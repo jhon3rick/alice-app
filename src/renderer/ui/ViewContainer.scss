@@ -1,0 +1,27 @@
+.view-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    padding: 24px 16px;
+
+    button {
+      margin-right: 6px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+  }
+
+  &__content {
+    flex: 1;
+    padding: 32px 0;
+    overflow: auto;
+  }
+}

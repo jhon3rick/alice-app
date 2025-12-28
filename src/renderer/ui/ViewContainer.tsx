@@ -1,9 +1,11 @@
 import React, { ReactNode } from 'react';
-import { Box, AppBar, Toolbar, Container } from '@mui/material';
+import { Container } from '@mui/material';
 
 // UI
-import ViewTitle from "@ui/ViewTitle";
-import BackButton from "@ui/BackButton";
+import ViewTitle from '@ui/ViewTitle';
+import ViewBackButton from '@ui/ViewBackButton';
+
+import './ViewContainer.scss';
 
 interface ViewContainerProps {
   title?: string;
@@ -22,19 +24,22 @@ const ViewContainer: React.FC<ViewContainerProps> = ({
 }) => {
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
-        <Toolbar>
-          {showBackButton && <BackButton />}
-          {title && <ViewTitle title={title}/>}
-          {actions && <Box sx={{ display: 'flex', gap: 1 }}>{actions}</Box>}
-        </Toolbar>
-      </AppBar>
+    <div className="view-container">
+      <div className="view-container__header">
+        {showBackButton && <ViewBackButton />}
+        {title && <ViewTitle title={title} />}
+        {actions && (
+          <div className="view-container__actions">
+            {actions}
+          </div>
+        )}
+      </div>
 
-      <Container maxWidth={maxWidth} sx={{ flex: 1, py: 4, overflow: 'auto' }}>
+      {/* Contenido */}
+      <Container maxWidth={maxWidth} className="view-container__content">
         {children}
       </Container>
-    </Box>
+    </div>
   );
 };
 
