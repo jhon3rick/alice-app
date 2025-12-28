@@ -1,0 +1,140 @@
+{
+  "projects": [
+    {
+      "codeindex": "rails-project-1",
+      "name": "My Rails Project",
+      "path": "/Users/username/projects/my-rails-app"
+    },
+    {
+      "codeindex": "react-project-1",
+      "name": "My React Project",
+      "path": "/Users/username/projects/my-react-app"
+    }
+  ],
+  "commands": [
+    {
+      "codeindex": "cmd-migration-add",
+      "name": "Add Migration",
+      "detail": "This command creates a new Rails migration to add a column to an existing table. It follows the Rails naming convention and automatically generates the appropriate migration file with the correct structure.",
+      "resumen": "Create a Rails migration to add a new column to a table",
+      "project": ["rails-project-1"],
+      "tags": ["migration", "add column", "rails"],
+      "steps": [
+        {
+          "name": "Generate Migration",
+          "detail": "Execute the Rails generator to create the migration file",
+          "command": "rails g migration {{migrationType}}{{fieldName}}To{{tableName}} {{field_name}}:{{fieldType}}",
+          "variables": [
+            {
+              "name": "migrationType",
+              "type": "option",
+              "detail": "Type of migration operation (Add for adding columns, Remove for removing)",
+              "options": ["Add", "Remove"]
+            },
+            {
+              "name": "fieldName",
+              "type": "string",
+              "detail": "The name of the field in UpperCamelCase format",
+              "format": "upperCamelCase"
+            },
+            {
+              "name": "tableName",
+              "type": "string",
+              "detail": "The name of the database table in UpperCamelCase format",
+              "format": "upperCamelCase"
+            },
+            {
+              "name": "field_name",
+              "type": "string",
+              "detail": "The name of the field in snake_case format for the database",
+              "format": "snake_case"
+            },
+            {
+              "name": "fieldType",
+              "type": "option",
+              "detail": "The data type for the new column",
+              "options": ["string", "integer", "boolean", "text", "date", "datetime", "decimal", "float"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeindex": "cmd-model-create",
+      "name": "Create Rails Model",
+      "detail": "Generate a new Rails model with specified attributes. This command creates the model file, migration, and test files following Rails conventions.",
+      "resumen": "Create a new Rails model with attributes",
+      "project": ["rails-project-1"],
+      "tags": ["model", "rails", "generator"],
+      "steps": [
+        {
+          "name": "Generate Model",
+          "detail": "Create the Rails model with attributes",
+          "command": "rails g model {{modelName}} {{attributes}}",
+          "variables": [
+            {
+              "name": "modelName",
+              "type": "string",
+              "detail": "Name of the model in UpperCamelCase",
+              "format": "upperCamelCase"
+            },
+            {
+              "name": "attributes",
+              "type": "string",
+              "detail": "Model attributes in format: field1:type field2:type (e.g., name:string age:integer)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeindex": "cmd-npm-install",
+      "name": "Install NPM Package",
+      "detail": "Install a new npm package in your project. You can choose to install it as a regular dependency or as a dev dependency.",
+      "resumen": "Install an npm package in the project",
+      "project": ["react-project-1"],
+      "tags": ["npm", "install", "package"],
+      "steps": [
+        {
+          "name": "Install Package",
+          "detail": "Run npm install command",
+          "command": "npm install {{packageName}}{{devFlag}}",
+          "variables": [
+            {
+              "name": "packageName",
+              "type": "string",
+              "detail": "Name of the npm package to install"
+            },
+            {
+              "name": "devFlag",
+              "type": "option",
+              "detail": "Install as dev dependency or regular dependency",
+              "options": [" --save-dev", ""]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codeindex": "cmd-git-commit",
+      "name": "Git Commit",
+      "detail": "Create a git commit with a formatted commit message. This helps maintain consistent commit message formatting across your team.",
+      "resumen": "Create a git commit with a message",
+      "tags": ["git", "commit", "version control"],
+      "steps": [
+        {
+          "name": "Git Add and Commit",
+          "detail": "Stage and commit changes",
+          "command": "git add . && git commit -m \"{{commitMessage}}\"",
+          "variables": [
+            {
+              "name": "commitMessage",
+              "type": "string",
+              "detail": "The commit message describing your changes"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
