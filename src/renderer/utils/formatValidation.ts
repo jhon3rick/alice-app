@@ -1,4 +1,4 @@
-import { VariableFormat } from '../types';
+import { VariableFormat } from '@types/index';
 
 export function applyFormat(value: string, format?: VariableFormat): string {
   if (!format) return value;

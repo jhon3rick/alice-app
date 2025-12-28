@@ -22,9 +22,9 @@ import {
   Paper,
 } from '@mui/material';
 import { ArrowBack, Add, Edit, Delete } from '@mui/icons-material';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchProjects, addProject, modifyProject, removeProject } from '../store/projectsSlice';
-import { Project } from '../types';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchProjects, addProject, modifyProject, removeProject } from '@store/projectsSlice';
+import { Project } from '@types/index';
 
 const ProjectsManager: React.FC = () => {
   const navigate = useNavigate();

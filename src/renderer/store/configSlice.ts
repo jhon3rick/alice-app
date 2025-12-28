@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Config } from '../types';
+import { Config } from '@types/index';
 
 interface ConfigState {
   config: Config;

@@ -2,14 +2,14 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { store } from './store';
-import Home from './views/Home';
-import CommandsList from './views/CommandsList';
-import CommandDetail from './views/CommandDetail';
-import ProjectsManager from './views/ProjectsManager';
-import TagsManager from './views/TagsManager';
-import ConfigView from './views/ConfigView';
-import Splash from './views/Splash';
+import { store } from '@store/index';
+import Home from '@views/Home';
+import CommandsList from '@views/CommandsList';
+import CommandDetail from '@views/CommandDetail';
+import ProjectsManager from '@views/ProjectsManager';
+import TagsManager from '@views/TagsManager';
+import ConfigView from '@views/ConfigView';
+import Splash from '@views/Splash';
 
 const theme = createTheme({
   palette: {

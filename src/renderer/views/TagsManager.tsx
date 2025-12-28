@@ -22,9 +22,9 @@ import {
   Paper,
 } from '@mui/material';
 import { ArrowBack, Add, Edit, Delete } from '@mui/icons-material';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchTags, addTag, modifyTag, removeTag } from '../store/tagsSlice';
-import { Tag } from '../types';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
+import { Tag } from '@types/index';
 
 const TagsManager: React.FC = () => {
   const navigate = useNavigate();

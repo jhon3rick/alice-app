@@ -19,12 +19,12 @@ import {
   Chip,
 } from '@mui/material';
 import { ArrowBack, PlayArrow } from '@mui/icons-material';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchCommand, clearCurrentCommand } from '../store/commandsSlice';
-import { fetchProjects } from '../store/projectsSlice';
-import { applyFormat } from '../utils/formatValidation';
-import { Variable, VariableValue } from '../types';
-import Terminal from '../components/Terminal';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchCommand, clearCurrentCommand } from '@store/commandsSlice';
+import { fetchProjects } from '@store/projectsSlice';
+import { applyFormat } from '@utils/formatValidation';
+import { Variable, VariableValue } from '@types/index';
+import Terminal from '@components/Terminal';
 
 const CommandDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();

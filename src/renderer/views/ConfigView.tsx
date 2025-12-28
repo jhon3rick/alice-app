@@ -14,8 +14,8 @@ import {
   Snackbar,
 } from '@mui/material';
 import { ArrowBack, Save, Download, Upload } from '@mui/icons-material';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchConfig, updateConfigValue } from '../store/configSlice';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchConfig, updateConfigValue } from '@store/configSlice';
 
 const ConfigView: React.FC = () => {
   const navigate = useNavigate();
