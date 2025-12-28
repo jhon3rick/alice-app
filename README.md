@@ -1,6 +1,28 @@
 # Alice App
 
-Alice App is an Electron-based application designed to help development teams manage and execute command templates with a visual interface. It solves the problem of complex CLI commands by providing a step-by-step interface to fill in variables and execute commands safely.
+> ⚠️ **En desarrollo activo** - Este proyecto está actualmente en desarrollo. Algunas funcionalidades pueden estar incompletas o sujetas a cambios.
+
+**Proyecto Personal** | Un gestor visual de plantillas de comandos para desarrolladores
+
+Alice App es una aplicación de escritorio basada en Electron diseñada para resolver un problema común en el desarrollo de software: **la gestión, estandarización y ejecución segura de comandos CLI complejos y repetitivos**. Permite crear plantillas con variables controladas mediante selectores, limitando las opciones disponibles y asegurando la consistencia en los comandos ejecutados por todo el equipo.
+
+## El Problema
+
+Los desarrolladores frecuentemente ejecutan comandos largos y complejos que requieren múltiples parámetros, nombres de archivos específicos, y convenciones de formato (camelCase, snake_case, etc.). Estos comandos son propensos a errores tipográficos, difíciles de recordar, complicados de compartir con el equipo, y **carecen de estandarización**, lo que resulta en comandos ejecutados de manera inconsistente entre diferentes miembros del equipo.
+
+## La Solución
+
+Alice App proporciona una interfaz visual intuitiva donde puedes:
+
+- **Crear plantillas estandarizadas** de comandos con variables parametrizadas
+- **Controlar las opciones** mediante selectores dropdown que limitan valores a opciones predefinidas
+- **Validar formatos automáticamente** (snake_case, camelCase, etc.) antes de la ejecución
+- **Garantizar consistencia** en todos los comandos ejecutados por el equipo
+- Ejecutar comandos con un terminal integrado que muestra el output en tiempo real
+- Organizar comandos por proyectos y etiquetas para fácil acceso
+- Compartir plantillas estandarizadas con tu equipo mediante archivos JSON
+
+En lugar de memorizar `rails g migration AddUsernameTo{{TableName}} username:string:uniq`, simplemente seleccionas la plantilla y completas los campos en un formulario visual.
 
 ## Features
 
