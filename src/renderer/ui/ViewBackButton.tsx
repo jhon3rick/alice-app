@@ -3,20 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 
-const BackButton: React.FC = () => {
+const ViewBackButton: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <IconButton
-      edge="start"
-      color="inherit"
       onClick={() => navigate(-1)}
-      sx={{ mr: 2 }}
       aria-label="back"
+      sx={{
+        color: '#005461',
+        bgcolor: 'transparent',
+        width: 48,
+        height: 48,
+        '&:hover': {
+          bgcolor: 'rgba(0, 84, 97, 0.08)',
+        },
+        '& svg': {
+          fontSize: 28,
+        },
+      }}
     >
       <ArrowBack />
     </IconButton>
   );
 };
 
-export default BackButton;
+export default ViewBackButton;
