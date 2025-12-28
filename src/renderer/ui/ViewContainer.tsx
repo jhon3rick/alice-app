@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, AppBar, Toolbar, IconButton, Typography, Container } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
+import { Box, AppBar, Toolbar, Container } from '@mui/material';
+
+// UI
+import ViewTitle from "@ui/ViewTitle";
+import BackButton from "@ui/BackButton";
 
 interface ViewContainerProps {
-  title: string;
+  title?: string;
   children: ReactNode;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
   showBackButton?: boolean;
@@ -18,26 +20,13 @@ const ViewContainer: React.FC<ViewContainerProps> = ({
   showBackButton = true,
   actions,
 }) => {
-  const navigate = useNavigate();
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AppBar position="static">
         <Toolbar>
-          {showBackButton && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={() => navigate(-1)}
-              sx={{ mr: 2 }}
-              aria-label="back"
-            >
-              <ArrowBack />
-            </IconButton>
-          )}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
+          {showBackButton && <BackButton />}
+          {title && <ViewTitle title={title}/>}
           {actions && <Box sx={{ display: 'flex', gap: 1 }}>{actions}</Box>}
         </Toolbar>
       </AppBar>

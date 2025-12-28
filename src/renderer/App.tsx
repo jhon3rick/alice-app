@@ -3,6 +3,8 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { store } from '@store/index';
+
+// Views
 import Home from '@views/Home';
 import CommandsList from '@views/CommandsList';
 import CommandDetail from '@views/CommandDetail';
