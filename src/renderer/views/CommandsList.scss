@@ -1,0 +1,28 @@
+.commands-list {
+  &__filters {
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+  }
+
+  &__commands {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__command-card {
+    .command-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .command-tags {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+  }
+}

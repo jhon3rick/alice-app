@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box,
   Typography,
   FormControl,
   InputLabel,
@@ -19,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchCommands, setFilters } from '@store/commandsSlice';
 import { fetchProjects } from '@store/projectsSlice';
 import { fetchTags } from '@store/tagsSlice';
+import './CommandsList.scss';
 
 const CommandsList: React.FC = () => {
   const navigate = useNavigate();
@@ -58,8 +58,8 @@ const CommandsList: React.FC = () => {
   }, [selectedProject, selectedTags, dispatch, tags]);
 
   return (
-    <ViewContainer title="Commands">
-      <Box sx={{ mb: 4, display: 'flex', gap: 2 }}>
+    <ViewContainer title="commands">
+      <div className="commands-list__filters">
         <FormControl fullWidth>
           <InputLabel>Filter by Project</InputLabel>
           <Select
@@ -91,7 +91,7 @@ const CommandsList: React.FC = () => {
             ))
           }
         />
-      </Box>
+      </div>
 
       {loading ? (
         <Typography>Loading...</Typography>
@@ -100,21 +100,21 @@ const CommandsList: React.FC = () => {
           No commands found. Create one to get started.
         </Typography>
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className="commands-list__commands">
           {commands.map((command) => (
-            <Card key={command.id}>
+            <Card key={command.id} className="commands-list__command-card">
               <CardActionArea onClick={() => navigate(`/commands/${command.id}`)}>
                 <CardContent>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', mb: 1 }}>
+                  <div className="command-header">
                     <Typography variant="h6" component="h3">
                       {command.name}
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                    <div className="command-tags">
                       {command.tags.map((tag) => (
                         <Chip key={tag} label={tag} size="small" color="primary" variant="outlined" />
                       ))}
-                    </Box>
-                  </Box>
+                    </div>
+                  </div>
                   <Typography variant="body2" color="text.secondary">
                     {command.resumen}
                   </Typography>
@@ -122,7 +122,7 @@ const CommandsList: React.FC = () => {
               </CardActionArea>
             </Card>
           ))}
-        </Box>
+        </div>
       )}
     </ViewContainer>
   );
