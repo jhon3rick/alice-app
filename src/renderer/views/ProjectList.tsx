@@ -26,9 +26,9 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchProjects, addProject, modifyProject, removeProject } from '@store/projectsSlice';
 import { Project } from '@types/index';
 
-import './ProjectsManager.scss';
+import './ProjectList.scss';
 
-const ProjectsManager: React.FC = () => {
+const ProjectList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -191,4 +191,4 @@ const ProjectsManager: React.FC = () => {
   );
 };
 
-export default ProjectsManager;
+export default ProjectList;

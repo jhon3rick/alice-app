@@ -6,9 +6,9 @@ import { store } from '@store/index';
 
 // Views
 import Home from '@views/Home';
-import CommandsList from '@views/CommandsList';
+import CommandList from '@views/CommandList';
 import CommandDetail from '@views/CommandDetail';
-import ProjectsManager from '@views/ProjectsManager';
+import ProjectList from '@views/ProjectList';
 import TagsManager from '@views/TagsManager';
 import ConfigView from '@views/ConfigView';
 import Splash from '@views/Splash';
@@ -47,9 +47,9 @@ const App: React.FC = () => {
             <Route path="/" element={<Navigate to="/splash" replace />} />
             <Route path="/splash" element={<Splash duration={4000} />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/commands" element={<CommandsList />} />
+            <Route path="/commands" element={<CommandList />} />
             <Route path="/commands/:id" element={<CommandDetail />} />
-            <Route path="/projects" element={<ProjectsManager />} />
+            <Route path="/projects" element={<ProjectList />} />
             <Route path="/tags" element={<TagsManager />} />
             <Route path="/config" element={<ConfigView />} />
           </Routes>

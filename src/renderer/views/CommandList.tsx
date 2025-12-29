@@ -18,9 +18,9 @@ import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchCommands, setFilters } from '@store/commandsSlice';
 import { fetchProjects } from '@store/projectsSlice';
 import { fetchTags } from '@store/tagsSlice';
-import './CommandsList.scss';
+import './CommandList.scss';
 
-const CommandsList: React.FC = () => {
+const CommandList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -59,7 +59,7 @@ const CommandsList: React.FC = () => {
 
   return (
     <ViewContainer title="commands">
-      <div className="commands-list__filters">
+      <div className="command-list__filters">
         <FormControl fullWidth>
           <InputLabel>Filter by Project</InputLabel>
           <Select
@@ -100,9 +100,9 @@ const CommandsList: React.FC = () => {
           No commands found. Create one to get started.
         </Typography>
       ) : (
-        <div className="commands-list__commands">
+        <div className="command-list__commands">
           {commands.map((command) => (
-            <Card key={command.id} className="commands-list__command-card">
+            <Card key={command.id} className="command-list__command-card">
               <CardActionArea onClick={() => navigate(`/commands/${command.id}`)}>
                 <CardContent>
                   <div className="command-header">
@@ -128,4 +128,4 @@ const CommandsList: React.FC = () => {
   );
 };
 
-export default CommandsList;
+export default CommandList;
