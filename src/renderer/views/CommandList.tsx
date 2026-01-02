@@ -2,38 +2,29 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Typography,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Autocomplete,
-  TextField,
   Card,
   CardActionArea,
   CardContent,
   Chip,
 } from '@mui/material';
 import ViewContainer from '@ui/ViewContainer';
+import FilterByProject from '@components/FilterByProject';
+import FilterByTags from '@components/FilterByTags';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchCommands, setFilters } from '@store/commandsSlice';
-import { fetchProjects } from '@store/projectsSlice';
-import { fetchTags } from '@store/tagsSlice';
 import './CommandList.scss';
 
 const CommandList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { commands, filters, loading } = useAppSelector((state) => state.commands);
-  const { projects } = useAppSelector((state) => state.projects);
+  const { commands, loading } = useAppSelector((state) => state.commands);
   const { tags } = useAppSelector((state) => state.tags);
 
   const [selectedProject, setSelectedProject] = useState<number | ''>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    dispatch(fetchProjects());
-    dispatch(fetchTags());
     dispatch(fetchCommands(undefined));
   }, [dispatch]);
 
@@ -60,36 +51,14 @@ const CommandList: React.FC = () => {
   return (
     <ViewContainer title="commands">
       <div className="command-list__filters">
-        <FormControl fullWidth>
-          <InputLabel>Filter by Project</InputLabel>
-          <Select
-            value={selectedProject}
-            label="Filter by Project"
-            onChange={(e) => setSelectedProject(e.target.value as number | '')}
-          >
-            <MenuItem value="">All Projects</MenuItem>
-            {projects.map((project) => (
-              <MenuItem key={project.id} value={project.id}>
-                {project.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <FilterByProject
+          value={selectedProject}
+          onChange={setSelectedProject}
+        />
 
-        <Autocomplete
-          multiple
-          fullWidth
-          options={tags.map((t) => t.name)}
+        <FilterByTags
           value={selectedTags}
-          onChange={(_, newValue) => setSelectedTags(newValue)}
-          renderInput={(params) => (
-            <TextField {...params} label="Filter by Tags" placeholder="Select tags" />
-          )}
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip {...getTagProps({ index })} key={option} label={option} size="small" />
-            ))
-          }
+          onChange={setSelectedTags}
         />
       </div>
 
