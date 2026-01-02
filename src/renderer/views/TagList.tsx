@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Box,
   Typography,
   Button,
-  AppBar,
-  Toolbar,
   IconButton,
   Dialog,
   DialogTitle,
@@ -21,13 +16,14 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { ArrowBack, Add, Edit, Delete } from '@mui/icons-material';
+import { Add, Edit, Delete } from '@mui/icons-material';
+import ViewContainer from '@ui/ViewContainer';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
 import { Tag } from '@types/index';
+import './TagList.scss';
 
-const TagsManager: React.FC = () => {
-  const navigate = useNavigate();
+const TagList: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const { tags } = useAppSelector((state) => state.tags);
@@ -90,23 +86,15 @@ const TagsManager: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Tags
-          </Typography>
-          <Button color="inherit" startIcon={<Add />} onClick={() => handleOpenDialog()}>
-            Add Tag
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Container maxWidth="lg" sx={{ flex: 1, py: 4, overflow: 'auto' }}>
-        <TableContainer component={Paper}>
+    <ViewContainer
+      title="tags"
+      actions={
+        <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
+          Add Tag
+        </Button>
+      }
+    >
+      <TableContainer component={Paper}>
           <Table>
             <TableHead>
               <TableRow>
@@ -141,7 +129,6 @@ const TagsManager: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Container>
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>{editingTag ? 'Edit Tag' : 'Add Tag'}</DialogTitle>
@@ -153,7 +140,7 @@ const TagsManager: React.FC = () => {
             fullWidth
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            sx={{ mb: 2 }}
+            className="tag-list__field"
           />
           <TextField
             margin="dense"
@@ -171,8 +158,8 @@ const TagsManager: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </ViewContainer>
   );
 };
 
-export default TagsManager;
+export default TagList;
