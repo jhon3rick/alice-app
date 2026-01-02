@@ -3,11 +3,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +13,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
 import ViewContainer from '@ui/ViewContainer';
+import ModalNewProject from '@components/ModalNewProject';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchProjects, addProject, modifyProject, removeProject } from '@store/projectsSlice';
 import { Project } from '@types/index';
@@ -29,51 +25,37 @@ const ProjectList: React.FC = () => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [formData, setFormData] = useState({ name: '', path: '', codeindex: '' });
 
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
   const handleOpenDialog = (project?: Project) => {
-    if (project) {
-      setEditingProject(project);
-      setFormData({
-        name: project.name,
-        path: project.path || '',
-        codeindex: project.codeindex || '',
-      });
-    } else {
-      setEditingProject(null);
-      setFormData({ name: '', path: '', codeindex: '' });
-    }
+    setEditingProject(project || null);
     setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setEditingProject(null);
-    setFormData({ name: '', path: '', codeindex: '' });
   };
 
-  const handleSave = async () => {
-    if (!formData.name.trim()) return;
-
+  const handleSave = async (formData: { name: string; path?: string; codeindex?: string }) => {
     if (editingProject) {
       await dispatch(
         modifyProject({
           id: editingProject.id!,
           name: formData.name,
-          path: formData.path || undefined,
-          codeindex: formData.codeindex || undefined,
+          path: formData.path,
+          codeindex: formData.codeindex,
         })
       );
     } else {
       await dispatch(
         addProject({
           name: formData.name,
-          path: formData.path || undefined,
-          codeindex: formData.codeindex || undefined,
+          path: formData.path,
+          codeindex: formData.codeindex,
         })
       );
     }
@@ -134,43 +116,12 @@ const ProjectList: React.FC = () => {
         </Table>
       </TableContainer>
 
-      <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingProject ? 'Edit Project' : 'Add Project'}</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Project Name"
-            fullWidth
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Project Path"
-            fullWidth
-            value={formData.path}
-            onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-            helperText="Optional: Specific directory path for command execution"
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Code Index"
-            fullWidth
-            value={formData.codeindex}
-            onChange={(e) => setFormData({ ...formData, codeindex: e.target.value })}
-            helperText="Optional: Unique identifier for JSON import/export"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSave} variant="contained" disabled={!formData.name.trim()}>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <ModalNewProject
+        open={dialogOpen}
+        editingProject={editingProject}
+        onClose={handleCloseDialog}
+        onSave={handleSave}
+      />
     </ViewContainer>
   );
 };
