@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Container,
-  Box,
   Typography,
   Button,
-  AppBar,
-  Toolbar,
   IconButton,
   Dialog,
   DialogTitle,
@@ -21,15 +16,13 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { ArrowBack, Add, Edit, Delete } from '@mui/icons-material';
+import { Add, Edit, Delete } from '@mui/icons-material';
+import ViewContainer from '@ui/ViewContainer';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchProjects, addProject, modifyProject, removeProject } from '@store/projectsSlice';
 import { Project } from '@types/index';
 
-import './ProjectList.scss';
-
 const ProjectList: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { projects } = useAppSelector((state) => state.projects);
@@ -95,60 +88,51 @@ const ProjectList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Projects
-          </Typography>
-          <Button color="inherit" startIcon={<Add />} onClick={() => handleOpenDialog()}>
-            Add Project
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Container maxWidth="lg" sx={{ flex: 1, py: 4, overflow: 'auto' }}>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
+    <ViewContainer
+      title="projects"
+      actions={
+        <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
+          Add Project
+        </Button>
+      }
+    >
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Path</TableCell>
+              <TableCell>Code Index</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {projects.length === 0 ? (
               <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Path</TableCell>
-                <TableCell>Code Index</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell colSpan={4} align="center">
+                  <Typography color="text.secondary">No projects found. Add one to get started.</Typography>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {projects.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={4} align="center">
-                    <Typography color="text.secondary">No projects found. Add one to get started.</Typography>
+            ) : (
+              projects.map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell>{project.name}</TableCell>
+                  <TableCell>{project.path || '-'}</TableCell>
+                  <TableCell>{project.codeindex || '-'}</TableCell>
+                  <TableCell align="right">
+                    <IconButton size="small" onClick={() => handleOpenDialog(project)}>
+                      <Edit fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => handleDelete(project.id!)} color="error">
+                      <Delete fontSize="small" />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
-              ) : (
-                projects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell>{project.name}</TableCell>
-                    <TableCell>{project.path || '-'}</TableCell>
-                    <TableCell>{project.codeindex || '-'}</TableCell>
-                    <TableCell align="right">
-                      <IconButton size="small" onClick={() => handleOpenDialog(project)}>
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleDelete(project.id!)} color="error">
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>{editingProject ? 'Edit Project' : 'Add Project'}</DialogTitle>
@@ -187,7 +171,7 @@ const ProjectList: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </ViewContainer>
   );
 };
 
