@@ -1,11 +1,13 @@
+@use '../styles/variables' as *;
+
 .tag-list {
   &__container {
     flex: 1;
-    padding: 32px 16px;
+    padding: $spacing-lg $spacing-sm;
     overflow: auto;
   }
 
   &__field {
-    margin-bottom: 16px;
+    margin-bottom: $spacing-sm;
   }
 }

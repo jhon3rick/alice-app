@@ -1,3 +1,5 @@
+@use '../styles/variables' as *;
+
 .view-container {
   height: 100vh;
   display: flex;
@@ -6,22 +8,22 @@
   &__header {
     display: flex;
     align-items: center;
-    padding: 24px 16px;
+    padding: $spacing-md $spacing-sm;
 
     button {
-      margin-right: 6px;
+      margin-right: 0.375rem; // 6px
     }
   }
 
   &__actions {
     display: flex;
-    gap: 8px;
+    gap: $spacing-xs;
     margin-left: auto;
   }
 
   &__content {
     flex: 1;
-    padding: 32px 0;
+    padding: $spacing-lg 0;
     overflow: auto;
   }
 }

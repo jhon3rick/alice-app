@@ -1,14 +1,16 @@
+@use '../styles/variables' as *;
+
 .command-list {
   &__filters {
-    margin-bottom: 32px;
+    margin-bottom: $spacing-lg;
     display: flex;
-    gap: 16px;
+    gap: $spacing-sm;
   }
 
   &__commands {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: $spacing-sm;
   }
 
   &__command-card {
@@ -16,12 +18,12 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 8px;
+      margin-bottom: $spacing-xs;
     }
 
     .command-tags {
       display: flex;
-      gap: 4px;
+      gap: $spacing-xxs;
       flex-wrap: wrap;
     }
   }

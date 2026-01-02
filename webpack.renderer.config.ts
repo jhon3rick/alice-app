@@ -14,7 +14,14 @@ rules.push({
   use: [
     { loader: 'style-loader' },
     { loader: 'css-loader' },
-    { loader: 'sass-loader' },
+    {
+      loader: 'sass-loader',
+      options: {
+        sassOptions: {
+          includePaths: [path.resolve(__dirname, 'src/renderer')],
+        },
+      },
+    },
   ],
 });
 

@@ -1,3 +1,5 @@
+@use '../styles/variables' as *;
+
 .splash {
   height: 100vh;
   display: flex;
@@ -8,14 +10,14 @@
   }
 
   &__title {
-    margin-bottom: 24px;
+    margin-bottom: $spacing-md;
     text-align: center;
-    font-weight: 600;
-    color: #005461;
+    font-weight: $font-weight-semibold;
+    color: $color-primary-dark;
   }
 
   &__subtitle {
     text-align: center;
-    font-weight: 300;
+    font-weight: $font-weight-light;
   }
 }
