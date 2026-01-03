@@ -14,7 +14,7 @@ export default (): Middleware => {
           ? String((action as { type: unknown }).type)
           : "UNKNOWN_ACTION";
 
-      console.groupCollapsed(`🧠 Redux: ${actionType}`);
+      console.groupCollapsed(`🔄 Redux: ${actionType}`);
       console.log("Prev state:", prevState);
       console.log("Next state:", nextState);
       console.log("Action:", action);
