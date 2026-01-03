@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { ipcMain, shell, dialog } from 'electron';
 import { databaseService } from '../database/Database';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -182,6 +182,20 @@ export function setupIpcHandlers(): void {
     const stmt = db.prepare('INSERT OR REPLACE INTO config (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)');
     stmt.run(key, value);
     return { key, value };
+  });
+
+  // Config Show Finder
+  ipcMain.handle('select-folder', async () => {
+    const result = await dialog.showOpenDialog({
+      title: 'Selecciona una carpeta',
+      properties: ['openDirectory'],
+    });
+
+    if (result.canceled) {
+      return null;
+    }
+
+    return result.filePaths[0];
   });
 
   // Import/Export JSON

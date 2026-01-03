@@ -24,6 +24,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getConfig: () => ipcRenderer.invoke('get-config'),
   updateConfig: (key: string, value: string) => ipcRenderer.invoke('update-config', key, value),
 
+  // Config Show Finder
+  selectFolder: () => ipcRenderer.invoke("select-folder"),
+
   // Import/Export
   importJson: (filePath: string) => ipcRenderer.invoke('import-json', filePath),
   exportJson: (exportPath: string) => ipcRenderer.invoke('export-json', exportPath),
@@ -50,6 +53,7 @@ declare global {
       deleteCommand: (id: number) => Promise<any>;
       getConfig: () => Promise<Record<string, string>>;
       updateConfig: (key: string, value: string) => Promise<any>;
+      selectFolder: () => Promise<any>;
       importJson: (filePath: string) => Promise<any>;
       exportJson: (exportPath: string) => Promise<any>;
       executeCommand: (command: string, workingDir?: string) => Promise<any>;

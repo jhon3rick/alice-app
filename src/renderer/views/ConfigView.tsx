@@ -36,6 +36,16 @@ const ConfigView: React.FC = () => {
     setExportPath(config.exportPath || '');
   }, [config]);
 
+  const handleSelectFolder = async () => {
+    // Llamamos a la API expuesta por preload
+    const selectedPath = await window.electronAPI.selectFolder();
+
+    // Si cancelan, viene null
+    if (!selectedPath) return;
+
+    setConfigPath(selectedPath);
+  };
+
   const handleSave = async () => {
     try {
       await dispatch(updateConfigValue({ key: 'configPath', value: configPath }));
@@ -110,6 +120,7 @@ const ConfigView: React.FC = () => {
               onChange={(e) => setConfigPath(e.target.value)}
               helperText="Directory where JSON configuration files are stored"
               sx={{ mb: 3 }}
+              onClick={handleSelectFolder}
             />
 
             <TextField
