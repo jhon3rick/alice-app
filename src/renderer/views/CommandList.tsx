@@ -1,3 +1,10 @@
+/**
+ * CommandList
+ *
+ * View component for listing and filtering commands.
+ * Displays commands in cards with filtering by project and tags.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

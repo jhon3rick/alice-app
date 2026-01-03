@@ -1,3 +1,10 @@
+/**
+ * Splash
+ *
+ * Splash screen component.
+ * Displays a loading screen and redirects to specified route after duration.
+ */
+
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Typography, Box, Fade } from '@mui/material';

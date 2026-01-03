@@ -1,3 +1,10 @@
+/**
+ * ViewBackButton
+ *
+ * Button component for navigating back.
+ * Uses React Router to go to the previous page.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';

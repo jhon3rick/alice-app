@@ -1,3 +1,10 @@
+/**
+ * ModalNewProject
+ *
+ * Modal component for creating or editing projects.
+ * Provides form fields for project name, path, and code index.
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

@@ -1,9 +1,9 @@
 /**
- * FilterByProject
+ * SelectProject
  *
- * Select dropdown para filtrar comandos por proyecto.
- * Incluye opción "All Projects" para mostrar todos.
- * Maneja su propio fetching de proyectos desde Redux.
+ * Select dropdown for filtering commands by project.
+ * Includes "All Projects" option to show all.
+ * Handles its own fetching of projects from Redux.
  */
 
 import React, { useEffect } from 'react';
@@ -11,12 +11,12 @@ import { FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchProjects } from '@store/projectsSlice';
 
-interface FilterByProjectProps {
+interface SelectProjectProps {
   value: number | '';
   onChange: (projectId: number | '') => void;
 }
 
-const FilterByProject: React.FC<FilterByProjectProps> = ({ value, onChange }) => {
+const SelectProject: React.FC<SelectProjectProps> = ({ value, onChange }) => {
   const dispatch = useAppDispatch();
   const { projects } = useAppSelector((state) => state.projects);
 
@@ -43,4 +43,4 @@ const FilterByProject: React.FC<FilterByProjectProps> = ({ value, onChange }) =>
   );
 };
 
-export default FilterByProject;
+export default SelectProject;

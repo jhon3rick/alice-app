@@ -1,3 +1,10 @@
+/**
+ * stateChangeLogger
+ *
+ * Redux middleware for logging state changes.
+ * Logs previous and next state when actions are dispatched.
+ */
+
 import type { Middleware } from "@reduxjs/toolkit";
 
 export default (): Middleware => {

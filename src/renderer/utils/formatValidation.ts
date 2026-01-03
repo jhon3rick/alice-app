@@ -1,4 +1,11 @@
 
+/**
+ * formatValidation
+ *
+ * Utility functions for variable name formatting and validation.
+ * Supports various naming conventions like camelCase, snake_case, etc.
+ */
+
 // Types
 import { VariableFormat } from '@tstypes/dbmodules';
 

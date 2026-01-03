@@ -1,3 +1,10 @@
+/**
+ * TagList
+ *
+ * View component for listing and managing tags.
+ * Displays tags in a table with add, edit, and delete functionality.
+ */
+
 import React, { useEffect, useState } from 'react';
 import {
   Typography,

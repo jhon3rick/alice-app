@@ -1,3 +1,10 @@
+/**
+ * Home
+ *
+ * Main home view component.
+ * Displays navigation cards for different application sections.
+ */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

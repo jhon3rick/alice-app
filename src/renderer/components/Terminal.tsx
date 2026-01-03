@@ -1,3 +1,10 @@
+/**
+ * Terminal
+ *
+ * Component for executing terminal commands.
+ * Displays command output and handles execution state.
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 

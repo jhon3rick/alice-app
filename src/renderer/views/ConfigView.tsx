@@ -1,3 +1,10 @@
+/**
+ * ConfigView
+ *
+ * View component for application configuration.
+ * Allows editing and saving configuration settings.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {

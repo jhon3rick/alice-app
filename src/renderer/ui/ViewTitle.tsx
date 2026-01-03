@@ -1,3 +1,10 @@
+/**
+ * ViewTitle
+ *
+ * Component for displaying view titles.
+ * Renders title text with consistent typography styling.
+ */
+
 import React from 'react';
 import { Typography } from '@mui/material';
 

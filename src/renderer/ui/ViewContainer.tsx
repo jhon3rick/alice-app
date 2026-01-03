@@ -1,3 +1,10 @@
+/**
+ * ViewContainer
+ *
+ * Container component for application views.
+ * Provides header with back button, title, and actions, plus content area.
+ */
+
 import React, { ReactNode } from 'react';
 import { Container } from '@mui/material';
 

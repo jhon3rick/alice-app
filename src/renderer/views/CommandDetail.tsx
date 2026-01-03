@@ -1,3 +1,10 @@
+/**
+ * CommandDetail
+ *
+ * View component for displaying and editing command details.
+ * Allows editing command properties and executing the command.
+ */
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -27,9 +34,6 @@ import { fetchProjects } from '@store/projectsSlice';
 
 // Utils
 import { applyFormat } from '@utils/formatValidation';
-
-// Types
-import { Variable, VariableValue } from '@tstypes/dbmodules';
 
 // Custom components
 import Terminal from '@components/Terminal';

@@ -1,9 +1,16 @@
+/**
+ * SelectFolder
+ *
+ * Component for selecting a folder path.
+ * Provides a text field with a browse button to open folder dialog.
+ */
+
 import React from 'react';
-import { TextField, InputAdornment, IconButton } from '@mui/material';
+import { TextField, InputAdornment, IconButton, SxProps } from '@mui/material';
 import { FolderOpen } from '@mui/icons-material';
 
 interface Props {
-  sx?: string;
+  sx?: SxProps;
   label?: string;
   value: string;
   onChange: (value: string) => void;

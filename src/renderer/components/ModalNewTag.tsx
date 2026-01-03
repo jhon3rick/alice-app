@@ -1,3 +1,10 @@
+/**
+ * ModalNewTag
+ *
+ * Modal component for creating or editing tags.
+ * Provides form fields for tag name and code index.
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

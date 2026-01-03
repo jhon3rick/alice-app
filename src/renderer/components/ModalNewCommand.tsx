@@ -1,3 +1,10 @@
+/**
+ * ModalNewCommand
+ *
+ * Modal component for creating or editing commands.
+ * Provides form fields for name, summary, details, tags, and code index.
+ */
+
 import React, { useState, useEffect } from 'react';
 import {
   Dialog,

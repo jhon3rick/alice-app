@@ -1,9 +1,9 @@
 /**
- * FilterByTags
+ * SelectTags
  *
- * Autocomplete multi-selección para filtrar comandos por tags.
- * Renderiza chips para cada tag seleccionado.
- * Maneja su propio fetching de tags desde Redux.
+ * Multi-select autocomplete for filtering commands by tags.
+ * Renders chips for each selected tag.
+ * Handles its own fetching of tags from Redux.
  */
 
 import React, { useEffect } from 'react';
@@ -11,12 +11,12 @@ import { Autocomplete, TextField, Chip } from '@mui/material';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchTags } from '@store/tagsSlice';
 
-interface FilterByTagsProps {
+interface SelectTagsProps {
   value: string[];
   onChange: (tagNames: string[]) => void;
 }
 
-const FilterByTags: React.FC<FilterByTagsProps> = ({ value, onChange }) => {
+const SelectTags: React.FC<SelectTagsProps> = ({ value, onChange }) => {
   const dispatch = useAppDispatch();
   const { tags } = useAppSelector((state) => state.tags);
 
@@ -43,4 +43,4 @@ const FilterByTags: React.FC<FilterByTagsProps> = ({ value, onChange }) => {
   );
 };
 
-export default FilterByTags;
+export default SelectTags;
