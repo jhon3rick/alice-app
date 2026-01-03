@@ -4,7 +4,6 @@ import {
   Container,
   Box,
   Typography,
-  TextField,
   Button,
   AppBar,
   Toolbar,
@@ -16,6 +15,9 @@ import {
 import { ArrowBack, Save, Download, Upload } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchConfig, updateConfigValue } from '@store/configSlice';
+
+// Custom components
+import SelectFolder from '@components/SelectFolder';
 
 const ConfigView: React.FC = () => {
   const navigate = useNavigate();
@@ -35,16 +37,6 @@ const ConfigView: React.FC = () => {
     setConfigPath(config.configPath || '');
     setExportPath(config.exportPath || '');
   }, [config]);
-
-  const handleSelectFolder = async () => {
-    // Llamamos a la API expuesta por preload
-    const selectedPath = await window.electronAPI.selectFolder();
-
-    // Si cancelan, viene null
-    if (!selectedPath) return;
-
-    setConfigPath(selectedPath);
-  };
 
   const handleSave = async () => {
     try {
@@ -113,23 +105,22 @@ const ConfigView: React.FC = () => {
           </Typography>
 
           <Box sx={{ mt: 4 }}>
-            <TextField
-              fullWidth
+            <SelectFolder
+              sx={{ mb: 3 }}
+              key="configPath"
               label="Config Path"
               value={configPath}
-              onChange={(e) => setConfigPath(e.target.value)}
+              onChange={setConfigPath}
               helperText="Directory where JSON configuration files are stored"
-              sx={{ mb: 3 }}
-              onClick={handleSelectFolder}
             />
 
-            <TextField
-              fullWidth
+            <SelectFolder
+              sx={{ mb: 3 }}
+              key="exportPath"
               label="Export Path"
               value={exportPath}
-              onChange={(e) => setExportPath(e.target.value)}
+              onChange={setExportPath}
               helperText="Directory where exported JSON files will be saved"
-              sx={{ mb: 3 }}
             />
 
             <Button

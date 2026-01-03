@@ -8,8 +8,8 @@ import {
   Chip,
 } from '@mui/material';
 import ViewContainer from '@ui/ViewContainer';
-import FilterByProject from '@components/FilterByProject';
-import FilterByTags from '@components/FilterByTags';
+import SelectProject from '@components/SelectProject';
+import SelectTags from '@components/SelectTags';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchCommands, setFilters } from '@store/commandsSlice';
 import './CommandList.scss';
@@ -51,12 +51,12 @@ const CommandList: React.FC = () => {
   return (
     <ViewContainer title="commands">
       <div className="command-list__filters">
-        <FilterByProject
+        <SelectProject
           value={selectedProject}
           onChange={setSelectedProject}
         />
 
-        <FilterByTags
+        <SelectTags
           value={selectedTags}
           onChange={setSelectedTags}
         />
