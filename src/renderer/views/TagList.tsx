@@ -12,11 +12,18 @@ import {
   Paper,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
-import ViewContainer from '@ui/ViewContainer';
-import ModalNewTag from '@components/ModalNewTag';
+
+// Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
-import { Tag } from '@types/index';
+
+// Custom Components
+import ViewContainer from '@ui/ViewContainer';
+import ModalNewTag from '@components/ModalNewTag';
+
+// Types
+import { Tag } from '@tstypes/dbmodules';
+
 import './TagList.scss';
 
 const TagList: React.FC = () => {

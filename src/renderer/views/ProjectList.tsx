@@ -12,11 +12,17 @@ import {
   Paper,
 } from '@mui/material';
 import { Add, Edit, Delete } from '@mui/icons-material';
-import ViewContainer from '@ui/ViewContainer';
-import ModalNewProject from '@components/ModalNewProject';
+
+// Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchProjects, addProject, modifyProject, removeProject } from '@store/projectsSlice';
-import { Project } from '@types/index';
+
+// Custom Components
+import ViewContainer from '@ui/ViewContainer';
+import ModalNewProject from '@components/ModalNewProject';
+
+// Types
+import { Project } from '@tstypes/dbmodules';
 
 const ProjectList: React.FC = () => {
   const dispatch = useAppDispatch();

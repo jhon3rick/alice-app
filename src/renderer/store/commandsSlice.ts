@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { CommandTemplate } from '@types/index';
+
+// Types
+import { CommandTemplate } from '@tstypes/dbmodules';
 
 interface CommandsState {
   commands: CommandTemplate[];

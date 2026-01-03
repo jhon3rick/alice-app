@@ -7,11 +7,16 @@ import {
   CardContent,
   Chip,
 } from '@mui/material';
+
+// Store
+import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { fetchCommands, setFilters } from '@store/commandsSlice';
+
+// Custom Components
 import ViewContainer from '@ui/ViewContainer';
 import SelectProject from '@components/SelectProject';
 import SelectTags from '@components/SelectTags';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { fetchCommands, setFilters } from '@store/commandsSlice';
+
 import './CommandList.scss';
 
 const CommandList: React.FC = () => {

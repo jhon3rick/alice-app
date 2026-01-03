@@ -9,7 +9,9 @@ import {
   Autocomplete,
   Chip,
 } from '@mui/material';
-import { CommandTemplate } from '@types/index';
+
+// Types
+import { CommandTemplate } from '@tstypes/dbmodules';
 
 interface ModalNewCommandProps {
   open: boolean;

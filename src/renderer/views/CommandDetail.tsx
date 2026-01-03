@@ -19,11 +19,19 @@ import {
   Chip,
 } from '@mui/material';
 import { ArrowBack, PlayArrow } from '@mui/icons-material';
+
+// Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchCommand, clearCurrentCommand } from '@store/commandsSlice';
 import { fetchProjects } from '@store/projectsSlice';
+
+// Utils
 import { applyFormat } from '@utils/formatValidation';
-import { Variable, VariableValue } from '@types/index';
+
+// Types
+import { Variable, VariableValue } from '@tstypes/dbmodules';
+
+// Custom components
 import Terminal from '@components/Terminal';
 
 const CommandDetail: React.FC = () => {

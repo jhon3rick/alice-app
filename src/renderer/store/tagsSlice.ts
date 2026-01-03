@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Tag } from '@types/index';
+
+// Types
+import { Tag } from '@tstypes/dbmodules';
 
 interface TagsState {
   tags: Tag[];

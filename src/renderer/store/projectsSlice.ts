@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Project } from '@types/index';
+
+// Types
+import { Project } from '@tstypes/dbmodules';
 
 interface ProjectsState {
   projects: Project[];

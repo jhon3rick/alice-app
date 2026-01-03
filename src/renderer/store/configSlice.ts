@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { Config } from '@types/index';
+
+// Types
+import { Config } from '@tstypes/dbmodules';
 
 interface ConfigState {
   config: Config;

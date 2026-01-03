@@ -3,11 +3,11 @@ import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { FolderOpen } from '@mui/icons-material';
 
 interface Props {
+  sx?: string;
   label?: string;
   value: string;
   onChange: (value: string) => void;
   helperText?: string;
-  sx?: string;
 }
 
 const SelectFolder: React.FC<Props> = ({ label = 'Folder', value, onChange, helperText, sx }) => {

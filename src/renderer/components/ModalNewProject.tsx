@@ -7,7 +7,9 @@ import {
   TextField,
   Button,
 } from '@mui/material';
-import { Project } from '@types/index';
+
+// Types
+import { Project } from '@tstypes/dbmodules';
 
 interface ModalNewProjectProps {
   open: boolean;

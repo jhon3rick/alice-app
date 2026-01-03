@@ -1,4 +1,6 @@
-import { VariableFormat } from '@types/index';
+
+// Types
+import { VariableFormat } from '@tstypes/dbmodules';
 
 export function applyFormat(value: string, format?: VariableFormat): string {
   if (!format) return value;

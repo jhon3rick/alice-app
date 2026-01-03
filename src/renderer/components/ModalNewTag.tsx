@@ -7,7 +7,9 @@ import {
   TextField,
   Button,
 } from '@mui/material';
-import { Tag } from '@types/index';
+
+// Types
+import { Tag } from '@tstypes/dbmodules';
 
 interface ModalNewTagProps {
   open: boolean;

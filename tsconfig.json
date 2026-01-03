@@ -20,7 +20,7 @@
       "@components/*": ["src/renderer/components/*"],
       "@views/*": ["src/renderer/views/*"],
       "@store/*": ["src/renderer/store/*"],
-      "@types/*": ["src/renderer/types/*"],
+      "@tstypes/*": ["src/renderer/tstypes/*"],
       "@utils/*": ["src/renderer/utils/*"],
       "@ui/*": ["src/renderer/ui/*"],
       "*": ["node_modules/*"]
