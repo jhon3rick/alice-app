@@ -37,33 +37,3 @@
     }
   }
 }
-
-.card {
-  height: 100%;
-  background-color: $color-surface !important;
-  transition: transform $transition-fast, box-shadow $transition-fast;
-  border-radius: $radius-md;
-  box-shadow: $shadow-sm;
-
-  &:hover {
-    transform: translateY(-0.25rem);
-    box-shadow: 0 0.5rem 1rem rgba(0, 84, 97, 0.2);
-  }
-
-  &__action {
-    height: 100%;
-    padding: $spacing-md;
-  }
-
-  &__content {
-    text-align: center;
-  }
-
-  &__icon {
-    margin-bottom: $spacing-sm;
-  }
-
-  &__title {
-    margin-bottom: $spacing-xs;
-  }
-}
