@@ -6,28 +6,25 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
-  Container,
   Box,
   Typography,
   Button,
-  AppBar,
-  Toolbar,
-  IconButton,
   Paper,
   Alert,
   Snackbar,
 } from '@mui/material';
-import { ArrowBack, Save, Download, Upload } from '@mui/icons-material';
+import { Save, Download, Upload } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchConfig, updateConfigValue } from '@store/configSlice';
 
-// Custom components
+// Custom Components
 import SelectFolder from '@components/SelectFolder';
+import ViewContainer from '@ui/ViewContainer';
+
+import './ConfigView.scss';
 
 const ConfigView: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const { config } = useAppSelector((state) => state.config);
@@ -95,78 +92,67 @@ const ConfigView: React.FC = () => {
   };
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton edge="start" color="inherit" onClick={() => navigate('/')} sx={{ mr: 2 }}>
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6">Configuration</Typography>
-        </Toolbar>
-      </AppBar>
+    <ViewContainer title="Configuration">
+      <Paper className="config-view__paper">
+        <Typography variant="h5" gutterBottom>
+          Application Settings
+        </Typography>
 
-      <Container maxWidth="md" sx={{ flex: 1, py: 4, overflow: 'auto' }}>
-        <Paper sx={{ p: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            Application Settings
-          </Typography>
+        <Box className="config-view__section">
+          <SelectFolder
+            sx={{ mb: 3 }}
+            key="configPath"
+            label="Config Path"
+            value={configPath}
+            onChange={setConfigPath}
+            helperText="Directory where JSON configuration files are stored"
+          />
 
-          <Box sx={{ mt: 4 }}>
-            <SelectFolder
-              sx={{ mb: 3 }}
-              key="configPath"
-              label="Config Path"
-              value={configPath}
-              onChange={setConfigPath}
-              helperText="Directory where JSON configuration files are stored"
-            />
+          <SelectFolder
+            sx={{ mb: 3 }}
+            key="exportPath"
+            label="Export Path"
+            value={exportPath}
+            onChange={setExportPath}
+            helperText="Directory where exported JSON files will be saved"
+          />
 
-            <SelectFolder
-              sx={{ mb: 3 }}
-              key="exportPath"
-              label="Export Path"
-              value={exportPath}
-              onChange={setExportPath}
-              helperText="Directory where exported JSON files will be saved"
-            />
+          <Button
+            variant="contained"
+            startIcon={<Save />}
+            onClick={handleSave}
+            sx={{ mb: 4 }}
+          >
+            Save Configuration
+          </Button>
+        </Box>
 
-            <Button
-              variant="contained"
-              startIcon={<Save />}
-              onClick={handleSave}
-              sx={{ mb: 4 }}
-            >
-              Save Configuration
-            </Button>
-          </Box>
+        <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
+          Import/Export
+        </Typography>
 
-          <Typography variant="h6" gutterBottom sx={{ mt: 4 }}>
-            Import/Export
-          </Typography>
+        <Alert severity="info" className="config-view__alert">
+          Import JSON files to update the database, or export current database to JSON format.
+        </Alert>
 
-          <Alert severity="info" sx={{ mb: 3 }}>
-            Import JSON files to update the database, or export current database to JSON format.
-          </Alert>
+        <Box className="config-view__actions">
+          <Button
+            variant="outlined"
+            startIcon={<Upload />}
+            onClick={handleImport}
+          >
+            Import JSON
+          </Button>
 
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<Upload />}
-              onClick={handleImport}
-            >
-              Import JSON
-            </Button>
-
-            <Button
-              variant="outlined"
-              startIcon={<Download />}
-              onClick={handleExport}
-            >
-              Export to JSON
-            </Button>
-          </Box>
-        </Paper>
-      </Container>
+          <Button
+            variant="outlined"
+            startIcon={<Download />}
+            onClick={handleExport}
+          >
+            Export to JSON
+          </Button>
+        </Box>
+      </Paper>
 
       <Snackbar
         open={snackbar.open}
@@ -181,7 +167,7 @@ const ConfigView: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </ViewContainer>
   );
 };
 

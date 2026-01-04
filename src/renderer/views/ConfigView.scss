@@ -1,0 +1,27 @@
+.config-view {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &__paper {
+    padding: 32px;
+  }
+
+  &__section {
+    margin-top: 32px;
+
+    &:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  &__alert {
+    margin-bottom: 24px;
+  }
+}
