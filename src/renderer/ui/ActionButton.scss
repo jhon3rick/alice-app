@@ -1,0 +1,17 @@
+@use '../styles/variables' as *;
+
+.action-buttons {
+  border-radius: 50% !important;
+  transition: all $transition-normal !important;
+
+  color: #005461 !important;
+
+  &:hover {
+    color: $color-primary-main !important;
+    background-color: rgba(0, 84, 97, 0.08) !important;
+  }
+
+  &:active {
+    background-color: rgba($color-primary-dark, 0.2) !important;
+  }
+}

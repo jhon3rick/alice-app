@@ -4,9 +4,17 @@
   height: 100vh;
   display: flex;
   align-items: center;
+  position: relative;
 
   &__container {
     width: 100%;
+  }
+
+  &__floating-btn {
+    position: fixed;
+    top: $spacing-lg;
+    right: $spacing-lg;
+    z-index: $z-index-sticky;
   }
 
   &__header {

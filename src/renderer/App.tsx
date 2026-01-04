@@ -5,13 +5,14 @@ import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { store } from '@store/index';
 
 // Views
+import Splash from '@views/Splash';
+import About from '@views/About';
 import Home from '@views/Home';
 import CommandList from '@views/CommandList';
 import CommandDetail from '@views/CommandDetail';
 import ProjectList from '@views/ProjectList';
 import TagList from '@views/TagList';
 import ConfigView from '@views/ConfigView';
-import Splash from '@views/Splash';
 
 const theme = createTheme({
   palette: {
@@ -46,6 +47,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Navigate to="/splash" replace />} />
             <Route path="/splash" element={<Splash duration={4000} />} />
+            <Route path="/about" element={<About />} />
             <Route path="/home" element={<Home />} />
             <Route path="/commands" element={<CommandList />} />
             <Route path="/commands/:id" element={<CommandDetail />} />
