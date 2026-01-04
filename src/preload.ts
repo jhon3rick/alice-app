@@ -1,31 +1,42 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { Project, Tag, CommandTemplate } from './renderer/tstypes/dbmodules';
+
+// Type definitions for IPC communication
+export interface IpcResponse {
+  success: boolean;
+  error?: string;
+  stdout?: string;
+  stderr?: string;
+}
+
+export interface CommandFilters {
+  projectId?: number;
+  tagIds?: number[];
+}
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // Projects
   getProjects: () => ipcRenderer.invoke('get-projects'),
-  createProject: (project: any) => ipcRenderer.invoke('create-project', project),
-  updateProject: (project: any) => ipcRenderer.invoke('update-project', project),
+  createProject: (project: Omit<Project, 'id'>) => ipcRenderer.invoke('create-project', project),
+  updateProject: (project: Project) => ipcRenderer.invoke('update-project', project),
   deleteProject: (id: number) => ipcRenderer.invoke('delete-project', id),
 
   // Tags
   getTags: () => ipcRenderer.invoke('get-tags'),
-  createTag: (tag: any) => ipcRenderer.invoke('create-tag', tag),
-  updateTag: (tag: any) => ipcRenderer.invoke('update-tag', tag),
+  createTag: (tag: Omit<Tag, 'id'>) => ipcRenderer.invoke('create-tag', tag),
+  updateTag: (tag: Tag) => ipcRenderer.invoke('update-tag', tag),
   deleteTag: (id: number) => ipcRenderer.invoke('delete-tag', id),
 
   // Commands
-  getCommands: (filters?: any) => ipcRenderer.invoke('get-commands', filters),
+  getCommands: (filters?: CommandFilters) => ipcRenderer.invoke('get-commands', filters),
   getCommand: (id: number) => ipcRenderer.invoke('get-command', id),
-  createCommand: (command: any) => ipcRenderer.invoke('create-command', command),
-  updateCommand: (command: any) => ipcRenderer.invoke('update-command', command),
+  createCommand: (command: Omit<CommandTemplate, 'id'>) => ipcRenderer.invoke('create-command', command),
+  updateCommand: (command: CommandTemplate) => ipcRenderer.invoke('update-command', command),
   deleteCommand: (id: number) => ipcRenderer.invoke('delete-command', id),
 
   // Config
   getConfig: () => ipcRenderer.invoke('get-config'),
   updateConfig: (key: string, value: string) => ipcRenderer.invoke('update-config', key, value),
-
-  // Config Show Finder
-  selectFolder: () => ipcRenderer.invoke("select-folder"),
 
   // Import/Export
   importJson: (filePath: string) => ipcRenderer.invoke('import-json', filePath),
@@ -35,28 +46,37 @@ contextBridge.exposeInMainWorld('electronAPI', {
   executeCommand: (command: string, workingDir?: string) => ipcRenderer.invoke('execute-command', command, workingDir),
 });
 
+contextBridge.exposeInMainWorld('electron', {
+  // Native Electron APIs
+  openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
+  selectFolder: () => ipcRenderer.invoke('select-folder'),
+});
+
 declare global {
   interface Window {
     electronAPI: {
-      getProjects: () => Promise<any[]>;
-      createProject: (project: any) => Promise<any>;
-      updateProject: (project: any) => Promise<any>;
-      deleteProject: (id: number) => Promise<any>;
-      getTags: () => Promise<any[]>;
-      createTag: (tag: any) => Promise<any>;
-      updateTag: (tag: any) => Promise<any>;
-      deleteTag: (id: number) => Promise<any>;
-      getCommands: (filters?: any) => Promise<any[]>;
-      getCommand: (id: number) => Promise<any>;
-      createCommand: (command: any) => Promise<any>;
-      updateCommand: (command: any) => Promise<any>;
-      deleteCommand: (id: number) => Promise<any>;
+      getProjects: () => Promise<Project[]>;
+      createProject: (project: Omit<Project, 'id'>) => Promise<Project>;
+      updateProject: (project: Project) => Promise<Project>;
+      deleteProject: (id: number) => Promise<IpcResponse>;
+      getTags: () => Promise<Tag[]>;
+      createTag: (tag: Omit<Tag, 'id'>) => Promise<Tag>;
+      updateTag: (tag: Tag) => Promise<Tag>;
+      deleteTag: (id: number) => Promise<IpcResponse>;
+      getCommands: (filters?: CommandFilters) => Promise<CommandTemplate[]>;
+      getCommand: (id: number) => Promise<CommandTemplate | null>;
+      createCommand: (command: Omit<CommandTemplate, 'id'>) => Promise<CommandTemplate>;
+      updateCommand: (command: CommandTemplate) => Promise<CommandTemplate>;
+      deleteCommand: (id: number) => Promise<IpcResponse>;
       getConfig: () => Promise<Record<string, string>>;
-      updateConfig: (key: string, value: string) => Promise<any>;
-      selectFolder: () => Promise<any>;
-      importJson: (filePath: string) => Promise<any>;
-      exportJson: (exportPath: string) => Promise<any>;
-      executeCommand: (command: string, workingDir?: string) => Promise<any>;
+      updateConfig: (key: string, value: string) => Promise<{ key: string; value: string }>;
+      importJson: (filePath: string) => Promise<IpcResponse>;
+      exportJson: (exportPath: string) => Promise<IpcResponse>;
+      executeCommand: (command: string, workingDir?: string) => Promise<IpcResponse>;
+    };
+    electron: {
+      openExternal: (url: string) => Promise<IpcResponse>;
+      selectFolder: () => Promise<string | null>;
     };
   }
 }

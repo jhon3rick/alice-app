@@ -19,7 +19,7 @@ interface Props {
 
 const SelectFolder: React.FC<Props> = ({ label = 'Folder', value, onChange, helperText, sx }) => {
   const handleBrowse = async () => {
-    const selected = await (window as any).electronAPI.selectFolder();
+    const selected = await window.electron.selectFolder();
     if (selected) onChange(selected);
   };
 
