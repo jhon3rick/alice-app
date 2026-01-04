@@ -29,23 +29,23 @@ import ViewContainer from '@ui/ViewContainer';
 import ModalNewTag from '@components/ModalNewTag';
 
 // Types
-import { Tag } from '@tstypes/dbmodules';
+import { StoredTag } from '@tstypes/dbmodules';
 
 import './TagList.scss';
 
 const TagList: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { tags } = useAppSelector((state) => state.tags);
+  const { tags } = useAppSelector((state) => state.tags) as { tags: StoredTag[] };
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingTag, setEditingTag] = useState<Tag | null>(null);
+  const [editingTag, setEditingTag] = useState<StoredTag | null>(null);
 
   useEffect(() => {
     dispatch(fetchTags());
   }, [dispatch]);
 
-  const handleOpenDialog = (tag?: Tag) => {
+  const handleOpenDialog = (tag?: StoredTag) => {
     setEditingTag(tag || null);
     setDialogOpen(true);
   };
@@ -59,7 +59,7 @@ const TagList: React.FC = () => {
     if (editingTag) {
       await dispatch(
         modifyTag({
-          id: editingTag.id!,
+          id: editingTag.id,
           name: formData.name,
           codeindex: formData.codeindex,
         })
@@ -116,7 +116,7 @@ const TagList: React.FC = () => {
                       <IconButton size="small" onClick={() => handleOpenDialog(tag)}>
                         <Edit fontSize="small" />
                       </IconButton>
-                      <IconButton size="small" onClick={() => handleDelete(tag.id!)} color="error">
+                      <IconButton size="small" onClick={() => handleDelete(tag.id)} color="error">
                         <Delete fontSize="small" />
                       </IconButton>
                     </TableCell>

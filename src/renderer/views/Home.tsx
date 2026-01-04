@@ -32,7 +32,6 @@ const Home: React.FC = () => {
             icon={<InfoIcon />}
             tooltip="About"
             onClick={() => navigate('/about')}
-            color="primary"
           />
         </div>
         <Box className="home__header">

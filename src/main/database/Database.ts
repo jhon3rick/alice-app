@@ -1,10 +1,10 @@
-import Database from 'better-sqlite3';
+import Sqlite from 'better-sqlite3';
 import { app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
 
 export class DatabaseService {
-  private db: Database.Database | null = null;
+  private db: Sqlite.Database | null = null;
 
   constructor() {
     this.initDatabase();
@@ -19,7 +19,7 @@ export class DatabaseService {
       fs.mkdirSync(userDataPath, { recursive: true });
     }
 
-    this.db = new Database(dbPath);
+    this.db = new Sqlite(dbPath);
     this.createTables();
   }
 
@@ -104,7 +104,7 @@ export class DatabaseService {
     stmt.run('exportPath', path.join(userDataPath, 'exports'));
   }
 
-  getDatabase(): Database.Database | null {
+  getDatabase(): Sqlite.Database | null {
     return this.db;
   }
 

@@ -53,7 +53,7 @@ const configSlice = createSlice({
       })
       .addCase(updateConfigValue.fulfilled, (state, action) => {
         const { key, value } = action.payload;
-        (state.config as any)[key] = value;
+        state.config[key as keyof Config] = value;
       });
   },
 });

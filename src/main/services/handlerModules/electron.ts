@@ -24,8 +24,9 @@ export function setupElectronHandlers(): void {
     try {
       await shell.openExternal(url);
       return { success: true };
-    } catch (error: any) {
-      return { success: false, error: error.message };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return { success: false, error: message };
     }
   });
 
@@ -37,8 +38,9 @@ export function setupElectronHandlers(): void {
         encoding: 'utf-8',
       });
       return { success: true, stdout, stderr };
-    } catch (error: any) {
-      return { success: false, error: error.message, stdout: error.stdout, stderr: error.stderr };
+    } catch (error) {
+      const err = error as { message: string; stdout?: string; stderr?: string };
+      return { success: false, error: err.message, stdout: err.stdout, stderr: err.stderr };
     }
   });
 }

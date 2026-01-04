@@ -13,6 +13,18 @@
     "plugin:import/typescript"
   ],
   "parser": "@typescript-eslint/parser",
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "out/",
+    "release/",
+    ".webpack/"
+  ],
+  "rules": {
+    "@typescript-eslint/semi": ["error", "always"],
+    "semi": "off"
+  },
   "settings": {
     "import/resolver": {
       "typescript": {
@@ -22,6 +34,9 @@
       "node": {
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
-    }
+    },
+    "import/ignore": [
+      "node_modules"
+    ]
   }
 }

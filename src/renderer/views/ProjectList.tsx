@@ -29,15 +29,15 @@ import ViewContainer from '@ui/ViewContainer';
 import ModalNewProject from '@components/ModalNewProject';
 
 // Types
-import { Project } from '@tstypes/dbmodules';
+import { StoredProject } from '@tstypes/dbmodules';
 
 const ProjectList: React.FC = () => {
   const dispatch = useAppDispatch();
 
-  const { projects } = useAppSelector((state) => state.projects);
+  const { projects } = useAppSelector((state) => state.projects) as { projects: StoredProject[] };
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [editingProject, setEditingProject] = useState<StoredProject | null>(null);
 
   useEffect(() => {
     dispatch(fetchProjects());
@@ -57,7 +57,7 @@ const ProjectList: React.FC = () => {
     if (editingProject) {
       await dispatch(
         modifyProject({
-          id: editingProject.id!,
+          id: editingProject.id,
           name: formData.name,
           path: formData.path,
           codeindex: formData.codeindex,
@@ -118,7 +118,7 @@ const ProjectList: React.FC = () => {
                     <IconButton size="small" onClick={() => handleOpenDialog(project)}>
                       <Edit fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" onClick={() => handleDelete(project.id!)} color="error">
+                    <IconButton size="small" onClick={() => handleDelete(project.id)} color="error">
                       <Delete fontSize="small" />
                     </IconButton>
                   </TableCell>

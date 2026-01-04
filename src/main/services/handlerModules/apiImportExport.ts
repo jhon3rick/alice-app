@@ -2,6 +2,8 @@ import { ipcMain } from 'electron';
 import type { Database } from 'better-sqlite3';
 import * as fs from 'fs';
 
+import { QueryId, StoredProject } from '@tstypes/dbmodules';
+
 // Helper functions
 function getCommandProjects(db: Database, commandId: number): number[] {
   const stmt = db.prepare('SELECT project_id FROM command_projects WHERE command_id = ?');
@@ -20,7 +22,7 @@ function getCommandTags(db: Database, commandId: number): string[] {
 }
 
 function getOrCreateTag(db: Database, tagName: string): number {
-  let tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as any;
+  const tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as QueryId;
   if (tag) return tag.id;
 
   const result = db.prepare('INSERT INTO tags (name) VALUES (?)').run(tagName);
@@ -37,7 +39,7 @@ export function setupImportExportHandlers(db: Database): void {
       if (json.projects) {
         for (const project of json.projects) {
           if (project.codeindex) {
-            const existing = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(project.codeindex) as any;
+            const existing = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(project.codeindex) as QueryId;
             if (existing) {
               db.prepare('UPDATE projects SET name = ?, path = ?, updated_at = CURRENT_TIMESTAMP WHERE codeindex = ?')
                 .run(project.name, project.path || null, project.codeindex);
@@ -54,7 +56,7 @@ export function setupImportExportHandlers(db: Database): void {
           const { codeindex, name, detail, resumen, steps, project, tags } = command;
 
           if (codeindex) {
-            const existing = db.prepare('SELECT id FROM command_templates WHERE codeindex = ?').get(codeindex) as any;
+            const existing = db.prepare('SELECT id FROM command_templates WHERE codeindex = ?').get(codeindex) as QueryId;
             if (existing) {
               db.prepare('UPDATE command_templates SET name = ?, detail = ?, resumen = ?, steps = ?, updated_at = CURRENT_TIMESTAMP WHERE codeindex = ?')
                 .run(name, detail, resumen, JSON.stringify(steps), codeindex);
@@ -66,7 +68,7 @@ export function setupImportExportHandlers(db: Database): void {
               if (project && project.length > 0) {
                 const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
                 for (const projectCodeindex of project) {
-                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as any;
+                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as QueryId;
                   if (proj) projectStmt.run(commandId, proj.id);
                 }
               }
@@ -74,7 +76,7 @@ export function setupImportExportHandlers(db: Database): void {
               if (tags && tags.length > 0) {
                 const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
                 for (const tagName of tags) {
-                  let tagId = getOrCreateTag(db, tagName);
+                  const tagId = getOrCreateTag(db, tagName);
                   tagStmt.run(commandId, tagId);
                 }
               }
@@ -86,7 +88,7 @@ export function setupImportExportHandlers(db: Database): void {
               if (project && project.length > 0) {
                 const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
                 for (const projectCodeindex of project) {
-                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as any;
+                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as QueryId;
                   if (proj) projectStmt.run(commandId, proj.id);
                 }
               }
@@ -94,7 +96,7 @@ export function setupImportExportHandlers(db: Database): void {
               if (tags && tags.length > 0) {
                 const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
                 for (const tagName of tags) {
-                  let tagId = getOrCreateTag(db, tagName);
+                  const tagId = getOrCreateTag(db, tagName);
                   tagStmt.run(commandId, tagId);
                 }
               }
@@ -113,23 +115,23 @@ export function setupImportExportHandlers(db: Database): void {
   ipcMain.handle('export-json', (_event, exportPath: string) => {
     try {
       const projects = db.prepare('SELECT * FROM projects').all();
-      const tags = db.prepare('SELECT * FROM tags').all();
+      // const tags = db.prepare('SELECT * FROM tags').all(); 
       const commands = db.prepare('SELECT * FROM command_templates').all();
 
       const exportData = {
-        projects: projects.map((p: any) => ({
+        projects: projects.map((p: Project) => ({
           codeindex: p.codeindex,
           name: p.name,
           path: p.path,
         })),
-        commands: commands.map((c: any) => ({
+        commands: commands.map((c: CommandTemplate) => ({
           codeindex: c.codeindex,
           name: c.name,
           detail: c.detail,
           resumen: c.resumen,
           steps: JSON.parse(c.steps),
           project: getCommandProjects(db, c.id).map((pid: number) => {
-            const proj = db.prepare('SELECT codeindex FROM projects WHERE id = ?').get(pid) as any;
+            const proj = db.prepare('SELECT codeindex FROM projects WHERE id = ?').get(pid) as StoredProject;
             return proj?.codeindex;
           }).filter(Boolean),
           tags: getCommandTags(db, c.id),

@@ -1,6 +1,8 @@
 import { ipcMain } from 'electron';
 import type { Database } from 'better-sqlite3';
 
+import { QueryId, CommandTemplate, StoredCommandTemplate } from '@tstypes/dbmodules';
+
 // Helper functions
 function getCommandProjects(db: Database, commandId: number): number[] {
   const stmt = db.prepare('SELECT project_id FROM command_projects WHERE command_id = ?');
@@ -19,7 +21,7 @@ function getCommandTags(db: Database, commandId: number): string[] {
 }
 
 function getOrCreateTag(db: Database, tagName: string): number {
-  let tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as any;
+  const tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as QueryId;
   if (tag) return tag.id;
 
   const result = db.prepare('INSERT INTO tags (name) VALUES (?)').run(tagName);
@@ -32,7 +34,7 @@ export function setupCommandsHandlers(db: Database): void {
     let query = `
       SELECT DISTINCT ct.* FROM command_templates ct
     `;
-    const params: any[] = [];
+    const params: number[] = [];
 
     if (filters?.projectId) {
       query += `
@@ -57,7 +59,7 @@ export function setupCommandsHandlers(db: Database): void {
     const stmt = db.prepare(query);
     const commands = stmt.all(...params);
 
-    return commands.map((cmd: any) => ({
+    return commands.map((cmd: CommandTemplate) => ({
       ...cmd,
       steps: JSON.parse(cmd.steps),
       project: getCommandProjects(db, cmd.id),
@@ -68,7 +70,7 @@ export function setupCommandsHandlers(db: Database): void {
   // Get single command
   ipcMain.handle('get-command', (_event, id: number) => {
     const stmt = db.prepare('SELECT * FROM command_templates WHERE id = ?');
-    const cmd: any = stmt.get(id);
+    const cmd: StoredCommandTemplate = stmt.get(id);
     if (!cmd) return null;
 
     return {
@@ -80,7 +82,7 @@ export function setupCommandsHandlers(db: Database): void {
   });
 
   // Create command
-  ipcMain.handle('create-command', (_event, command: any) => {
+  ipcMain.handle('create-command', (_event, command: CommandTemplate) => {
     const { codeindex, name, detail, resumen, steps, project, tags } = command;
 
     const stmt = db.prepare('INSERT INTO command_templates (codeindex, name, detail, resumen, steps) VALUES (?, ?, ?, ?, ?)');
@@ -97,7 +99,7 @@ export function setupCommandsHandlers(db: Database): void {
     if (tags && tags.length > 0) {
       const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
       for (const tagName of tags) {
-        let tagId = getOrCreateTag(db, tagName);
+        const tagId = getOrCreateTag(db, tagName);
         tagStmt.run(commandId, tagId);
       }
     }
@@ -106,7 +108,7 @@ export function setupCommandsHandlers(db: Database): void {
   });
 
   // Update command
-  ipcMain.handle('update-command', (_event, command: any) => {
+  ipcMain.handle('update-command', (_event, command: StoredCommandTemplate) => {
     const { id, codeindex, name, detail, resumen, steps, project, tags } = command;
 
     const stmt = db.prepare('UPDATE command_templates SET codeindex = ?, name = ?, detail = ?, resumen = ?, steps = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
@@ -124,7 +126,7 @@ export function setupCommandsHandlers(db: Database): void {
     if (tags && tags.length > 0) {
       const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
       for (const tagName of tags) {
-        let tagId = getOrCreateTag(db, tagName);
+        const tagId = getOrCreateTag(db, tagName);
         tagStmt.run(id, tagId);
       }
     }

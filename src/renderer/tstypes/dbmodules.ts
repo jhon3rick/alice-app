@@ -1,3 +1,7 @@
+export type QueryId = {
+  id: number;
+} | null;
+
 export type VariableFormat = 'snake_case' | 'camelCase' | 'upperCamelCase' | 'kebab-case' | 'UPPER_CASE';
 
 export type VariableType = 'string' | 'option' | 'number' | 'boolean';
@@ -28,6 +32,10 @@ export interface CommandTemplate {
   steps: Step[];
 }
 
+export interface StoredCommandTemplate extends Omit<CommandTemplate, 'id'> {
+  id: number;
+}
+
 export interface Project {
   id?: number;
   codeindex?: string;
@@ -35,10 +43,18 @@ export interface Project {
   path?: string;
 }
 
+export interface StoredProject extends Omit<Project, 'id'> {
+  id: number;
+}
+
 export interface Tag {
   id?: number;
   codeindex?: string;
   name: string;
+}
+
+export interface StoredTag extends Omit<Tag, 'id'> {
+  id: number;
 }
 
 export interface Config {

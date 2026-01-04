@@ -56,8 +56,8 @@ const ConfigView: React.FC = () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
-    input.onchange = async (e: any) => {
-      const file = e.target.files[0];
+    input.onchange = async (e: Event) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         try {
           const result = await window.electronAPI.importJson(file.path);
