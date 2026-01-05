@@ -6,19 +6,8 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Typography,
-  Button,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
@@ -26,10 +15,33 @@ import { fetchProjects, addProject, modifyProject, removeProject } from '@store/
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
+import DataTable, { GridColDef } from '@ui/DataTable';
 import ModalNewProject from '@components/ModalNewProject';
 
 // Types
 import { StoredProject } from '@tstypes/dbmodules';
+
+const columnsSchema: GridColDef[] = [
+  {
+    flex: 1,
+    field: 'codeindex',
+    headerName: 'Code Index',
+    minWidth: 50,
+    valueGetter: (value) => value || '-',
+  },
+  {
+    flex: 1,
+    field: 'name',
+    headerName: 'Name',
+    minWidth: 150,
+  },
+  {
+    flex: 1,
+    field: 'path',
+    headerName: 'Path',
+    minWidth: 150,
+  },
+];
 
 const ProjectList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -91,50 +103,16 @@ const ProjectList: React.FC = () => {
         </Button>
       }
     >
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Path</TableCell>
-              <TableCell>Code Index</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {projects.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} align="center">
-                  <Typography color="text.secondary">No projects found. Add one to get started.</Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              projects.map((project) => (
-                <TableRow key={project.id}>
-                  <TableCell>{project.name}</TableCell>
-                  <TableCell>{project.path || '-'}</TableCell>
-                  <TableCell>{project.codeindex || '-'}</TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" onClick={() => handleOpenDialog(project)}>
-                      <Edit fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" onClick={() => handleDelete(project.id)} color="error">
-                      <Delete fontSize="small" />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <ModalNewProject
-        open={dialogOpen}
-        editingProject={editingProject}
-        onClose={handleCloseDialog}
-        onSave={handleSave}
+      <DataTable
+        rows={projects}
+        columns={columnsSchema}
+        pageSize={10}
+        pageSizeOptions={[5, 10, 25, 50]}
+        onEdit={handleOpenDialog}
+        onDelete={handleDelete}
       />
+
+      <ModalNewProject open={dialogOpen} editingProject={editingProject} onClose={handleCloseDialog} onSave={handleSave} />
     </ViewContainer>
   );
 };
