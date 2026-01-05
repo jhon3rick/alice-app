@@ -6,11 +6,7 @@ import type { Database, NewProject, ProjectUpdate } from '../../database/schema'
 export function setupProjectsHandlers(db: Kysely<Database>): void {
   // Get all projects
   ipcMain.handle('get-projects', async () => {
-    return await db
-      .selectFrom('projects')
-      .selectAll()
-      .orderBy('name', 'asc')
-      .execute();
+    return await db.selectFrom('projects').selectAll().orderBy('name', 'asc').execute();
   });
 
   // Create project
@@ -21,10 +17,7 @@ export function setupProjectsHandlers(db: Kysely<Database>): void {
       path: project.path || null,
     };
 
-    const result = await db
-      .insertInto('projects')
-      .values(newProject)
-      .executeTakeFirstOrThrow();
+    const result = await db.insertInto('projects').values(newProject).executeTakeFirstOrThrow();
 
     return { id: Number(result.insertId), ...project };
   });
@@ -38,11 +31,7 @@ export function setupProjectsHandlers(db: Kysely<Database>): void {
       updated_at: new Date().toISOString(),
     };
 
-    await db
-      .updateTable('projects')
-      .set(updateData)
-      .where('id', '=', project.id)
-      .execute();
+    await db.updateTable('projects').set(updateData).where('id', '=', project.id).execute();
 
     return project;
   });

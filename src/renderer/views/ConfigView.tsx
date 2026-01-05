@@ -6,14 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Alert,
-  Snackbar,
-} from '@mui/material';
+import { Box, Typography, Button, Paper, Alert, Snackbar } from '@mui/material';
 import { Save, Download, Upload } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchConfig, updateConfigValue } from '@store/configSlice';
@@ -31,7 +24,11 @@ const ConfigView: React.FC = () => {
 
   const [configPath, setConfigPath] = useState('');
   const [exportPath, setExportPath] = useState('');
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' as 'success' | 'error',
+  });
 
   useEffect(() => {
     dispatch(fetchConfig());
@@ -64,7 +61,11 @@ const ConfigView: React.FC = () => {
           if (result.success) {
             setSnackbar({ open: true, message: 'JSON imported successfully', severity: 'success' });
           } else {
-            setSnackbar({ open: true, message: `Import failed: ${result.error}`, severity: 'error' });
+            setSnackbar({
+              open: true,
+              message: `Import failed: ${result.error}`,
+              severity: 'error',
+            });
           }
         } catch (error) {
           setSnackbar({ open: true, message: 'Failed to import JSON', severity: 'error' });
@@ -117,12 +118,7 @@ const ConfigView: React.FC = () => {
             helperText="Directory where exported JSON files will be saved"
           />
 
-          <Button
-            variant="contained"
-            startIcon={<Save />}
-            onClick={handleSave}
-            sx={{ mb: 4 }}
-          >
+          <Button variant="contained" startIcon={<Save />} onClick={handleSave} sx={{ mb: 4 }}>
             Save Configuration
           </Button>
         </Box>
@@ -136,19 +132,11 @@ const ConfigView: React.FC = () => {
         </Alert>
 
         <Box className="config-view__actions">
-          <Button
-            variant="outlined"
-            startIcon={<Upload />}
-            onClick={handleImport}
-          >
+          <Button variant="outlined" startIcon={<Upload />} onClick={handleImport}>
             Import JSON
           </Button>
 
-          <Button
-            variant="outlined"
-            startIcon={<Download />}
-            onClick={handleExport}
-          >
+          <Button variant="outlined" startIcon={<Download />} onClick={handleExport}>
             Export to JSON
           </Button>
         </Box>

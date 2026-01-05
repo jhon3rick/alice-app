@@ -7,13 +7,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Card,
-  CardContent,
-  CardActionArea,
-  Typography,
-} from '@mui/material';
+import { Box, Card, CardContent, CardActionArea, Typography } from '@mui/material';
 
 import './HomeCard.scss';
 

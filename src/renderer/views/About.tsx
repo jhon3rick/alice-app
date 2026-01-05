@@ -6,12 +6,7 @@
  */
 
 import React from 'react';
-import {
-  Typography,
-  Box,
-  Link,
-  Paper,
-} from '@mui/material';
+import { Typography, Box, Link, Paper } from '@mui/material';
 import { GitHub } from '@mui/icons-material';
 
 // Custom components
@@ -38,7 +33,9 @@ const About: React.FC = () => {
 
         <Box className="about__content">
           <Typography variant="body1" paragraph>
-            Alice App is a powerful desktop application designed to help developers and system administrators manage and execute command templates efficiently. Built with Electron and React, it provides a user-friendly interface for organizing commands, projects, and tags.
+            Alice App is a powerful desktop application designed to help developers and system administrators manage and execute command
+            templates efficiently. Built with Electron and React, it provides a user-friendly interface for organizing commands, projects,
+            and tags.
           </Typography>
 
           <Typography variant="body1" paragraph>
@@ -64,16 +61,13 @@ const About: React.FC = () => {
           </Box>
 
           <Typography variant="body1" paragraph>
-            Whether you're a developer scripting repetitive tasks or a sysadmin managing complex command sequences, Alice App streamlines your workflow with an intuitive interface and robust functionality.
+            Whether you're a developer scripting repetitive tasks or a sysadmin managing complex command sequences, Alice App streamlines
+            your workflow with an intuitive interface and robust functionality.
           </Typography>
         </Box>
 
         <Box className="about__link-container">
-          <Link
-            href="https://github.com/jhon3rick/alice-app"
-            onClick={handleGitHubClick}
-            className="about__link"
-          >
+          <Link href="https://github.com/jhon3rick/alice-app" onClick={handleGitHubClick} className="about__link">
             <GitHub />
             View on GitHub
           </Link>

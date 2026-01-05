@@ -14,7 +14,7 @@ async function getCommandProjects(db: Kysely<Database>, commandId: number): Prom
     .where('cp.command_id', '=', commandId)
     .execute();
 
-  return projects.map(p => p.codeindex).filter((code): code is string => code !== null);
+  return projects.map((p) => p.codeindex).filter((code): code is string => code !== null);
 }
 
 async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<string[]> {
@@ -25,22 +25,15 @@ async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<
     .where('ct.command_id', '=', commandId)
     .execute();
 
-  return tags.map(t => t.name);
+  return tags.map((t) => t.name);
 }
 
 async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<number> {
-  const tag = await db
-    .selectFrom('tags')
-    .select('id')
-    .where('name', '=', tagName)
-    .executeTakeFirst();
+  const tag = await db.selectFrom('tags').select('id').where('name', '=', tagName).executeTakeFirst();
 
   if (tag) return tag.id;
 
-  const result = await db
-    .insertInto('tags')
-    .values({ name: tagName })
-    .executeTakeFirstOrThrow();
+  const result = await db.insertInto('tags').values({ name: tagName }).executeTakeFirstOrThrow();
 
   return Number(result.insertId);
 }
@@ -55,11 +48,7 @@ export function setupImportExportHandlers(db: Kysely<Database>): void {
       if (json.projects) {
         for (const project of json.projects) {
           if (project.codeindex) {
-            const existing = await db
-              .selectFrom('projects')
-              .select('id')
-              .where('codeindex', '=', project.codeindex)
-              .executeTakeFirst();
+            const existing = await db.selectFrom('projects').select('id').where('codeindex', '=', project.codeindex).executeTakeFirst();
 
             if (existing) {
               await db
@@ -90,11 +79,7 @@ export function setupImportExportHandlers(db: Kysely<Database>): void {
           const { codeindex, name, detail, resumen, steps, project, tags } = command;
 
           if (codeindex) {
-            const existing = await db
-              .selectFrom('commands')
-              .select('id')
-              .where('codeindex', '=', codeindex)
-              .executeTakeFirst();
+            const existing = await db.selectFrom('commands').select('id').where('codeindex', '=', codeindex).executeTakeFirst();
 
             let commandId: number;
 

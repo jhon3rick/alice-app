@@ -254,13 +254,7 @@ const CommandDetail: React.FC = () => {
                 <Box key={variable.name}>
                   <Typography variant="subtitle2" gutterBottom>
                     {variable.name}
-                    {variable.format && (
-                      <Chip
-                        label={variable.format}
-                        size="small"
-                        sx={{ ml: 1, height: 20, fontSize: '0.7rem' }}
-                      />
-                    )}
+                    {variable.format && <Chip label={variable.format} size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />}
                   </Typography>
                   <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
                     {variable.detail}

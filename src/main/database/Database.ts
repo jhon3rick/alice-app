@@ -86,20 +86,8 @@ export class DatabaseService {
       .addColumn('command_id', 'integer', (col) => col.notNull())
       .addColumn('project_id', 'integer', (col) => col.notNull())
       .addPrimaryKeyConstraint('command_projects_pk', ['command_id', 'project_id'])
-      .addForeignKeyConstraint(
-        'command_projects_command_fk',
-        ['command_id'],
-        'commands',
-        ['id'],
-        (cb) => cb.onDelete('cascade')
-      )
-      .addForeignKeyConstraint(
-        'command_projects_project_fk',
-        ['project_id'],
-        'projects',
-        ['id'],
-        (cb) => cb.onDelete('cascade')
-      )
+      .addForeignKeyConstraint('command_projects_command_fk', ['command_id'], 'commands', ['id'], (cb) => cb.onDelete('cascade'))
+      .addForeignKeyConstraint('command_projects_project_fk', ['project_id'], 'projects', ['id'], (cb) => cb.onDelete('cascade'))
       .execute();
 
     // Create command_tags junction table
@@ -109,20 +97,8 @@ export class DatabaseService {
       .addColumn('command_id', 'integer', (col) => col.notNull())
       .addColumn('tag_id', 'integer', (col) => col.notNull())
       .addPrimaryKeyConstraint('command_tags_pk', ['command_id', 'tag_id'])
-      .addForeignKeyConstraint(
-        'command_tags_command_fk',
-        ['command_id'],
-        'commands',
-        ['id'],
-        (cb) => cb.onDelete('cascade')
-      )
-      .addForeignKeyConstraint(
-        'command_tags_tag_fk',
-        ['tag_id'],
-        'tags',
-        ['id'],
-        (cb) => cb.onDelete('cascade')
-      )
+      .addForeignKeyConstraint('command_tags_command_fk', ['command_id'], 'commands', ['id'], (cb) => cb.onDelete('cascade'))
+      .addForeignKeyConstraint('command_tags_tag_fk', ['tag_id'], 'tags', ['id'], (cb) => cb.onDelete('cascade'))
       .execute();
 
     // Create config table

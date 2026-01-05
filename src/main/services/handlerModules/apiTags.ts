@@ -6,11 +6,7 @@ import type { Database, NewTag, TagUpdate } from '../../database/schema';
 export function setupTagsHandlers(db: Kysely<Database>): void {
   // Get all tags
   ipcMain.handle('get-tags', async () => {
-    return await db
-      .selectFrom('tags')
-      .selectAll()
-      .orderBy('name', 'asc')
-      .execute();
+    return await db.selectFrom('tags').selectAll().orderBy('name', 'asc').execute();
   });
 
   // Create tag
@@ -20,10 +16,7 @@ export function setupTagsHandlers(db: Kysely<Database>): void {
       name: tag.name,
     };
 
-    const result = await db
-      .insertInto('tags')
-      .values(newTag)
-      .executeTakeFirstOrThrow();
+    const result = await db.insertInto('tags').values(newTag).executeTakeFirstOrThrow();
 
     return { id: Number(result.insertId), ...tag };
   });
@@ -36,11 +29,7 @@ export function setupTagsHandlers(db: Kysely<Database>): void {
       updated_at: new Date().toISOString(),
     };
 
-    await db
-      .updateTable('tags')
-      .set(updateData)
-      .where('id', '=', tag.id)
-      .execute();
+    await db.updateTable('tags').set(updateData).where('id', '=', tag.id).execute();
 
     return tag;
   });

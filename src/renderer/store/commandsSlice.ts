@@ -22,12 +22,9 @@ const initialState: CommandsState = {
   filters: {},
 };
 
-export const fetchCommands = createAsyncThunk(
-  'commands/fetch',
-  async (filters?: { projectId?: number; tagIds?: number[] }) => {
-    return await window.electronAPI.getCommands(filters);
-  }
-);
+export const fetchCommands = createAsyncThunk('commands/fetch', async (filters?: { projectId?: number; tagIds?: number[] }) => {
+  return await window.electronAPI.getCommands(filters);
+});
 
 export const fetchCommand = createAsyncThunk('commands/fetchOne', async (id: number) => {
   return await window.electronAPI.getCommand(id);
@@ -78,13 +75,13 @@ const commandsSlice = createSlice({
         state.commands.push(action.payload);
       })
       .addCase(modifyCommand.fulfilled, (state, action) => {
-        const index = state.commands.findIndex(c => c.id === action.payload.id);
+        const index = state.commands.findIndex((c) => c.id === action.payload.id);
         if (index !== -1) {
           state.commands[index] = action.payload;
         }
       })
       .addCase(removeCommand.fulfilled, (state, action) => {
-        state.commands = state.commands.filter(c => c.id !== action.payload);
+        state.commands = state.commands.filter((c) => c.id !== action.payload);
       });
   },
 });

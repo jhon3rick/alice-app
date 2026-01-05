@@ -94,17 +94,9 @@ const Terminal: React.FC<TerminalProps> = ({ command, workingDir }) => {
         </Box>
       )}
 
-      {output && (
-        <Box sx={{ mb: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-          {output}
-        </Box>
-      )}
+      {output && <Box sx={{ mb: 1, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{output}</Box>}
 
-      {error && (
-        <Box sx={{ color: '#f48771', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
-          {error}
-        </Box>
-      )}
+      {error && <Box sx={{ color: '#f48771', whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{error}</Box>}
 
       {!loading && !output && !error && executed && (
         <Typography variant="body2" sx={{ fontFamily: 'monospace', color: '#6a9955' }}>

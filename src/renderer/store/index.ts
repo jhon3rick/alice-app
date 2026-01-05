@@ -4,7 +4,7 @@ import tagsReducer from './tagsSlice';
 import commandsReducer from './commandsSlice';
 import configReducer from './configSlice';
 
-import stateChangeLogger from "./middlewares/stateChangeLogger";
+import stateChangeLogger from './middlewares/stateChangeLogger';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const combineReducers = {
@@ -17,7 +17,7 @@ const combineReducers = {
 export const store = configureStore({
   devTools: isDevelopment,
   reducer: combineReducers,
-  middleware: (getDefaultMiddleware) =>{
+  middleware: (getDefaultMiddleware) => {
     const base = getDefaultMiddleware({ serializableCheck: false });
     return isDevelopment ? base.concat(stateChangeLogger()) : base;
   },

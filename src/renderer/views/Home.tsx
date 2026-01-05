@@ -7,11 +7,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Typography,
-} from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { Info as InfoIcon } from '@mui/icons-material';
 import { homeModules } from '@utils/homeModules';
 
@@ -28,11 +24,7 @@ const Home: React.FC = () => {
     <Container maxWidth="lg" className="home">
       <Box className="home__container">
         <div className="home__floating-btn">
-          <ActionButton
-            icon={<InfoIcon />}
-            tooltip="About"
-            onClick={() => navigate('/about')}
-          />
+          <ActionButton icon={<InfoIcon />} tooltip="About" onClick={() => navigate('/about')} />
         </div>
         <Box className="home__header">
           <Box>
@@ -45,7 +37,9 @@ const Home: React.FC = () => {
           </Box>
         </Box>
         <div className="home__cards-grid">
-          {homeModules.map((module) => <HomeCard key={module.id} {...module} />)}
+          {homeModules.map((module) => (
+            <HomeCard key={module.id} {...module} />
+          ))}
         </div>
       </Box>
     </Container>

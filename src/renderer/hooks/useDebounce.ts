@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 // Debounce para inputs (filtros y búsqueda)
-export const useDebounce = <T,>(value: T, delayMs = 350) => {
+export const useDebounce = <T>(value: T, delayMs = 350) => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {

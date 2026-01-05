@@ -8,7 +8,7 @@ export function setupConfigHandlers(db: Kysely<Database>): void {
   ipcMain.handle('get-config', async () => {
     const rows = await db.selectFrom('config').selectAll().execute();
     const config: Record<string, string> = {};
-    rows.forEach(row => {
+    rows.forEach((row) => {
       config[row.key] = row.value;
     });
     return config;

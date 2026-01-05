@@ -7,13 +7,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Chip,
-  Card,
-  Typography,
-  CardContent,
-  CardActionArea,
-} from '@mui/material';
+import { Chip, Card, Typography, CardContent, CardActionArea } from '@mui/material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
@@ -71,15 +65,9 @@ const CommandList: React.FC = () => {
   return (
     <ViewContainer title="commands">
       <div className="command-list__filters">
-        <SelectProject
-          value={selectedProject}
-          onChange={setSelectedProject}
-        />
+        <SelectProject value={selectedProject} onChange={setSelectedProject} />
 
-        <SelectTags
-          value={selectedTags}
-          onChange={setSelectedTags}
-        />
+        <SelectTags value={selectedTags} onChange={setSelectedTags} />
       </div>
 
       {loading ? (

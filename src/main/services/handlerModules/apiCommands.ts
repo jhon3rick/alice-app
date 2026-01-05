@@ -13,7 +13,7 @@ async function getCommandProjects(db: Kysely<Database>, commandId: number): Prom
     .where('cp.command_id', '=', commandId)
     .execute();
 
-  return projects.map(p => p.name);
+  return projects.map((p) => p.name);
 }
 
 async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<string[]> {
@@ -24,22 +24,15 @@ async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<
     .where('ct.command_id', '=', commandId)
     .execute();
 
-  return tags.map(t => t.name);
+  return tags.map((t) => t.name);
 }
 
 async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<number> {
-  const tag = await db
-    .selectFrom('tags')
-    .select('id')
-    .where('name', '=', tagName)
-    .executeTakeFirst();
+  const tag = await db.selectFrom('tags').select('id').where('name', '=', tagName).executeTakeFirst();
 
   if (tag) return tag.id;
 
-  const result = await db
-    .insertInto('tags')
-    .values({ name: tagName })
-    .executeTakeFirstOrThrow();
+  const result = await db.insertInto('tags').values({ name: tagName }).executeTakeFirstOrThrow();
 
   return Number(result.insertId);
 }
@@ -47,31 +40,18 @@ async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<nu
 export function setupCommandsHandlers(db: Kysely<Database>): void {
   // Get commands with filters
   ipcMain.handle('get-commands', async (_event, filters?: { projectId?: number; tagIds?: number[] }) => {
-    let query = db
-      .selectFrom('commands as c')
-      .selectAll('c')
-      .distinct();
+    let query = db.selectFrom('commands as c').selectAll('c').distinct();
 
     if (filters?.projectId !== undefined) {
       const projectId = filters.projectId;
       query = query
         .leftJoin('command_projects as cp', 'c.id', 'cp.command_id')
-        .where((eb) =>
-          eb.or([
-            eb('cp.project_id', '=', projectId),
-            eb('cp.project_id', 'is', null),
-          ])
-        );
+        .where((eb) => eb.or([eb('cp.project_id', '=', projectId), eb('cp.project_id', 'is', null)]));
     }
 
     if (filters?.tagIds && filters.tagIds.length > 0) {
       const tagIds = filters.tagIds;
-      query = query.where('c.id', 'in', (eb) =>
-        eb
-          .selectFrom('command_tags')
-          .select('command_id')
-          .where('tag_id', 'in', tagIds)
-      );
+      query = query.where('c.id', 'in', (eb) => eb.selectFrom('command_tags').select('command_id').where('tag_id', 'in', tagIds));
     }
 
     query = query.orderBy('c.name', 'asc');
@@ -92,11 +72,7 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
 
   // Get single command
   ipcMain.handle('get-command', async (_event, id: number) => {
-    const cmd = await db
-      .selectFrom('commands')
-      .selectAll()
-      .where('id', '=', id)
-      .executeTakeFirst();
+    const cmd = await db.selectFrom('commands').selectAll().where('id', '=', id).executeTakeFirst();
 
     if (!cmd) return null;
 
@@ -127,11 +103,7 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
 
     // Add projects (convert project names to IDs)
     if (projects && projects.length > 0) {
-      const projectRecords = await db
-        .selectFrom('projects')
-        .select(['id', 'name'])
-        .where('name', 'in', projects)
-        .execute();
+      const projectRecords = await db.selectFrom('projects').select(['id', 'name']).where('name', 'in', projects).execute();
 
       if (projectRecords.length > 0) {
         await db
@@ -187,11 +159,7 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
     await db.deleteFrom('command_projects').where('command_id', '=', id).execute();
 
     if (projects && projects.length > 0) {
-      const projectRecords = await db
-        .selectFrom('projects')
-        .select(['id', 'name'])
-        .where('name', 'in', projects)
-        .execute();
+      const projectRecords = await db.selectFrom('projects').select(['id', 'name']).where('name', 'in', projects).execute();
 
       if (projectRecords.length > 0) {
         await db
