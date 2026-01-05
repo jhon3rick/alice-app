@@ -10,7 +10,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/recommended",
     "plugin:import/electron",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "ignorePatterns": [
@@ -22,8 +23,7 @@
     ".webpack/"
   ],
   "rules": {
-    "@typescript-eslint/semi": ["error", "always"],
-    "semi": "off"
+    // Prettier handles formatting, so we disable conflicting rules
   },
   "settings": {
     "import/resolver": {
