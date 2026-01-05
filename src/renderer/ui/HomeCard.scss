@@ -30,4 +30,24 @@
   &__title {
     margin-bottom: $spacing-xs;
   }
+
+  &__disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: $shadow-sm;
+    }
+
+    .home-card__action {
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .home-card__title,
+    .MuiTypography-body2 {
+      color: rgba(0, 0, 0, 0.38);
+    }
+  }
 }

@@ -8,6 +8,7 @@ export interface HomeModule {
   icon: React.ReactElement;
   path: string;
   color: string;
+  readonly?: boolean;
 }
 
 export const homeModules: HomeModule[] = [
@@ -42,5 +43,6 @@ export const homeModules: HomeModule[] = [
     icon: <SettingsIcon sx={{ fontSize: 60 }} />,
     path: '/config',
     color: '#005461',
+    readonly: true,
   },
 ];
