@@ -19,6 +19,21 @@ export function setupElectronHandlers(): void {
     return result.filePaths[0];
   });
 
+  // Select file dialog
+  ipcMain.handle('select-file', async (_event, filters?: { name: string; extensions: string[] }[]) => {
+    const result = await dialog.showOpenDialog({
+      title: 'Selecciona un archivo',
+      properties: ['openFile'],
+      filters: filters || [],
+    });
+
+    if (result.canceled) {
+      return null;
+    }
+
+    return result.filePaths[0];
+  });
+
   // Open external URL in default browser
   ipcMain.handle('open-external', async (_event, url: string) => {
     try {

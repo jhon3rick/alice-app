@@ -1,31 +1,55 @@
 import { ipcMain } from 'electron';
-import type { Database } from 'better-sqlite3';
+import type { Kysely } from 'kysely';
 
-export function setupProjectsHandlers(db: Database): void {
+import type { Database, NewProject, ProjectUpdate } from '../../database/schema';
+
+export function setupProjectsHandlers(db: Kysely<Database>): void {
   // Get all projects
-  ipcMain.handle('get-projects', () => {
-    const stmt = db.prepare('SELECT * FROM projects ORDER BY name ASC');
-    return stmt.all();
+  ipcMain.handle('get-projects', async () => {
+    return await db
+      .selectFrom('projects')
+      .selectAll()
+      .orderBy('name', 'asc')
+      .execute();
   });
 
   // Create project
-  ipcMain.handle('create-project', (_event, project: { codeindex?: string; name: string; path?: string }) => {
-    const stmt = db.prepare('INSERT INTO projects (codeindex, name, path) VALUES (?, ?, ?)');
-    const result = stmt.run(project.codeindex || null, project.name, project.path || null);
-    return { id: result.lastInsertRowid, ...project };
+  ipcMain.handle('create-project', async (_event, project: { codeindex?: string; name: string; path?: string }) => {
+    const newProject: NewProject = {
+      codeindex: project.codeindex || null,
+      name: project.name,
+      path: project.path || null,
+    };
+
+    const result = await db
+      .insertInto('projects')
+      .values(newProject)
+      .executeTakeFirstOrThrow();
+
+    return { id: Number(result.insertId), ...project };
   });
 
   // Update project
-  ipcMain.handle('update-project', (_event, project: { id: number; codeindex?: string; name: string; path?: string }) => {
-    const stmt = db.prepare('UPDATE projects SET codeindex = ?, name = ?, path = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-    stmt.run(project.codeindex || null, project.name, project.path || null, project.id);
+  ipcMain.handle('update-project', async (_event, project: { id: number; codeindex?: string; name: string; path?: string }) => {
+    const updateData: ProjectUpdate = {
+      codeindex: project.codeindex || null,
+      name: project.name,
+      path: project.path || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    await db
+      .updateTable('projects')
+      .set(updateData)
+      .where('id', '=', project.id)
+      .execute();
+
     return project;
   });
 
   // Delete project
-  ipcMain.handle('delete-project', (_event, id: number) => {
-    const stmt = db.prepare('DELETE FROM projects WHERE id = ?');
-    stmt.run(id);
+  ipcMain.handle('delete-project', async (_event, id: number) => {
+    await db.deleteFrom('projects').where('id', '=', id).execute();
     return { success: true };
   });
 }

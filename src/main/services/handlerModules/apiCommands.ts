@@ -1,143 +1,234 @@
 import { ipcMain } from 'electron';
-import type { Database } from 'better-sqlite3';
+import type { Kysely } from 'kysely';
 
-import { QueryId, CommandTemplate, StoredCommandTemplate } from '@tstypes/dbmodules';
+import type { Command, Step } from '@tstypes/dbmodules';
+import type { Database } from '../../database/schema';
 
 // Helper functions
-function getCommandProjects(db: Database, commandId: number): number[] {
-  const stmt = db.prepare('SELECT project_id FROM command_projects WHERE command_id = ?');
-  const rows = stmt.all(commandId) as { project_id: number }[];
-  return rows.map(r => r.project_id);
+async function getCommandProjects(db: Kysely<Database>, commandId: number): Promise<string[]> {
+  const projects = await db
+    .selectFrom('projects as p')
+    .innerJoin('command_projects as cp', 'p.id', 'cp.project_id')
+    .select('p.name')
+    .where('cp.command_id', '=', commandId)
+    .execute();
+
+  return projects.map(p => p.name);
 }
 
-function getCommandTags(db: Database, commandId: number): string[] {
-  const stmt = db.prepare(`
-    SELECT t.name FROM tags t
-    JOIN command_tags ct ON t.id = ct.tag_id
-    WHERE ct.command_id = ?
-  `);
-  const rows = stmt.all(commandId) as { name: string }[];
-  return rows.map(r => r.name);
+async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<string[]> {
+  const tags = await db
+    .selectFrom('tags as t')
+    .innerJoin('command_tags as ct', 't.id', 'ct.tag_id')
+    .select('t.name')
+    .where('ct.command_id', '=', commandId)
+    .execute();
+
+  return tags.map(t => t.name);
 }
 
-function getOrCreateTag(db: Database, tagName: string): number {
-  const tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as QueryId;
+async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<number> {
+  const tag = await db
+    .selectFrom('tags')
+    .select('id')
+    .where('name', '=', tagName)
+    .executeTakeFirst();
+
   if (tag) return tag.id;
 
-  const result = db.prepare('INSERT INTO tags (name) VALUES (?)').run(tagName);
-  return result.lastInsertRowid as number;
+  const result = await db
+    .insertInto('tags')
+    .values({ name: tagName })
+    .executeTakeFirstOrThrow();
+
+  return Number(result.insertId);
 }
 
-export function setupCommandsHandlers(db: Database): void {
+export function setupCommandsHandlers(db: Kysely<Database>): void {
   // Get commands with filters
-  ipcMain.handle('get-commands', (_event, filters?: { projectId?: number; tagIds?: number[] }) => {
-    let query = `
-      SELECT DISTINCT ct.* FROM command_templates ct
-    `;
-    const params: number[] = [];
+  ipcMain.handle('get-commands', async (_event, filters?: { projectId?: number; tagIds?: number[] }) => {
+    let query = db
+      .selectFrom('commands as c')
+      .selectAll('c')
+      .distinct();
 
-    if (filters?.projectId) {
-      query += `
-        LEFT JOIN command_projects cp ON ct.id = cp.command_id
-        WHERE (cp.project_id = ? OR cp.project_id IS NULL)
-      `;
-      params.push(filters.projectId);
+    if (filters?.projectId !== undefined) {
+      const projectId = filters.projectId;
+      query = query
+        .leftJoin('command_projects as cp', 'c.id', 'cp.command_id')
+        .where((eb) =>
+          eb.or([
+            eb('cp.project_id', '=', projectId),
+            eb('cp.project_id', 'is', null),
+          ])
+        );
     }
 
     if (filters?.tagIds && filters.tagIds.length > 0) {
-      const tagCondition = filters?.projectId ? 'AND' : 'WHERE';
-      query += `
-        ${tagCondition} ct.id IN (
-          SELECT command_id FROM command_tags WHERE tag_id IN (${filters.tagIds.map(() => '?').join(',')})
-        )
-      `;
-      params.push(...filters.tagIds);
+      const tagIds = filters.tagIds;
+      query = query.where('c.id', 'in', (eb) =>
+        eb
+          .selectFrom('command_tags')
+          .select('command_id')
+          .where('tag_id', 'in', tagIds)
+      );
     }
 
-    query += ' ORDER BY ct.name ASC';
+    query = query.orderBy('c.name', 'asc');
 
-    const stmt = db.prepare(query);
-    const commands = stmt.all(...params);
+    const commands = await query.execute();
 
-    return commands.map((cmd: CommandTemplate) => ({
-      ...cmd,
-      steps: JSON.parse(cmd.steps),
-      project: getCommandProjects(db, cmd.id),
-      tags: getCommandTags(db, cmd.id),
-    }));
+    const result = await Promise.all(
+      commands.map(async (cmd) => ({
+        ...cmd,
+        steps: JSON.parse(cmd.steps) as Step[],
+        projects: await getCommandProjects(db, cmd.id),
+        tags: await getCommandTags(db, cmd.id),
+      }))
+    );
+
+    return result;
   });
 
   // Get single command
-  ipcMain.handle('get-command', (_event, id: number) => {
-    const stmt = db.prepare('SELECT * FROM command_templates WHERE id = ?');
-    const cmd: StoredCommandTemplate = stmt.get(id);
+  ipcMain.handle('get-command', async (_event, id: number) => {
+    const cmd = await db
+      .selectFrom('commands')
+      .selectAll()
+      .where('id', '=', id)
+      .executeTakeFirst();
+
     if (!cmd) return null;
 
     return {
       ...cmd,
-      steps: JSON.parse(cmd.steps),
-      project: getCommandProjects(db, cmd.id),
-      tags: getCommandTags(db, cmd.id),
+      steps: JSON.parse(cmd.steps) as Step[],
+      projects: await getCommandProjects(db, cmd.id),
+      tags: await getCommandTags(db, cmd.id),
     };
   });
 
   // Create command
-  ipcMain.handle('create-command', (_event, command: CommandTemplate) => {
-    const { codeindex, name, detail, resumen, steps, project, tags } = command;
+  ipcMain.handle('create-command', async (_event, command: Command) => {
+    const { codeindex, name, detail, resumen, steps, projects, tags } = command;
 
-    const stmt = db.prepare('INSERT INTO command_templates (codeindex, name, detail, resumen, steps) VALUES (?, ?, ?, ?, ?)');
-    const result = stmt.run(codeindex || null, name, detail, resumen, JSON.stringify(steps));
-    const commandId = result.lastInsertRowid as number;
+    const result = await db
+      .insertInto('commands')
+      .values({
+        codeindex: codeindex || null,
+        name,
+        detail,
+        resumen,
+        steps: JSON.stringify(steps),
+      })
+      .executeTakeFirstOrThrow();
 
-    if (project && project.length > 0) {
-      const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
-      for (const projectId of project) {
-        projectStmt.run(commandId, projectId);
+    const commandId = Number(result.insertId);
+
+    // Add projects (convert project names to IDs)
+    if (projects && projects.length > 0) {
+      const projectRecords = await db
+        .selectFrom('projects')
+        .select(['id', 'name'])
+        .where('name', 'in', projects)
+        .execute();
+
+      if (projectRecords.length > 0) {
+        await db
+          .insertInto('command_projects')
+          .values(
+            projectRecords.map((proj) => ({
+              command_id: commandId,
+              project_id: proj.id,
+            }))
+          )
+          .execute();
       }
     }
 
+    // Add tags (create if not exists)
     if (tags && tags.length > 0) {
-      const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
-      for (const tagName of tags) {
-        const tagId = getOrCreateTag(db, tagName);
-        tagStmt.run(commandId, tagId);
-      }
+      const tagIds = await Promise.all(tags.map((tagName) => getOrCreateTag(db, tagName)));
+
+      await db
+        .insertInto('command_tags')
+        .values(
+          tagIds.map((tagId) => ({
+            command_id: commandId,
+            tag_id: tagId,
+          }))
+        )
+        .execute();
     }
 
     return { id: commandId, ...command };
   });
 
   // Update command
-  ipcMain.handle('update-command', (_event, command: StoredCommandTemplate) => {
-    const { id, codeindex, name, detail, resumen, steps, project, tags } = command;
+  ipcMain.handle('update-command', async (_event, command: Command) => {
+    const { id, codeindex, name, detail, resumen, steps, projects, tags } = command;
 
-    const stmt = db.prepare('UPDATE command_templates SET codeindex = ?, name = ?, detail = ?, resumen = ?, steps = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-    stmt.run(codeindex || null, name, detail, resumen, JSON.stringify(steps), id);
+    if (!id) throw new Error('Command ID is required for update');
 
-    db.prepare('DELETE FROM command_projects WHERE command_id = ?').run(id);
-    if (project && project.length > 0) {
-      const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
-      for (const projectId of project) {
-        projectStmt.run(id, projectId);
+    await db
+      .updateTable('commands')
+      .set({
+        codeindex: codeindex || null,
+        name,
+        detail,
+        resumen,
+        steps: JSON.stringify(steps),
+        updated_at: new Date().toISOString(),
+      })
+      .where('id', '=', id)
+      .execute();
+
+    // Update projects (convert project names to IDs)
+    await db.deleteFrom('command_projects').where('command_id', '=', id).execute();
+
+    if (projects && projects.length > 0) {
+      const projectRecords = await db
+        .selectFrom('projects')
+        .select(['id', 'name'])
+        .where('name', 'in', projects)
+        .execute();
+
+      if (projectRecords.length > 0) {
+        await db
+          .insertInto('command_projects')
+          .values(
+            projectRecords.map((proj) => ({
+              command_id: id,
+              project_id: proj.id,
+            }))
+          )
+          .execute();
       }
     }
 
-    db.prepare('DELETE FROM command_tags WHERE command_id = ?').run(id);
+    // Update tags (create if not exists)
+    await db.deleteFrom('command_tags').where('command_id', '=', id).execute();
+
     if (tags && tags.length > 0) {
-      const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
-      for (const tagName of tags) {
-        const tagId = getOrCreateTag(db, tagName);
-        tagStmt.run(id, tagId);
-      }
+      const tagIds = await Promise.all(tags.map((tagName) => getOrCreateTag(db, tagName)));
+
+      await db
+        .insertInto('command_tags')
+        .values(
+          tagIds.map((tagId) => ({
+            command_id: id,
+            tag_id: tagId,
+          }))
+        )
+        .execute();
     }
 
     return command;
   });
 
   // Delete command
-  ipcMain.handle('delete-command', (_event, id: number) => {
-    const stmt = db.prepare('DELETE FROM command_templates WHERE id = ?');
-    stmt.run(id);
+  ipcMain.handle('delete-command', async (_event, id: number) => {
+    await db.deleteFrom('commands').where('id', '=', id).execute();
     return { success: true };
   });
 }

@@ -18,11 +18,11 @@ import {
 } from '@mui/material';
 
 // Types
-import { CommandTemplate } from '@tstypes/dbmodules';
+import { Command } from '@tstypes/dbmodules';
 
 interface ModalNewCommandProps {
   open: boolean;
-  editingCommand: CommandTemplate | null;
+  editingCommand: Command | null;
   onClose: () => void;
   onSave: (formData: {
     name: string;

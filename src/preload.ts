@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Project, Tag, CommandTemplate } from './renderer/tstypes/dbmodules';
+import type { Project, Tag, Command } from './renderer/tstypes/dbmodules';
 
 // Type definitions for IPC communication
 export interface IpcResponse {
@@ -30,8 +30,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // Commands
   getCommands: (filters?: CommandFilters) => ipcRenderer.invoke('get-commands', filters),
   getCommand: (id: number) => ipcRenderer.invoke('get-command', id),
-  createCommand: (command: Omit<CommandTemplate, 'id'>) => ipcRenderer.invoke('create-command', command),
-  updateCommand: (command: CommandTemplate) => ipcRenderer.invoke('update-command', command),
+  createCommand: (command: Omit<Command, 'id'>) => ipcRenderer.invoke('create-command', command),
+  updateCommand: (command: Command) => ipcRenderer.invoke('update-command', command),
   deleteCommand: (id: number) => ipcRenderer.invoke('delete-command', id),
 
   // Config
@@ -50,6 +50,7 @@ contextBridge.exposeInMainWorld('electron', {
   // Native Electron APIs
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
   selectFolder: () => ipcRenderer.invoke('select-folder'),
+  selectFile: (filters?: { name: string; extensions: string[] }[]) => ipcRenderer.invoke('select-file', filters),
 });
 
 declare global {
@@ -63,10 +64,10 @@ declare global {
       createTag: (tag: Omit<Tag, 'id'>) => Promise<Tag>;
       updateTag: (tag: Tag) => Promise<Tag>;
       deleteTag: (id: number) => Promise<IpcResponse>;
-      getCommands: (filters?: CommandFilters) => Promise<CommandTemplate[]>;
-      getCommand: (id: number) => Promise<CommandTemplate | null>;
-      createCommand: (command: Omit<CommandTemplate, 'id'>) => Promise<CommandTemplate>;
-      updateCommand: (command: CommandTemplate) => Promise<CommandTemplate>;
+      getCommands: (filters?: CommandFilters) => Promise<Command[]>;
+      getCommand: (id: number) => Promise<Command | null>;
+      createCommand: (command: Omit<Command, 'id'>) => Promise<Command>;
+      updateCommand: (command: Command) => Promise<Command>;
       deleteCommand: (id: number) => Promise<IpcResponse>;
       getConfig: () => Promise<Record<string, string>>;
       updateConfig: (key: string, value: string) => Promise<{ key: string; value: string }>;
@@ -77,6 +78,7 @@ declare global {
     electron: {
       openExternal: (url: string) => Promise<IpcResponse>;
       selectFolder: () => Promise<string | null>;
+      selectFile: (filters?: { name: string; extensions: string[] }[]) => Promise<string | null>;
     };
   }
 }

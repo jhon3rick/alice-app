@@ -43,7 +43,7 @@ const ProjectList: React.FC = () => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  const handleOpenDialog = (project?: Project) => {
+  const handleOpenDialog = (project?: StoredProject) => {
     setEditingProject(project || null);
     setDialogOpen(true);
   };

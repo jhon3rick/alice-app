@@ -12,9 +12,6 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-// Setup IPC handlers
-setupIpcHandlers();
-
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -37,7 +34,11 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', async () => {
+  // Setup IPC handlers and wait for database initialization
+  await setupIpcHandlers();
+  createWindow();
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

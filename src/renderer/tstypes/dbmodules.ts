@@ -2,10 +2,11 @@ export type QueryId = {
   id: number;
 } | null;
 
+// Variable types and formats for validation
 export type VariableFormat = 'snake_case' | 'camelCase' | 'upperCamelCase' | 'kebab-case' | 'UPPER_CASE';
-
 export type VariableType = 'string' | 'option' | 'number' | 'boolean';
 
+// Variable structure (used when steps JSON is parsed)
 export interface Variable {
   name: string;
   type: VariableType;
@@ -14,6 +15,7 @@ export interface Variable {
   options?: string[];
 }
 
+// Step structure (used when steps JSON is parsed)
 export interface Step {
   name: string;
   detail: string;
@@ -21,19 +23,22 @@ export interface Step {
   variables: Variable[];
 }
 
-export interface CommandTemplate {
+// Command - Application level (steps is parsed array)
+export interface Command {
   id?: number;
   codeindex?: string;
   name: string;
   detail: string;
   resumen: string;
-  project?: number[];
+  projects: string[];
   tags: string[];
   steps: Step[];
 }
 
-export interface StoredCommandTemplate extends Omit<CommandTemplate, 'id'> {
+// StoredCommand - Database level (steps is JSON string, no project/tags)
+export interface StoredCommand extends Omit<Command, 'id' | 'steps' | 'project' | 'tags'> {
   id: number;
+  steps: string; // JSON string in DB
 }
 
 export interface Project {

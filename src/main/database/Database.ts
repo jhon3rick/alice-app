@@ -2,15 +2,23 @@ import Sqlite from 'better-sqlite3';
 import { app } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs';
+import { Kysely, SqliteDialect } from 'kysely';
+import type { Database } from './schema';
 
 export class DatabaseService {
-  private db: Sqlite.Database | null = null;
+  private sqliteDb: Sqlite.Database | null = null;
+  private db: Kysely<Database> | null = null;
+  private initPromise: Promise<void>;
 
   constructor() {
-    this.initDatabase();
+    this.initPromise = this.initDatabase();
   }
 
-  private initDatabase(): void {
+  async waitForInit(): Promise<void> {
+    await this.initPromise;
+  }
+
+  private async initDatabase(): Promise<void> {
     const userDataPath = app.getPath('userData');
     const dbPath = path.join(userDataPath, 'alice.db');
 
@@ -19,99 +27,141 @@ export class DatabaseService {
       fs.mkdirSync(userDataPath, { recursive: true });
     }
 
-    this.db = new Sqlite(dbPath);
-    this.createTables();
+    this.sqliteDb = new Sqlite(dbPath);
+
+    // Initialize Kysely with SQLite dialect
+    this.db = new Kysely<Database>({
+      dialect: new SqliteDialect({
+        database: this.sqliteDb,
+      }),
+    });
+
+    await this.createTables();
   }
 
-  private createTables(): void {
+  private async createTables(): Promise<void> {
     if (!this.db) return;
 
     // Create projects table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS projects (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codeindex TEXT UNIQUE,
-        name TEXT NOT NULL,
-        path TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    await this.db.schema
+      .createTable('projects')
+      .ifNotExists()
+      .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+      .addColumn('codeindex', 'text', (col) => col.unique())
+      .addColumn('name', 'text', (col) => col.notNull())
+      .addColumn('path', 'text')
+      .addColumn('created_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .addColumn('updated_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .execute();
 
     // Create tags table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS tags (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codeindex TEXT UNIQUE,
-        name TEXT NOT NULL UNIQUE,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    await this.db.schema
+      .createTable('tags')
+      .ifNotExists()
+      .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+      .addColumn('codeindex', 'text', (col) => col.unique())
+      .addColumn('name', 'text', (col) => col.notNull().unique())
+      .addColumn('created_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .addColumn('updated_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .execute();
 
-    // Create command_templates table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS command_templates (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        codeindex TEXT UNIQUE,
-        name TEXT NOT NULL,
-        detail TEXT NOT NULL,
-        resumen TEXT NOT NULL,
-        steps TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    // Create commands table
+    await this.db.schema
+      .createTable('commands')
+      .ifNotExists()
+      .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+      .addColumn('codeindex', 'text', (col) => col.unique())
+      .addColumn('name', 'text', (col) => col.notNull())
+      .addColumn('detail', 'text', (col) => col.notNull())
+      .addColumn('resumen', 'text', (col) => col.notNull())
+      .addColumn('steps', 'text', (col) => col.notNull())
+      .addColumn('created_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .addColumn('updated_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .execute();
 
     // Create command_projects junction table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS command_projects (
-        command_id INTEGER NOT NULL,
-        project_id INTEGER NOT NULL,
-        PRIMARY KEY (command_id, project_id),
-        FOREIGN KEY (command_id) REFERENCES command_templates(id) ON DELETE CASCADE,
-        FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-      );
-    `);
+    await this.db.schema
+      .createTable('command_projects')
+      .ifNotExists()
+      .addColumn('command_id', 'integer', (col) => col.notNull())
+      .addColumn('project_id', 'integer', (col) => col.notNull())
+      .addPrimaryKeyConstraint('command_projects_pk', ['command_id', 'project_id'])
+      .addForeignKeyConstraint(
+        'command_projects_command_fk',
+        ['command_id'],
+        'commands',
+        ['id'],
+        (cb) => cb.onDelete('cascade')
+      )
+      .addForeignKeyConstraint(
+        'command_projects_project_fk',
+        ['project_id'],
+        'projects',
+        ['id'],
+        (cb) => cb.onDelete('cascade')
+      )
+      .execute();
 
     // Create command_tags junction table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS command_tags (
-        command_id INTEGER NOT NULL,
-        tag_id INTEGER NOT NULL,
-        PRIMARY KEY (command_id, tag_id),
-        FOREIGN KEY (command_id) REFERENCES command_templates(id) ON DELETE CASCADE,
-        FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-      );
-    `);
+    await this.db.schema
+      .createTable('command_tags')
+      .ifNotExists()
+      .addColumn('command_id', 'integer', (col) => col.notNull())
+      .addColumn('tag_id', 'integer', (col) => col.notNull())
+      .addPrimaryKeyConstraint('command_tags_pk', ['command_id', 'tag_id'])
+      .addForeignKeyConstraint(
+        'command_tags_command_fk',
+        ['command_id'],
+        'commands',
+        ['id'],
+        (cb) => cb.onDelete('cascade')
+      )
+      .addForeignKeyConstraint(
+        'command_tags_tag_fk',
+        ['tag_id'],
+        'tags',
+        ['id'],
+        (cb) => cb.onDelete('cascade')
+      )
+      .execute();
 
     // Create config table
-    this.db.exec(`
-      CREATE TABLE IF NOT EXISTS config (
-        key TEXT PRIMARY KEY,
-        value TEXT NOT NULL,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      );
-    `);
+    await this.db.schema
+      .createTable('config')
+      .ifNotExists()
+      .addColumn('key', 'text', (col) => col.primaryKey())
+      .addColumn('value', 'text', (col) => col.notNull())
+      .addColumn('updated_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
+      .execute();
 
     // Insert default config values if not exists
-    const stmt = this.db.prepare(`
-      INSERT OR IGNORE INTO config (key, value) VALUES (?, ?)
-    `);
-
     const userDataPath = app.getPath('userData');
-    stmt.run('configPath', path.join(userDataPath, 'config'));
-    stmt.run('exportPath', path.join(userDataPath, 'exports'));
+
+    await this.db
+      .insertInto('config')
+      .values({ key: 'configPath', value: path.join(userDataPath, 'config') })
+      .onConflict((oc) => oc.column('key').doNothing())
+      .execute();
+
+    await this.db
+      .insertInto('config')
+      .values({ key: 'exportPath', value: path.join(userDataPath, 'exports') })
+      .onConflict((oc) => oc.column('key').doNothing())
+      .execute();
   }
 
-  getDatabase(): Sqlite.Database | null {
+  getDatabase(): Kysely<Database> | null {
     return this.db;
   }
 
-  close(): void {
+  async close(): Promise<void> {
     if (this.db) {
-      this.db.close();
+      await this.db.destroy();
       this.db = null;
+    }
+    if (this.sqliteDb) {
+      this.sqliteDb.close();
+      this.sqliteDb = null;
     }
   }
 }

@@ -12,7 +12,10 @@ import {
  * Setup all IPC handlers for the application
  * Handlers are organized by functionality in separate modules
  */
-export function setupIpcHandlers(): void {
+export async function setupIpcHandlers(): Promise<void> {
+  // Wait for database initialization to complete
+  await databaseService.waitForInit();
+
   const db = databaseService.getDatabase();
 
   // Setup database-related handlers

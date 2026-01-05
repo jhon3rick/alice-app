@@ -1,37 +1,53 @@
 import { ipcMain } from 'electron';
-import type { Database } from 'better-sqlite3';
+import type { Kysely } from 'kysely';
 import * as fs from 'fs';
 
-import { QueryId, StoredProject } from '@tstypes/dbmodules';
+import { Step } from '@tstypes/dbmodules';
+import type { Database } from '../../database/schema';
 
 // Helper functions
-function getCommandProjects(db: Database, commandId: number): number[] {
-  const stmt = db.prepare('SELECT project_id FROM command_projects WHERE command_id = ?');
-  const rows = stmt.all(commandId) as { project_id: number }[];
-  return rows.map(r => r.project_id);
+async function getCommandProjects(db: Kysely<Database>, commandId: number): Promise<string[]> {
+  const projects = await db
+    .selectFrom('command_projects as cp')
+    .innerJoin('projects as p', 'p.id', 'cp.project_id')
+    .select('p.codeindex')
+    .where('cp.command_id', '=', commandId)
+    .execute();
+
+  return projects.map(p => p.codeindex).filter((code): code is string => code !== null);
 }
 
-function getCommandTags(db: Database, commandId: number): string[] {
-  const stmt = db.prepare(`
-    SELECT t.name FROM tags t
-    JOIN command_tags ct ON t.id = ct.tag_id
-    WHERE ct.command_id = ?
-  `);
-  const rows = stmt.all(commandId) as { name: string }[];
-  return rows.map(r => r.name);
+async function getCommandTags(db: Kysely<Database>, commandId: number): Promise<string[]> {
+  const tags = await db
+    .selectFrom('tags as t')
+    .innerJoin('command_tags as ct', 't.id', 'ct.tag_id')
+    .select('t.name')
+    .where('ct.command_id', '=', commandId)
+    .execute();
+
+  return tags.map(t => t.name);
 }
 
-function getOrCreateTag(db: Database, tagName: string): number {
-  const tag = db.prepare('SELECT id FROM tags WHERE name = ?').get(tagName) as QueryId;
+async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<number> {
+  const tag = await db
+    .selectFrom('tags')
+    .select('id')
+    .where('name', '=', tagName)
+    .executeTakeFirst();
+
   if (tag) return tag.id;
 
-  const result = db.prepare('INSERT INTO tags (name) VALUES (?)').run(tagName);
-  return result.lastInsertRowid as number;
+  const result = await db
+    .insertInto('tags')
+    .values({ name: tagName })
+    .executeTakeFirstOrThrow();
+
+  return Number(result.insertId);
 }
 
-export function setupImportExportHandlers(db: Database): void {
+export function setupImportExportHandlers(db: Kysely<Database>): void {
   // Import JSON
-  ipcMain.handle('import-json', (_event, filePath: string) => {
+  ipcMain.handle('import-json', async (_event, filePath: string) => {
     try {
       const data = fs.readFileSync(filePath, 'utf-8');
       const json = JSON.parse(data);
@@ -39,13 +55,31 @@ export function setupImportExportHandlers(db: Database): void {
       if (json.projects) {
         for (const project of json.projects) {
           if (project.codeindex) {
-            const existing = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(project.codeindex) as QueryId;
+            const existing = await db
+              .selectFrom('projects')
+              .select('id')
+              .where('codeindex', '=', project.codeindex)
+              .executeTakeFirst();
+
             if (existing) {
-              db.prepare('UPDATE projects SET name = ?, path = ?, updated_at = CURRENT_TIMESTAMP WHERE codeindex = ?')
-                .run(project.name, project.path || null, project.codeindex);
+              await db
+                .updateTable('projects')
+                .set({
+                  name: project.name,
+                  path: project.path || null,
+                  updated_at: new Date().toISOString(),
+                })
+                .where('codeindex', '=', project.codeindex)
+                .execute();
             } else {
-              db.prepare('INSERT INTO projects (codeindex, name, path) VALUES (?, ?, ?)')
-                .run(project.codeindex, project.name, project.path || null);
+              await db
+                .insertInto('projects')
+                .values({
+                  codeindex: project.codeindex,
+                  name: project.name,
+                  path: project.path || null,
+                })
+                .execute();
             }
           }
         }
@@ -56,50 +90,81 @@ export function setupImportExportHandlers(db: Database): void {
           const { codeindex, name, detail, resumen, steps, project, tags } = command;
 
           if (codeindex) {
-            const existing = db.prepare('SELECT id FROM command_templates WHERE codeindex = ?').get(codeindex) as QueryId;
+            const existing = await db
+              .selectFrom('commands')
+              .select('id')
+              .where('codeindex', '=', codeindex)
+              .executeTakeFirst();
+
+            let commandId: number;
+
             if (existing) {
-              db.prepare('UPDATE command_templates SET name = ?, detail = ?, resumen = ?, steps = ?, updated_at = CURRENT_TIMESTAMP WHERE codeindex = ?')
-                .run(name, detail, resumen, JSON.stringify(steps), codeindex);
+              await db
+                .updateTable('commands')
+                .set({
+                  name,
+                  detail,
+                  resumen,
+                  steps: JSON.stringify(steps),
+                  updated_at: new Date().toISOString(),
+                })
+                .where('codeindex', '=', codeindex)
+                .execute();
 
-              const commandId = existing.id;
-              db.prepare('DELETE FROM command_projects WHERE command_id = ?').run(commandId);
-              db.prepare('DELETE FROM command_tags WHERE command_id = ?').run(commandId);
-
-              if (project && project.length > 0) {
-                const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
-                for (const projectCodeindex of project) {
-                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as QueryId;
-                  if (proj) projectStmt.run(commandId, proj.id);
-                }
-              }
-
-              if (tags && tags.length > 0) {
-                const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
-                for (const tagName of tags) {
-                  const tagId = getOrCreateTag(db, tagName);
-                  tagStmt.run(commandId, tagId);
-                }
-              }
+              commandId = existing.id;
             } else {
-              const result = db.prepare('INSERT INTO command_templates (codeindex, name, detail, resumen, steps) VALUES (?, ?, ?, ?, ?)')
-                .run(codeindex, name, detail, resumen, JSON.stringify(steps));
-              const commandId = result.lastInsertRowid as number;
+              const result = await db
+                .insertInto('commands')
+                .values({
+                  codeindex,
+                  name,
+                  detail,
+                  resumen,
+                  steps: JSON.stringify(steps),
+                })
+                .executeTakeFirstOrThrow();
 
-              if (project && project.length > 0) {
-                const projectStmt = db.prepare('INSERT INTO command_projects (command_id, project_id) VALUES (?, ?)');
-                for (const projectCodeindex of project) {
-                  const proj = db.prepare('SELECT id FROM projects WHERE codeindex = ?').get(projectCodeindex) as QueryId;
-                  if (proj) projectStmt.run(commandId, proj.id);
-                }
-              }
+              commandId = Number(result.insertId);
+            }
 
-              if (tags && tags.length > 0) {
-                const tagStmt = db.prepare('INSERT INTO command_tags (command_id, tag_id) VALUES (?, ?)');
-                for (const tagName of tags) {
-                  const tagId = getOrCreateTag(db, tagName);
-                  tagStmt.run(commandId, tagId);
-                }
+            // Clear existing relations
+            await db.deleteFrom('command_projects').where('command_id', '=', commandId).execute();
+            await db.deleteFrom('command_tags').where('command_id', '=', commandId).execute();
+
+            // Add projects
+            if (project && project.length > 0) {
+              const projectRecords = await db
+                .selectFrom('projects')
+                .select(['id', 'codeindex'])
+                .where('codeindex', 'in', project)
+                .execute();
+
+              if (projectRecords.length > 0) {
+                await db
+                  .insertInto('command_projects')
+                  .values(
+                    projectRecords.map((proj) => ({
+                      command_id: commandId,
+                      project_id: proj.id,
+                    }))
+                  )
+                  .execute();
               }
+            }
+
+            // Add tags
+            if (tags && tags.length > 0) {
+              const tagIds = await Promise.all(tags.map((tagName: string) => getOrCreateTag(db, tagName)));
+
+              await db
+                .insertInto('command_tags')
+                .values(
+                  tagIds.map((tagId) => ({
+                    command_id: commandId,
+                    tag_id: tagId,
+                  }))
+                )
+                .execute();
             }
           }
         }
@@ -112,30 +177,28 @@ export function setupImportExportHandlers(db: Database): void {
   });
 
   // Export JSON
-  ipcMain.handle('export-json', (_event, exportPath: string) => {
+  ipcMain.handle('export-json', async (_event, exportPath: string) => {
     try {
-      const projects = db.prepare('SELECT * FROM projects').all();
-      // const tags = db.prepare('SELECT * FROM tags').all(); 
-      const commands = db.prepare('SELECT * FROM command_templates').all();
+      const projects = await db.selectFrom('projects').selectAll().execute();
+      const commands = await db.selectFrom('commands').selectAll().execute();
 
       const exportData = {
-        projects: projects.map((p: Project) => ({
+        projects: projects.map((p) => ({
           codeindex: p.codeindex,
           name: p.name,
           path: p.path,
         })),
-        commands: commands.map((c: CommandTemplate) => ({
-          codeindex: c.codeindex,
-          name: c.name,
-          detail: c.detail,
-          resumen: c.resumen,
-          steps: JSON.parse(c.steps),
-          project: getCommandProjects(db, c.id).map((pid: number) => {
-            const proj = db.prepare('SELECT codeindex FROM projects WHERE id = ?').get(pid) as StoredProject;
-            return proj?.codeindex;
-          }).filter(Boolean),
-          tags: getCommandTags(db, c.id),
-        })),
+        commands: await Promise.all(
+          commands.map(async (c) => ({
+            codeindex: c.codeindex,
+            name: c.name,
+            detail: c.detail,
+            resumen: c.resumen,
+            steps: JSON.parse(c.steps) as Step[],
+            project: await getCommandProjects(db, c.id),
+            tags: await getCommandTags(db, c.id),
+          }))
+        ),
       };
 
       fs.writeFileSync(exportPath, JSON.stringify(exportData, null, 2), 'utf-8');

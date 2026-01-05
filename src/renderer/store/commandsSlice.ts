@@ -1,11 +1,11 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 // Types
-import { CommandTemplate } from '@tstypes/dbmodules';
+import { Command } from '@tstypes/dbmodules';
 
 interface CommandsState {
-  commands: CommandTemplate[];
-  currentCommand: CommandTemplate | null;
+  commands: Command[];
+  currentCommand: Command | null;
   loading: boolean;
   error: string | null;
   filters: {
@@ -33,11 +33,11 @@ export const fetchCommand = createAsyncThunk('commands/fetchOne', async (id: num
   return await window.electronAPI.getCommand(id);
 });
 
-export const addCommand = createAsyncThunk('commands/add', async (command: Omit<CommandTemplate, 'id'>) => {
+export const addCommand = createAsyncThunk('commands/add', async (command: Omit<Command, 'id'>) => {
   return await window.electronAPI.createCommand(command);
 });
 
-export const modifyCommand = createAsyncThunk('commands/modify', async (command: CommandTemplate) => {
+export const modifyCommand = createAsyncThunk('commands/modify', async (command: Command) => {
   return await window.electronAPI.updateCommand(command);
 });
 
