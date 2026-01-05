@@ -23,8 +23,8 @@ export interface DataTableProps<T extends { id: number | string }> {
   onRowClick?: (row: T) => void;
   checkboxSelection?: boolean;
   getRowId?: (row: T) => string | number;
-  onEdit?: (row: T) => void;
-  onDelete?: (id: number | string) => void;
+  onEditRow?: (row: T) => void;
+  onDeleteRow?: (id: number | string) => void;
 }
 
 function DataTable<T extends { id: number | string }>({
@@ -38,11 +38,12 @@ function DataTable<T extends { id: number | string }>({
   onRowClick,
   checkboxSelection = false,
   getRowId,
-  onEdit,
-  onDelete,
+  onEditRow,
+  onDeleteRow,
 }: DataTableProps<T>) {
+
   const columnsWithActions = useMemo<GridColDef[]>(() => {
-    if (!onEdit && !onDelete) {
+    if (!onEditRow && !onDeleteRow) {
       return columns;
     }
 
@@ -53,18 +54,18 @@ function DataTable<T extends { id: number | string }>({
       width: 100,
       getActions: (params) => {
         const actions = [];
-        if (onEdit) {
-          actions.push(<GridActionsCellItem icon={<Edit />} label="Edit" onClick={() => onEdit(params.row as T)} />);
+        if (onEditRow) {
+          actions.push(<GridActionsCellItem icon={<Edit />} label="Edit" onClick={() => onEditRow(params.row as T)} />);
         }
-        if (onDelete) {
-          actions.push(<GridActionsCellItem icon={<Delete />} label="Delete" onClick={() => onDelete(params.row.id)} showInMenu={false} />);
+        if (onDeleteRow) {
+          actions.push(<GridActionsCellItem icon={<Delete />} label="Delete" onClick={() => onDeleteRow(params.row.id)} showInMenu={false} />);
         }
         return actions;
       },
     };
 
     return [...columns, actionsColumn];
-  }, [columns, onEdit, onDelete]);
+  }, [columns, onEditRow, onDeleteRow]);
 
   return (
     <Paper className={`data-table ${onRowClick ? 'clickable' : ''}`}>

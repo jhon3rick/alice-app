@@ -102,10 +102,9 @@ const TagList: React.FC = () => {
         columns={columnsSchema}
         pageSize={10}
         pageSizeOptions={[5, 10, 25, 50]}
-        onEdit={handleOpenDialog}
-        onDelete={handleDelete}
+        onEditRow={handleOpenDialog}
+        onDeleteRow={handleDelete}
       />
-
       <ModalNewTag open={dialogOpen} editingTag={editingTag} onClose={handleCloseDialog} onSave={handleSave} />
     </ViewContainer>
   );
