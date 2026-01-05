@@ -24,6 +24,15 @@
   ],
   "rules": {
     // Prettier handles formatting, so we disable conflicting rules
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "no-unused-vars": "off"
   },
   "settings": {
     "import/resolver": {

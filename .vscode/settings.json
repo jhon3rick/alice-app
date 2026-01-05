@@ -53,7 +53,15 @@
   },
 
   // ESLint Settings
+  "eslint.enable": true,
   "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.run": "onType",
+  "eslint.probe": [
     "javascript",
     "javascriptreact",
     "typescript",
