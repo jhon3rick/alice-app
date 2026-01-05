@@ -27,11 +27,7 @@ const SelectProject: React.FC<SelectProjectProps> = ({ value, onChange }) => {
   return (
     <FormControl fullWidth>
       <InputLabel>Filter by Project</InputLabel>
-      <Select
-        value={value}
-        label="Filter by Project"
-        onChange={(e) => onChange(e.target.value as number | '')}
-      >
+      <Select value={value} label="Filter by Project" onChange={(e) => onChange(e.target.value as number | '')}>
         <MenuItem value="">All Projects</MenuItem>
         {projects.map((project) => (
           <MenuItem key={project.id} value={project.id}>

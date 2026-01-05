@@ -184,11 +184,7 @@ const CommandDetail: React.FC = () => {
           {currentCommand.projects && currentCommand.projects.length > 0 && (
             <FormControl fullWidth sx={{ mb: 3 }}>
               <InputLabel>Execution Path</InputLabel>
-              <Select
-                value={selectedProjectPath}
-                label="Execution Path"
-                onChange={(e) => setSelectedProjectPath(e.target.value)}
-              >
+              <Select value={selectedProjectPath} label="Execution Path" onChange={(e) => setSelectedProjectPath(e.target.value)}>
                 <MenuItem value="">Default (current directory)</MenuItem>
                 {currentCommand.projects.map((projectName: string) => {
                   const project = projects.find((p) => p.name === projectName);

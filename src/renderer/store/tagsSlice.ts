@@ -54,13 +54,13 @@ const tagsSlice = createSlice({
         state.tags.push(action.payload);
       })
       .addCase(modifyTag.fulfilled, (state, action) => {
-        const index = state.tags.findIndex(t => t.id === action.payload.id);
+        const index = state.tags.findIndex((t) => t.id === action.payload.id);
         if (index !== -1) {
           state.tags[index] = action.payload;
         }
       })
       .addCase(removeTag.fulfilled, (state, action) => {
-        state.tags = state.tags.filter(t => t.id !== action.payload);
+        state.tags = state.tags.filter((t) => t.id !== action.payload);
       });
   },
 });

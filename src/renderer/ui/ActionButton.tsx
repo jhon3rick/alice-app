@@ -19,14 +19,7 @@ interface ActionButtonProps {
   size?: 'small' | 'medium' | 'large';
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({
-  icon,
-  tooltip,
-  onClick,
-  className = '',
-  size = 'medium',
-}) => {
-
+const ActionButton: React.FC<ActionButtonProps> = ({ icon, tooltip, onClick, className = '', size = 'medium' }) => {
   const button = (
     <IconButton
       size={size}
@@ -45,7 +38,9 @@ const ActionButton: React.FC<ActionButtonProps> = ({
     </IconButton>
   );
 
-  if (!tooltip) { return button; }
+  if (!tooltip) {
+    return button;
+  }
   return (
     <Tooltip title={tooltip} arrow placement="bottom">
       {button}

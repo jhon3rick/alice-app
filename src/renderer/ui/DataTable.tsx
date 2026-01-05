@@ -54,23 +54,10 @@ function DataTable<T extends { id: number | string }>({
       getActions: (params) => {
         const actions = [];
         if (onEdit) {
-          actions.push(
-            <GridActionsCellItem
-              icon={<Edit />}
-              label="Edit"
-              onClick={() => onEdit(params.row as T)}
-            />
-          );
+          actions.push(<GridActionsCellItem icon={<Edit />} label="Edit" onClick={() => onEdit(params.row as T)} />);
         }
         if (onDelete) {
-          actions.push(
-            <GridActionsCellItem
-              icon={<Delete />}
-              label="Delete"
-              onClick={() => onDelete(params.row.id)}
-              showInMenu={false}
-            />
-          );
+          actions.push(<GridActionsCellItem icon={<Delete />} label="Delete" onClick={() => onDelete(params.row.id)} showInMenu={false} />);
         }
         return actions;
       },

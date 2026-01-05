@@ -22,14 +22,7 @@ interface ViewContainerProps {
   actions?: ReactNode;
 }
 
-const ViewContainer: React.FC<ViewContainerProps> = ({
-  title,
-  children,
-  maxWidth = 'lg',
-  showBackButton = true,
-  actions,
-}) => {
-
+const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth = 'lg', showBackButton = true, actions }) => {
   return (
     <div className="view-container">
       <div className="view-container__header">

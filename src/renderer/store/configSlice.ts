@@ -22,12 +22,9 @@ export const fetchConfig = createAsyncThunk('config/fetch', async () => {
   return await window.electronAPI.getConfig();
 });
 
-export const updateConfigValue = createAsyncThunk(
-  'config/update',
-  async ({ key, value }: { key: string; value: string }) => {
-    return await window.electronAPI.updateConfig(key, value);
-  }
-);
+export const updateConfigValue = createAsyncThunk('config/update', async ({ key, value }: { key: string; value: string }) => {
+  return await window.electronAPI.updateConfig(key, value);
+});
 
 const configSlice = createSlice({
   name: 'config',

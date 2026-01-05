@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Terminal as TerminalIcon,
-  Folder as FolderIcon,
-  Label as LabelIcon,
-  Settings as SettingsIcon,
-} from '@mui/icons-material';
+import { Terminal as TerminalIcon, Folder as FolderIcon, Label as LabelIcon, Settings as SettingsIcon } from '@mui/icons-material';
 
 export interface HomeModule {
   id: string;

@@ -6,16 +6,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Button,
-  Autocomplete,
-  Chip,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Autocomplete, Chip } from '@mui/material';
 
 // Types
 import { Command } from '@tstypes/dbmodules';
@@ -24,23 +15,11 @@ interface ModalNewCommandProps {
   open: boolean;
   editingCommand: Command | null;
   onClose: () => void;
-  onSave: (formData: {
-    name: string;
-    resumen: string;
-    detail: string;
-    tags: string[];
-    codeindex?: string;
-  }) => void;
+  onSave: (formData: { name: string; resumen: string; detail: string; tags: string[]; codeindex?: string }) => void;
   availableTags: string[];
 }
 
-const ModalNewCommand: React.FC<ModalNewCommandProps> = ({
-  open,
-  editingCommand,
-  onClose,
-  onSave,
-  availableTags,
-}) => {
+const ModalNewCommand: React.FC<ModalNewCommandProps> = ({ open, editingCommand, onClose, onSave, availableTags }) => {
   const [formData, setFormData] = useState({
     name: '',
     resumen: '',
@@ -139,13 +118,9 @@ const ModalNewCommand: React.FC<ModalNewCommandProps> = ({
           options={availableTags}
           value={formData.tags}
           onChange={(_, newValue) => setFormData({ ...formData, tags: newValue })}
-          renderInput={(params) => (
-            <TextField {...params} label="Tags" placeholder="Select tags" />
-          )}
+          renderInput={(params) => <TextField {...params} label="Tags" placeholder="Select tags" />}
           renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip {...getTagProps({ index })} key={option} label={option} size="small" />
-            ))
+            value.map((option, index) => <Chip {...getTagProps({ index })} key={option} label={option} size="small" />)
           }
           sx={{ mb: 2 }}
         />
@@ -160,11 +135,7 @@ const ModalNewCommand: React.FC<ModalNewCommandProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          disabled={!formData.name.trim() || !formData.resumen.trim()}
-        >
+        <Button onClick={handleSave} variant="contained" disabled={!formData.name.trim() || !formData.resumen.trim()}>
           Save
         </Button>
       </DialogActions>

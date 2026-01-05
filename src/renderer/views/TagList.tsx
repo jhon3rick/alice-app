@@ -106,12 +106,7 @@ const TagList: React.FC = () => {
         onDelete={handleDelete}
       />
 
-      <ModalNewTag
-        open={dialogOpen}
-        editingTag={editingTag}
-        onClose={handleCloseDialog}
-        onSave={handleSave}
-      />
+      <ModalNewTag open={dialogOpen} editingTag={editingTag} onClose={handleCloseDialog} onSave={handleSave} />
     </ViewContainer>
   );
 };
