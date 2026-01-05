@@ -6,32 +6,38 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Typography,
-  Button,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
-import { Add, Edit, Delete } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
 
 // Custom Components
-import ViewContainer from '@ui/ViewContainer';
 import ModalNewTag from '@components/ModalNewTag';
+import ViewContainer from '@ui/ViewContainer';
+import DataTable, { GridColDef } from '@ui/DataTable';
 
 // Types
 import { StoredTag } from '@tstypes/dbmodules';
 
 import './TagList.scss';
+
+const columnsSchema: GridColDef[] = [
+  {
+    flex: 1,
+    field: 'codeindex',
+    headerName: 'Code Index',
+    minWidth: 50,
+    valueGetter: (value) => value || '-',
+  },
+  {
+    flex: 1,
+    field: 'name',
+    headerName: 'Name',
+    minWidth: 150,
+  },
+];
 
 const TagList: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -91,41 +97,14 @@ const TagList: React.FC = () => {
         </Button>
       }
     >
-      <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Name</TableCell>
-                <TableCell>Code Index</TableCell>
-                <TableCell align="right">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {tags.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} align="center">
-                    <Typography color="text.secondary">No tags found. Add one to get started.</Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                tags.map((tag) => (
-                  <TableRow key={tag.id}>
-                    <TableCell>{tag.name}</TableCell>
-                    <TableCell>{tag.codeindex || '-'}</TableCell>
-                    <TableCell align="right">
-                      <IconButton size="small" onClick={() => handleOpenDialog(tag)}>
-                        <Edit fontSize="small" />
-                      </IconButton>
-                      <IconButton size="small" onClick={() => handleDelete(tag.id)} color="error">
-                        <Delete fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+      <DataTable
+        rows={tags}
+        columns={columnsSchema}
+        pageSize={10}
+        pageSizeOptions={[5, 10, 25, 50]}
+        onEdit={handleOpenDialog}
+        onDelete={handleDelete}
+      />
 
       <ModalNewTag
         open={dialogOpen}

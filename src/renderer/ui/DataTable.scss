@@ -1,0 +1,15 @@
+.data-table {
+  width: 100%;
+
+  .MuiDataGrid-cell:focus {
+    outline: none;
+  }
+
+  .MuiDataGrid-row:hover {
+    cursor: var(--data-table-cursor, default);
+  }
+
+  &.clickable .MuiDataGrid-row:hover {
+    cursor: pointer;
+  }
+}

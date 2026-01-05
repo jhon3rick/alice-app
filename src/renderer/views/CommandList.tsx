@@ -5,14 +5,14 @@
  * Displays commands in cards with filtering by project and tags.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Typography,
-  Card,
-  CardActionArea,
-  CardContent,
   Chip,
+  Card,
+  Typography,
+  CardContent,
+  CardActionArea,
 } from '@mui/material';
 
 // Store
@@ -40,11 +40,14 @@ const CommandList: React.FC = () => {
     dispatch(fetchCommands(undefined));
   }, [dispatch]);
 
-  useEffect(() => {
-    const tagIds = selectedTags
+  // Memoize tagIds calculation to avoid recalculating on every render
+  const tagIds = useMemo(() => {
+    return selectedTags
       .map((tagName) => tags.find((t) => t.name === tagName)?.id)
       .filter((id): id is number => id !== undefined);
+  }, [selectedTags, tags]);
 
+  useEffect(() => {
     dispatch(
       setFilters({
         projectId: selectedProject || undefined,
@@ -58,7 +61,12 @@ const CommandList: React.FC = () => {
         tagIds: tagIds.length > 0 ? tagIds : undefined,
       })
     );
-  }, [selectedProject, selectedTags, dispatch, tags]);
+  }, [selectedProject, tagIds, dispatch]);
+
+  // Memoize navigation handler to prevent recreating on every render
+  const handleCommandClick = useCallback((commandId: number | undefined) => {
+    navigate(`/commands/${commandId}`);
+  }, [navigate]);
 
   return (
     <ViewContainer title="commands">
@@ -84,7 +92,7 @@ const CommandList: React.FC = () => {
         <div className="command-list__commands">
           {commands.map((command) => (
             <Card key={command.id} className="command-list__command-card">
-              <CardActionArea onClick={() => navigate(`/commands/${command.id}`)}>
+              <CardActionArea onClick={() => handleCommandClick(command.id)}>
                 <CardContent>
                   <div className="command-header">
                     <Typography variant="h6" component="h3">
