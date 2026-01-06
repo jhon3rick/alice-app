@@ -9,6 +9,7 @@ import Splash from '@views/Splash';
 import About from '@views/About';
 import Home from '@views/Home';
 import CommandList from '@views/CommandList';
+import CommandCreate from '@views/CommandCreate';
 import CommandDetail from '@views/CommandDetail';
 import ProjectList from '@views/ProjectList';
 import TagList from '@views/TagList';
@@ -50,6 +51,8 @@ const App: React.FC = () => {
             <Route path="/about" element={<About />} />
             <Route path="/home" element={<Home />} />
             <Route path="/commands" element={<CommandList />} />
+            <Route path="/commands/new" element={<CommandCreate />} />
+            <Route path="/commands/:id/edit" element={<CommandCreate />} />
             <Route path="/commands/:id" element={<CommandDetail />} />
             <Route path="/projects" element={<ProjectList />} />
             <Route path="/tags" element={<TagList />} />

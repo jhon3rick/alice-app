@@ -31,7 +31,7 @@ const SelectTags: React.FC<SelectTagsProps> = ({ value, onChange }) => {
       options={tags.map((t) => t.name)}
       value={value}
       onChange={(_, newValue) => onChange(newValue)}
-      renderInput={(params) => <TextField {...params} label="Filter by Tags" placeholder="Select tags" />}
+      renderInput={(params) => <TextField {...params} label="Tags" placeholder="Select tags" />}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => <Chip {...getTagProps({ index })} key={option} label={option} size="small" />)
       }
