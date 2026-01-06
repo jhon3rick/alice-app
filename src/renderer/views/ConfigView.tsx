@@ -44,7 +44,7 @@ const ConfigView: React.FC = () => {
       await dispatch(updateConfigValue({ key: 'configPath', value: configPath }));
       await dispatch(updateConfigValue({ key: 'exportPath', value: exportPath }));
       setSnackbar({ open: true, message: 'Configuration saved successfully', severity: 'success' });
-    } catch (error) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to save configuration', severity: 'error' });
     }
   };
@@ -67,7 +67,7 @@ const ConfigView: React.FC = () => {
               severity: 'error',
             });
           }
-        } catch (error) {
+        } catch {
           setSnackbar({ open: true, message: 'Failed to import JSON', severity: 'error' });
         }
       }
@@ -87,7 +87,7 @@ const ConfigView: React.FC = () => {
       } else {
         setSnackbar({ open: true, message: `Export failed: ${result.error}`, severity: 'error' });
       }
-    } catch (error) {
+    } catch {
       setSnackbar({ open: true, message: 'Failed to export JSON', severity: 'error' });
     }
   };

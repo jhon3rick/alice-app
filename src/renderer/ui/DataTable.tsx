@@ -41,7 +41,6 @@ function DataTable<T extends { id: number | string }>({
   onEditRow,
   onDeleteRow,
 }: DataTableProps<T>) {
-
   const columnsWithActions = useMemo<GridColDef[]>(() => {
     if (!onEditRow && !onDeleteRow) {
       return columns;
@@ -58,7 +57,9 @@ function DataTable<T extends { id: number | string }>({
           actions.push(<GridActionsCellItem icon={<Edit />} label="Edit" onClick={() => onEditRow(params.row as T)} />);
         }
         if (onDeleteRow) {
-          actions.push(<GridActionsCellItem icon={<Delete />} label="Delete" onClick={() => onDeleteRow(params.row.id)} showInMenu={false} />);
+          actions.push(
+            <GridActionsCellItem icon={<Delete />} label="Delete" onClick={() => onDeleteRow(params.row.id)} showInMenu={false} />
+          );
         }
         return actions;
       },

@@ -8,15 +8,13 @@ export interface IActionsToolbar {
 }
 
 const ActionsToolbar: React.FC<IActionsToolbar> = ({ actions }) => {
-  return(
+  return (
     <div className="actions-toolbar">
-      {
-        actions.map((action, index) => (
-          <ActionButton key={index} {...action} />
-        ))
-      }
+      {actions.map((action, index) => (
+        <ActionButton key={index} {...action} />
+      ))}
     </div>
-);
+  );
 };
 
 export { IActionButton };

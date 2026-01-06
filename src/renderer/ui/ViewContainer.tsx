@@ -29,7 +29,11 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth
       <div className="view-container__header">
         {showBackButton && <ViewBackButton />}
         {title && <ViewTitle title={title} />}
-        {actions && <div className="view-container__actions"><ActionsToolbar actions={actions} /></div>}
+        {actions && (
+          <div className="view-container__actions">
+            <ActionsToolbar actions={actions} />
+          </div>
+        )}
       </div>
 
       {/* Contenido */}

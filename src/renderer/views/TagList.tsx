@@ -96,10 +96,7 @@ const TagList: React.FC = () => {
   ];
 
   return (
-    <ViewContainer
-      title="tags"
-      actions={actionsToolbar}
-    >
+    <ViewContainer title="tags" actions={actionsToolbar}>
       <DataTable
         rows={tags}
         columns={columnsSchema}

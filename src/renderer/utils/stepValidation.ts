@@ -110,7 +110,7 @@ export const validateStepsInterface = (steps: Step[]): ValidationResult => {
           };
         }
 
-        if (!variable.options.every((opt: string[]) => typeof opt === 'string')) {
+        if (!variable.options.every((opt: string) => typeof opt === 'string')) {
           return { isValid: false, error: `Step ${i + 1}, Variable ${j + 1}: All 'options' must be strings` };
         }
       }
@@ -135,10 +135,10 @@ export const validateStepsJson = (jsonString: string): { isValid: boolean; error
   }
 
   // Parse JSON
-  let parsedSteps: any;
+  let parsedSteps: Step[];
   try {
     parsedSteps = JSON.parse(jsonString);
-  } catch (error) {
+  } catch {
     return { isValid: false, error: 'Failed to parse JSON' };
   }
 

@@ -9,12 +9,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  TextField,
-  Button,
-  Box,
-  Alert,
-} from '@mui/material';
+import { TextField, Button, Box, Alert } from '@mui/material';
 import { Save, Cancel } from '@mui/icons-material';
 
 // Store
@@ -182,11 +177,7 @@ const CommandCreate: React.FC = () => {
           </Box>
 
           <Box sx={{ mb: 2 }}>
-            <StepsJsonEditor
-              value={stepsJson}
-              onChange={setStepsJson}
-              onValidationChange={handleStepsValidation}
-            />
+            <StepsJsonEditor value={stepsJson} onChange={setStepsJson} onValidationChange={handleStepsValidation} />
           </Box>
 
           {validationError && (
@@ -199,7 +190,12 @@ const CommandCreate: React.FC = () => {
             <Button variant="outlined" startIcon={<Cancel />} onClick={handleCancel}>
               Cancel
             </Button>
-            <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={!name.trim() || !resumen.trim() || !isStepsValid}>
+            <Button
+              variant="contained"
+              startIcon={<Save />}
+              onClick={handleSave}
+              disabled={!name.trim() || !resumen.trim() || !isStepsValid}
+            >
               {isEditMode ? 'Update Command' : 'Save Command'}
             </Button>
           </Box>

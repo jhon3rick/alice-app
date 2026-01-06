@@ -30,7 +30,7 @@ const iconByType: Record<IconName, React.ReactElement> = {
 
 const ActionButton: React.FC<IActionButton> = ({ iconName, tooltip, onClick, className = '', size = 'medium' }) => {
   if (!iconByType[iconName]) {
-    return console.warn(`ActionButton: Unsupported icon name "${iconName}" by ActionButton component.`), null;
+    return (console.warn(`ActionButton: Unsupported icon name "${iconName}" by ActionButton component.`), null);
   }
 
   const button = (
