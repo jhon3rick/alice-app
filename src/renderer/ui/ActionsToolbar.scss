@@ -1,0 +1,11 @@
+@use '../styles/variables' as *;
+
+.actions-toolbar {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  position: fixed;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  z-index: $z-index-sticky;
+}

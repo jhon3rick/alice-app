@@ -6,8 +6,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
@@ -16,6 +14,7 @@ import { fetchProjects, addProject, modifyProject, removeProject } from '@store/
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
 import DataTable, { GridColDef } from '@ui/DataTable';
+import { IActionButton } from '@ui/ActionsToolbar';
 import ModalNewProject from '@components/ModalNewProject';
 
 // Types
@@ -94,15 +93,16 @@ const ProjectList: React.FC = () => {
     }
   };
 
+  const actionsToolbar: IActionButton[] = [
+    {
+      iconName: 'add',
+      tooltip: 'Add Project',
+      onClick: () => handleOpenDialog(),
+    },
+  ];
+
   return (
-    <ViewContainer
-      title="projects"
-      actions={
-        <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
-          Add Project
-        </Button>
-      }
-    >
+    <ViewContainer title="projects" actions={actionsToolbar}>
       <DataTable
         rows={projects}
         columns={columnsSchema}

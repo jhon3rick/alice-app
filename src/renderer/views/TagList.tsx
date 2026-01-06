@@ -6,8 +6,6 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
-import { Add } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
@@ -17,6 +15,7 @@ import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
 import ModalNewTag from '@components/ModalNewTag';
 import ViewContainer from '@ui/ViewContainer';
 import DataTable, { GridColDef } from '@ui/DataTable';
+import { IActionButton } from '@ui/ActionsToolbar';
 
 // Types
 import { StoredTag } from '@tstypes/dbmodules';
@@ -88,14 +87,18 @@ const TagList: React.FC = () => {
     }
   };
 
+  const actionsToolbar: IActionButton[] = [
+    {
+      iconName: 'add',
+      tooltip: 'Add Tag',
+      onClick: () => handleOpenDialog(),
+    },
+  ];
+
   return (
     <ViewContainer
       title="tags"
-      actions={
-        <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
-          Add Tag
-        </Button>
-      }
+      actions={actionsToolbar}
     >
       <DataTable
         rows={tags}

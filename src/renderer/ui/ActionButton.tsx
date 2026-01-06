@@ -8,18 +8,31 @@
 
 import React from 'react';
 import { IconButton, Tooltip } from '@mui/material';
+import { Info as InfoIcon, Add as AddIcon, Help as HelpIcon } from '@mui/icons-material';
 
 import './ActionButton.scss';
 
-interface ActionButtonProps {
-  icon: React.ReactNode;
+type IconName = 'add' | 'info' | 'help';
+
+export interface IActionButton {
+  size?: 'small' | 'medium' | 'large';
+  iconName: IconName;
   tooltip?: string;
   onClick?: () => void;
   className?: string;
-  size?: 'small' | 'medium' | 'large';
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({ icon, tooltip, onClick, className = '', size = 'medium' }) => {
+const iconByType: Record<IconName, React.ReactElement> = {
+  add: <AddIcon />,
+  info: <InfoIcon />,
+  help: <HelpIcon />,
+};
+
+const ActionButton: React.FC<IActionButton> = ({ iconName, tooltip, onClick, className = '', size = 'medium' }) => {
+  if (!iconByType[iconName]) {
+    return console.warn(`ActionButton: Unsupported icon name "${iconName}" by ActionButton component.`), null;
+  }
+
   const button = (
     <IconButton
       size={size}
@@ -34,7 +47,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, tooltip, onClick, cla
         },
       }}
     >
-      {icon}
+      {iconByType[iconName]}
     </IconButton>
   );
 

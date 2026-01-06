@@ -15,6 +15,7 @@ import { fetchCommands, setFilters } from '@store/commandsSlice';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
+import ActionsToolbar, { IActionButton } from '@ui/ActionsToolbar';
 import SelectProject from '@components/SelectProject';
 import SelectTags from '@components/SelectTags';
 
@@ -64,9 +65,9 @@ const CommandList: React.FC = () => {
 
   return (
     <ViewContainer title="commands">
+      <ActionsToolbar actions={[{ iconName: 'add', tooltip: 'Add Command', onClick: () => navigate('/commands/new') }]} />
       <div className="command-list__filters">
         <SelectProject value={selectedProject} onChange={setSelectedProject} />
-
         <SelectTags value={selectedTags} onChange={setSelectedTags} />
       </div>
 

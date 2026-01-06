@@ -11,6 +11,7 @@ import { Container } from '@mui/material';
 // UI
 import ViewTitle from '@ui/ViewTitle';
 import ViewBackButton from '@ui/ViewBackButton';
+import ActionsToolbar, { IActionButton } from '@ui/ActionsToolbar';
 
 import './ViewContainer.scss';
 
@@ -19,7 +20,7 @@ interface ViewContainerProps {
   children: ReactNode;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
   showBackButton?: boolean;
-  actions?: ReactNode;
+  actions?: IActionButton[];
 }
 
 const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth = 'lg', showBackButton = true, actions }) => {
@@ -28,7 +29,7 @@ const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth
       <div className="view-container__header">
         {showBackButton && <ViewBackButton />}
         {title && <ViewTitle title={title} />}
-        {actions && <div className="view-container__actions">{actions}</div>}
+        {actions && <div className="view-container__actions"><ActionsToolbar actions={actions} /></div>}
       </div>
 
       {/* Contenido */}
