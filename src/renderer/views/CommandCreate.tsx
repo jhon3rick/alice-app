@@ -28,6 +28,7 @@ import type { Step, Command } from '@tstypes/dbmodules';
 import ViewContainer from '@ui/ViewContainer';
 import SelectProjects from '@components/SelectProjects';
 import SelectTags from '@components/SelectTags';
+import StepsJsonEditor from '@components/StepsJsonEditor';
 
 import './CommandCreate.scss';
 
@@ -47,7 +48,8 @@ const CommandCreate: React.FC = () => {
   const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [stepsJson, setStepsJson] = useState('');
-  const [jsonError, setJsonError] = useState<string | null>(null);
+  const [validatedSteps, setValidatedSteps] = useState<Step[] | undefined>(undefined);
+  const [isStepsValid, setIsStepsValid] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -73,127 +75,9 @@ const CommandCreate: React.FC = () => {
     }
   }, [isEditMode, currentCommand]);
 
-  // Validate JSON syntax
-  const validateJson = (jsonString: string): boolean => {
-    if (!jsonString.trim()) {
-      setJsonError(null);
-      return false;
-    }
-
-    try {
-      JSON.parse(jsonString);
-      setJsonError(null);
-      return true;
-    } catch (error) {
-      if (error instanceof Error) {
-        setJsonError(`Invalid JSON: ${error.message}`);
-      }
-      return false;
-    }
-  };
-
-  // Validate Step[] interface
-  const validateStepsInterface = (steps: any): steps is Step[] => {
-    if (!Array.isArray(steps)) {
-      setValidationError('Steps must be an array');
-      return false;
-    }
-
-    if (steps.length === 0) {
-      setValidationError('Steps array cannot be empty');
-      return false;
-    }
-
-    for (let i = 0; i < steps.length; i++) {
-      const step = steps[i];
-
-      if (typeof step !== 'object' || step === null) {
-        setValidationError(`Step ${i + 1}: Must be an object`);
-        return false;
-      }
-
-      if (typeof step.name !== 'string' || !step.name.trim()) {
-        setValidationError(`Step ${i + 1}: Missing or invalid 'name' (must be non-empty string)`);
-        return false;
-      }
-
-      if (typeof step.detail !== 'string') {
-        setValidationError(`Step ${i + 1}: Missing or invalid 'detail' (must be string)`);
-        return false;
-      }
-
-      if (typeof step.command !== 'string' || !step.command.trim()) {
-        setValidationError(`Step ${i + 1}: Missing or invalid 'command' (must be non-empty string)`);
-        return false;
-      }
-
-      if (!Array.isArray(step.variables)) {
-        setValidationError(`Step ${i + 1}: Missing or invalid 'variables' (must be array)`);
-        return false;
-      }
-
-      // Validate each variable
-      for (let j = 0; j < step.variables.length; j++) {
-        const variable = step.variables[j];
-
-        if (typeof variable !== 'object' || variable === null) {
-          setValidationError(`Step ${i + 1}, Variable ${j + 1}: Must be an object`);
-          return false;
-        }
-
-        if (typeof variable.name !== 'string' || !variable.name.trim()) {
-          setValidationError(`Step ${i + 1}, Variable ${j + 1}: Missing or invalid 'name' (must be non-empty string)`);
-          return false;
-        }
-
-        const validTypes = ['string', 'option', 'number', 'boolean'];
-        if (!validTypes.includes(variable.type)) {
-          setValidationError(
-            `Step ${i + 1}, Variable ${j + 1}: Invalid 'type' (must be one of: ${validTypes.join(', ')})`
-          );
-          return false;
-        }
-
-        if (typeof variable.detail !== 'string') {
-          setValidationError(`Step ${i + 1}, Variable ${j + 1}: Missing or invalid 'detail' (must be string)`);
-          return false;
-        }
-
-        // Optional format validation
-        if (variable.format !== undefined) {
-          const validFormats = ['snake_case', 'camelCase', 'upperCamelCase', 'kebab-case', 'UPPER_CASE'];
-          if (!validFormats.includes(variable.format)) {
-            setValidationError(
-              `Step ${i + 1}, Variable ${j + 1}: Invalid 'format' (must be one of: ${validFormats.join(', ')})`
-            );
-            return false;
-          }
-        }
-
-        // Options validation for 'option' type
-        if (variable.type === 'option') {
-          if (!Array.isArray(variable.options) || variable.options.length === 0) {
-            setValidationError(
-              `Step ${i + 1}, Variable ${j + 1}: 'options' is required and must be non-empty array for type 'option'`
-            );
-            return false;
-          }
-
-          if (!variable.options.every((opt: any) => typeof opt === 'string')) {
-            setValidationError(`Step ${i + 1}, Variable ${j + 1}: All 'options' must be strings`);
-            return false;
-          }
-        }
-      }
-    }
-
-    setValidationError(null);
-    return true;
-  };
-
-  const handleStepsJsonChange = (value: string) => {
-    setStepsJson(value);
-    validateJson(value);
+  const handleStepsValidation = (isValid: boolean, steps?: Step[]) => {
+    setIsStepsValid(isValid);
+    setValidatedSteps(steps);
   };
 
   const handleSave = async () => {
@@ -208,26 +92,8 @@ const CommandCreate: React.FC = () => {
       return;
     }
 
-    if (!stepsJson.trim()) {
-      setValidationError('Steps configuration is required');
-      return;
-    }
-
-    // Validate JSON
-    if (!validateJson(stepsJson)) {
-      return;
-    }
-
-    // Parse and validate steps
-    let parsedSteps: any;
-    try {
-      parsedSteps = JSON.parse(stepsJson);
-    } catch (error) {
-      setValidationError('Failed to parse JSON');
-      return;
-    }
-
-    if (!validateStepsInterface(parsedSteps)) {
+    if (!isStepsValid || !validatedSteps) {
+      setValidationError('Please fix the errors in the steps configuration');
       return;
     }
 
@@ -240,7 +106,7 @@ const CommandCreate: React.FC = () => {
       codeindex: codeindex.trim() || undefined,
       projects: selectedProjects,
       tags: selectedTags,
-      steps: parsedSteps,
+      steps: validatedSteps,
     };
 
     try {
@@ -315,48 +181,25 @@ const CommandCreate: React.FC = () => {
             <SelectTags value={selectedTags} onChange={setSelectedTags} />
           </Box>
 
-          <Box className="command-create__json-section">
-            <TextField
-              label="Steps Configuration (JSON)"
-              fullWidth
-              required
-              multiline
-              rows={16}
+          <Box sx={{ mb: 2 }}>
+            <StepsJsonEditor
               value={stepsJson}
-              onChange={(e) => handleStepsJsonChange(e.target.value)}
-              placeholder={`[\n  {\n    "name": "Step 1",\n    "detail": "Description",\n    "command": "npm test {{testName}}",\n    "variables": [\n      {\n        "name": "testName",\n        "type": "string",\n        "detail": "Name of the test",\n        "format": "kebab-case"\n      }\n    ]\n  }\n]`}
-              helperText="Enter steps as JSON array. Each step must include: name, detail, command, and variables array"
-              error={!!jsonError}
-              sx={{ mb: 1, fontFamily: 'monospace' }}
-              InputProps={{
-                style: { fontFamily: 'monospace', fontSize: '14px' },
-              }}
+              onChange={setStepsJson}
+              onValidationChange={handleStepsValidation}
             />
-
-            {jsonError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {jsonError}
-              </Alert>
-            )}
-
-            {validationError && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {validationError}
-              </Alert>
-            )}
-
-            {!jsonError && !validationError && stepsJson.trim() && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                JSON is valid and matches Step[] interface
-              </Alert>
-            )}
           </Box>
+
+          {validationError && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {validationError}
+            </Alert>
+          )}
 
           <Box className="command-create__actions">
             <Button variant="outlined" startIcon={<Cancel />} onClick={handleCancel}>
               Cancel
             </Button>
-            <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={!!jsonError || !name.trim() || !resumen.trim() || !stepsJson.trim()}>
+            <Button variant="contained" startIcon={<Save />} onClick={handleSave} disabled={!name.trim() || !resumen.trim() || !isStepsValid}>
               {isEditMode ? 'Update Command' : 'Save Command'}
             </Button>
           </Box>

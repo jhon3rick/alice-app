@@ -15,7 +15,7 @@ import { fetchCommands, setFilters } from '@store/commandsSlice';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
-import ActionsToolbar, { IActionButton } from '@ui/ActionsToolbar';
+import ActionsToolbar from '@ui/ActionsToolbar';
 import SelectProject from '@components/SelectProject';
 import SelectTags from '@components/SelectTags';
 
