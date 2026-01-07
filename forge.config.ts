@@ -14,8 +14,11 @@ import { rendererConfig } from './webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    asarUnpack: '**/node_modules/node-pty/**',
   },
-  rebuildConfig: {},
+  rebuildConfig: {
+    onlyModules: ['node-pty'],
+  },
   makers: [
     new MakerSquirrel({}),
     new MakerZIP({}, ['darwin']),

@@ -30,4 +30,7 @@ export const mainConfig: Configuration = {
       '@ui': path.resolve(__dirname, 'src/renderer/ui'),
     },
   },
+  externals: {
+    'node-pty': 'commonjs2 node-pty',
+  },
 };

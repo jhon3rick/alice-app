@@ -4,3 +4,4 @@ export { setupCommandsHandlers } from './apiCommands';
 export { setupConfigHandlers } from './apiConfig';
 export { setupImportExportHandlers } from './apiImportExport';
 export { setupElectronHandlers } from './electron';
+export { setupTerminalHandlers, cleanupTerminals } from './apiTerminal';

@@ -6,6 +6,7 @@ import {
   setupConfigHandlers,
   setupImportExportHandlers,
   setupElectronHandlers,
+  setupTerminalHandlers,
 } from './handlerModules';
 
 /**
@@ -29,4 +30,5 @@ export async function setupIpcHandlers(): Promise<void> {
 
   // Setup Electron native API handlers (don't require database)
   setupElectronHandlers();
+  setupTerminalHandlers();
 }
