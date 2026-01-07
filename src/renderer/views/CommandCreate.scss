@@ -1,9 +1,6 @@
 @use '../styles/variables' as *;
 
 .command-create {
-  max-width: 900px;
-  margin: 0 auto;
-
   &__form {
     display: flex;
     flex-direction: column;

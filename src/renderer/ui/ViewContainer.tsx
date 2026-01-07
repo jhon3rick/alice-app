@@ -21,11 +21,12 @@ interface ViewContainerProps {
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | false;
   showBackButton?: boolean;
   actions?: IActionButton[];
+  className?: string;
 }
 
-const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth = 'lg', showBackButton = true, actions }) => {
+const ViewContainer: React.FC<ViewContainerProps> = ({ title, children, maxWidth = 'lg', showBackButton = true, actions, className, ...props }) => {
   return (
-    <div className="view-container">
+    <div className={`view-container ${className || ''}`} {...props}>
       <div className="view-container__header">
         {showBackButton && <ViewBackButton />}
         {title && <ViewTitle title={title} />}
