@@ -1,0 +1,107 @@
+.commands-table {
+  width: 100%;
+
+  .MuiTableRow-root {
+    cursor: pointer;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .MuiTableCell-head {
+    font-weight: 600;
+  }
+
+  .MuiTableCell-body {
+    padding: 4px 16px;
+    border-bottom: 1px solid rgba(224, 224, 224, 1);
+  }
+
+  .MuiTableRow-hover:hover:not(.commands-table__row-expanded) {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+
+  &__row-expanded {
+    .MuiTableCell-body {
+      border-bottom: none;
+    }
+  }
+
+  &__detail-row {
+    &:not(&--expanded) {
+      .MuiTableCell-body {
+        padding: 0;
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__detail-cell {
+    padding: 0 !important;
+  }
+
+  &__loading {
+    display: flex;
+    justify-content: center;
+    padding: 32px;
+  }
+
+  &__header-expand-cell {
+    width: 50px;
+    max-width: 50px;
+  }
+
+  &__header-tags-cell {
+    width: 250px;
+  }
+
+  &__header-actions-cell {
+    width: 120px;
+    font-weight: bold;
+  }
+
+  &__empty-cell {
+    padding-top: 32px;
+    padding-bottom: 32px;
+  }
+
+  &__cell-top-align {
+    max-width: 50px;
+    vertical-align: top;
+  }
+
+  &__command-info {
+    gap: 8px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__command-name {
+    font-weight: bold;
+    white-space: nowrap;
+    text-transform: capitalize;
+  }
+
+  &__command-resumen {
+    flex: 1;
+    color: rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    font-style: italic;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &__tags-container {
+    gap: 4px;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  &__actions-container {
+    gap: 4px;
+    display: flex;
+    justify-content: center;
+  }
+}

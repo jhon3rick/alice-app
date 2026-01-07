@@ -2,22 +2,23 @@
  * CommandList
  *
  * View component for listing and filtering commands.
- * Displays commands in cards with filtering by project and tags.
+ * Displays commands in virtualized table with expandable rows.
  */
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Chip, Card, Typography, CardContent, CardActionArea } from '@mui/material';
+import { Box } from '@mui/material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { fetchCommands, setFilters } from '@store/commandsSlice';
+import { fetchCommands, setFilters, deleteCommand } from '@store/commandsSlice';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
 import ActionsToolbar from '@ui/ActionsToolbar';
 import SelectProject from '@components/SelectProject';
 import SelectTags from '@components/SelectTags';
+import CommandsTable from '@components/CommandsTable';
 
 import './CommandList.scss';
 
@@ -58,50 +59,40 @@ const CommandList: React.FC = () => {
     );
   }, [selectedProject, tagIds, dispatch]);
 
-  // Memoize navigation handler to prevent recreating on every render
-  const handleCommandClick = useCallback((commandId: number | undefined) => {
-    navigate(`/commands/${commandId}`);
-  }, [navigate]);
+  const handleEdit = useCallback(
+    (command: Command) => {
+      navigate(`/commands/${command.id}/edit`);
+    },
+    [navigate]
+  );
+
+  const handleDelete = useCallback(
+    async (id: number) => {
+      if (window.confirm('Are you sure you want to delete this command?')) {
+        await dispatch(deleteCommand(id));
+      }
+    },
+    [dispatch]
+  );
+
+  const handleViewDetail = useCallback(
+    (id: number) => {
+      navigate(`/commands/${id}`);
+    },
+    [navigate]
+  );
 
   return (
     <ViewContainer title="commands">
       <ActionsToolbar actions={[{ iconName: 'add', tooltip: 'Add Command', onClick: () => navigate('/commands/new') }]} />
-      <div className="command-list__filters">
+      <Box className="command-list__filters">
         <SelectProject value={selectedProject} onChange={setSelectedProject} />
         <SelectTags value={selectedTags} onChange={setSelectedTags} />
-      </div>
+      </Box>
 
-      {loading ? (
-        <Typography>Loading...</Typography>
-      ) : commands.length === 0 ? (
-        <Typography color="text.secondary" align="center">
-          No commands found. Create one to get started.
-        </Typography>
-      ) : (
-        <div className="command-list__commands">
-          {commands.map((command) => (
-            <Card key={command.id} className="command-list__command-card">
-              <CardActionArea onClick={() => handleCommandClick(command.id)}>
-                <CardContent>
-                  <div className="command-header">
-                    <Typography variant="h6" component="h3">
-                      {command.name}
-                    </Typography>
-                    <div className="command-tags">
-                      {command.tags.map((tag) => (
-                        <Chip key={tag} label={tag} size="small" color="primary" variant="outlined" />
-                      ))}
-                    </div>
-                  </div>
-                  <Typography variant="body2" color="text.secondary">
-                    {command.resumen}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-        </div>
-      )}
+      <Box sx={{ mt: 2 }}>
+        <CommandsTable commands={commands} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onViewDetail={handleViewDetail} />
+      </Box>
     </ViewContainer>
   );
 };
