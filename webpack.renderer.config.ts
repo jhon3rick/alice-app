@@ -41,6 +41,7 @@ export const rendererConfig: Configuration = {
       '@store': path.resolve(__dirname, 'src/renderer/store'),
       '@tstypes': path.resolve(__dirname, 'src/renderer/tstypes'),
       '@utils': path.resolve(__dirname, 'src/renderer/utils'),
+      '@const': path.resolve(__dirname, 'src/renderer/const'),
       '@ui': path.resolve(__dirname, 'src/renderer/ui'),
     },
   },

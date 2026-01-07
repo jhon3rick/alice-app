@@ -22,6 +22,7 @@
       "@store/*": ["src/renderer/store/*"],
       "@tstypes/*": ["src/renderer/tstypes/*"],
       "@utils/*": ["src/renderer/utils/*"],
+      "@const/*": ["src/renderer/const/*"],
       "@ui/*": ["src/renderer/ui/*"],
       "*": ["node_modules/*"]
     }

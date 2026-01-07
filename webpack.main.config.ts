@@ -26,6 +26,7 @@ export const mainConfig: Configuration = {
       '@store': path.resolve(__dirname, 'src/renderer/store'),
       '@types': path.resolve(__dirname, 'src/renderer/types'),
       '@utils': path.resolve(__dirname, 'src/renderer/utils'),
+      '@const': path.resolve(__dirname, 'src/renderer/const'),
       '@ui': path.resolve(__dirname, 'src/renderer/ui'),
     },
   },
