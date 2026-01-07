@@ -1,5 +1,5 @@
 /**
- * CommandDetail
+ * CommandView
  *
  * View component for displaying and editing command details.
  * Allows editing command properties and executing the command.
@@ -38,7 +38,7 @@ import { applyFormat } from '@utils/formatValidation';
 // Custom components
 import Terminal from '@components/Terminal';
 
-const CommandDetail: React.FC = () => {
+const CommandView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -292,4 +292,4 @@ const CommandDetail: React.FC = () => {
   );
 };
 
-export default CommandDetail;
+export default CommandView;

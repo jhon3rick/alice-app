@@ -10,7 +10,7 @@ import About from '@views/About';
 import Home from '@views/Home';
 import CommandList from '@views/CommandList';
 import CommandCreate from '@views/CommandCreate';
-import CommandDetail from '@views/CommandDetail';
+import CommandView from '@views/CommandView';
 import ProjectList from '@views/ProjectList';
 import TagList from '@views/TagList';
 import ConfigView from '@views/ConfigView';
@@ -53,7 +53,7 @@ const App: React.FC = () => {
             <Route path="/commands" element={<CommandList />} />
             <Route path="/commands/new" element={<CommandCreate />} />
             <Route path="/commands/:id/edit" element={<CommandCreate />} />
-            <Route path="/commands/:id" element={<CommandDetail />} />
+            <Route path="/commands/:id" element={<CommandView />} />
             <Route path="/projects" element={<ProjectList />} />
             <Route path="/tags" element={<TagList />} />
             <Route path="/config" element={<ConfigView />} />
