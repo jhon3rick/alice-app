@@ -2,15 +2,18 @@
  * StepsJsonEditor
  *
  * JSON editor component for command steps configuration.
- * Features Monaco Editor with syntax highlighting, validation, and error messages.
+ * Features code editor with syntax highlighting, validation, and error messages.
  * Displays success/error alerts based on validation state.
  */
 
 import React, { useState, useEffect } from 'react';
 import { Box, Alert, Button } from '@mui/material';
-import Editor from '@monaco-editor/react';
+import CodeMirror from '@uiw/react-codemirror';
+import { json } from '@codemirror/lang-json';
 import { validateStepsJson, STEPS_EXAMPLE } from '@utils/stepValidation';
 import type { Step } from '@tstypes/dbmodules';
+
+import './StepsJsonEditor.scss';
 
 interface StepsJsonEditorProps {
   value: string;
@@ -37,8 +40,8 @@ const StepsJsonEditor: React.FC<StepsJsonEditorProps> = ({ value, onChange, onVa
     onValidationChange?.(validation.isValid, validation.steps);
   }, [value, onValidationChange]);
 
-  const handleEditorChange = (newValue: string | undefined) => {
-    onChange(newValue || '');
+  const handleEditorChange = (value: string) => {
+    onChange(value);
   };
 
   const handleInsertExample = () => {
@@ -46,9 +49,9 @@ const StepsJsonEditor: React.FC<StepsJsonEditorProps> = ({ value, onChange, onVa
   };
 
   return (
-    <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-        <Box component="label" sx={{ fontWeight: 500, fontSize: '0.875rem', color: 'text.secondary' }}>
+    <Box className="steps-json-editor">
+      <Box className="steps-json-editor__header">
+        <Box component="label" className="steps-json-editor__label">
           Steps Configuration (JSON) *
         </Box>
         {!value.trim() && (
@@ -59,50 +62,47 @@ const StepsJsonEditor: React.FC<StepsJsonEditorProps> = ({ value, onChange, onVa
       </Box>
 
       <Box
-        sx={{
-          border: validationError ? '1px solid #d32f2f' : '1px solid rgba(0, 0, 0, 0.23)',
-          borderRadius: 1,
-          overflow: 'hidden',
-          '&:hover': {
-            borderColor: validationError ? '#d32f2f' : 'rgba(0, 0, 0, 0.87)',
-          },
-        }}
+        className={`steps-json-editor__editor-container ${
+          validationError ? 'steps-json-editor__editor-container--error' : ''
+        }`}
       >
-        <Editor
-          height="400px"
-          defaultLanguage="json"
+        <CodeMirror
           value={value}
+          height="400px"
+          extensions={[json()]}
           onChange={handleEditorChange}
-          theme="vs-dark"
-          options={{
-            minimap: { enabled: false },
-            fontSize: 14,
-            lineNumbers: 'on',
-            scrollBeyondLastLine: false,
-            automaticLayout: true,
-            tabSize: 2,
-            formatOnPaste: true,
-            formatOnType: true,
-            wordWrap: 'on',
+          placeholder="Enter JSON configuration for steps..."
+          basicSetup={{
+            lineNumbers: true,
+            highlightActiveLineGutter: true,
+            highlightActiveLine: true,
+            foldGutter: true,
+            dropCursor: true,
+            indentOnInput: true,
+            bracketMatching: true,
+            closeBrackets: true,
+            autocompletion: true,
+            highlightSelectionMatches: true,
           }}
+          className="steps-json-editor__code-editor"
         />
       </Box>
 
-      <Box sx={{ mt: 1, minHeight: '24px' }}>
+      <Box className="steps-json-editor__messages">
         {validationError && (
-          <Alert severity="error" sx={{ mt: 1 }}>
+          <Alert severity="error" className="steps-json-editor__alert">
             {validationError}
           </Alert>
         )}
 
         {!validationError && isValid && value.trim() && (
-          <Alert severity="success" sx={{ mt: 1 }}>
+          <Alert severity="success" className="steps-json-editor__alert">
             JSON is valid and matches Step[] interface
           </Alert>
         )}
 
         {!value.trim() && (
-          <Box component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary', ml: 1.5 }}>
+          <Box component="span" className="steps-json-editor__helper-text">
             Enter steps as JSON array. Each step must include: name, detail, command, and variables array
           </Box>
         )}

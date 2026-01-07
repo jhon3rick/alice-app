@@ -1,0 +1,91 @@
+.steps-json-editor {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  &__label {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  &__editor-container {
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    border-radius: 4px;
+    overflow: hidden;
+
+    &:hover {
+      border-color: rgba(0, 0, 0, 0.87);
+    }
+
+    &--error {
+      border-color: #d32f2f;
+
+      &:hover {
+        border-color: #d32f2f;
+      }
+    }
+  }
+
+  &__code-editor {
+    font-size: 14px;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Consolas, Liberation Mono, Menlo, monospace;
+
+    // CodeMirror wrapper styles
+    .cm-editor {
+      background-color: #1e1e1e;
+      min-height: 400px;
+    }
+
+    // Line numbers
+    .cm-gutters {
+      background-color: #252526;
+      border-right: 1px solid #3e3e42;
+      color: #858585;
+    }
+
+    // Active line gutter highlight
+    .cm-activeLineGutter {
+      background-color: #2a2a2a;
+    }
+
+    // Active line highlight
+    .cm-activeLine {
+      background-color: #2a2a2a;
+    }
+
+    // Content area
+    .cm-content {
+      color: #d4d4d4;
+      caret-color: #ffffff;
+    }
+
+    // Selection
+    .cm-selectionBackground {
+      background-color: #264f78 !important;
+    }
+
+    // Cursor
+    .cm-cursor {
+      border-left-color: #ffffff;
+    }
+  }
+
+  &__messages {
+    margin-top: 8px;
+    min-height: 24px;
+  }
+
+  &__helper-text {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.6);
+    margin-left: 12px;
+  }
+
+  &__alert {
+    margin-top: 8px;
+  }
+}
