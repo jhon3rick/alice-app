@@ -8,7 +8,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Container, Typography } from '@mui/material';
-import { homeModules } from '@utils/homeModules';
+import { homeModules } from '@const/homeModules';
 
 // Custom Components
 import HomeCard from '@ui/HomeCard';
