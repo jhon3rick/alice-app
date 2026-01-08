@@ -1,0 +1,184 @@
+// Block: xterm-terminal
+.xterm-terminal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  // Element: loading
+  &__loading {
+    top: 0;
+    gap: 16px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    opacity: 1;
+    display: flex;
+    position: absolute;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1e1e1e;
+    border-radius: 4px;
+    transition: opacity 0.3s ease-in-out;
+
+    // Modifier: hidden
+    &--hidden {
+      opacity: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+  }
+
+  // Element: loading-spinner
+  &__loading-spinner {
+    color: #4ec9b0;
+  }
+
+  // Element: loading-text
+  &__loading-text {
+    color: #cccccc;
+    font-size: 14px;
+  }
+
+  // Element: container
+  &__container {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 5;
+    overflow: hidden;
+    position: absolute;
+    border-radius: 4px;
+    flex-direction: column;
+    background-color: #1e1e1e;
+  }
+
+  // Element: header
+  &__header {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: space-between;
+    border-bottom: 1px solid #3e3e42;
+    background-color: #2d2d30;
+  }
+
+  // Element: title
+  &__title {
+    color: #dddddd;
+    font-size: 1rem;
+    font-weight: bold;
+    user-select: none;
+  }
+
+  // Element: actions
+  &__actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  // Element: action-button
+  &__action-button {
+    color: #dddddd!important;
+    padding: 4px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    // Modifier: hover state (using pseudo-class)
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1)!important;
+    }
+
+    &:active {
+      background-color: rgba(255, 255, 255, 0.15)!important;
+    }
+  }
+
+  // Element: content
+  &__content {
+    flex: 1;
+    width: 100%;
+    padding: 8px;
+    overflow: hidden;
+    min-height: 0;
+  }
+}
+
+// Ensure xterm.js styles are properly applied
+.xterm {
+  position: relative;
+  user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  font-feature-settings: "liga" 0;
+}
+
+.xterm.focus,
+.xterm:focus {
+  outline: none;
+}
+
+.xterm .xterm-helpers {
+  position: absolute;
+  top: 0;
+  z-index: 5;
+}
+
+.xterm .xterm-helper-textarea {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  position: absolute;
+  opacity: 0;
+  left: -9999em;
+  top: 0;
+  width: 0;
+  height: 0;
+  z-index: -5;
+  white-space: nowrap;
+  overflow: hidden;
+  resize: none;
+}
+
+.xterm-char-measure-element {
+  display: inline-block;
+  visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: -9999em;
+  line-height: normal;
+}
+
+.xterm-viewport {
+  background-color: #1e1e1e;
+  overflow-y: scroll;
+  cursor: default;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.xterm-viewport::-webkit-scrollbar {
+  width: 10px;
+}
+
+.xterm-viewport::-webkit-scrollbar-track {
+  background: #1e1e1e;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
+  background: #424242;
+  border-radius: 5px;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

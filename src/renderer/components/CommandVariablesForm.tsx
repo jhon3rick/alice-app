@@ -7,6 +7,9 @@
 
 import React from 'react';
 import { Box, Typography, TextField, Select, MenuItem, FormControl, Chip } from '@mui/material';
+import VariableHelpButton from './VariableHelpButton';
+
+import './CommandVariablesForm.scss';
 
 interface Variable {
   name: string;
@@ -27,37 +30,36 @@ const CommandVariablesForm: React.FC<CommandVariablesFormProps> = ({
   variableValues,
   onVariableChange,
 }) => {
-  const getVariableStatus = (variableName: string): 'filled' | 'empty' => {
-    return variableValues[variableName]?.trim() ? 'filled' : 'empty';
-  };
-
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Typography variant="h6" gutterBottom>
+    <Box className="command-variables-form">
+      <Typography variant="h6" gutterBottom className="command-variables-form__title">
         Variables
       </Typography>
 
-      <Box sx={{ flex: 1, overflow: 'auto' }}>
+      <Box className="command-variables-form__content">
         {variables.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" className="command-variables-form__empty-message">
             No variables required for this command.
           </Typography>
         ) : (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box className="command-variables-form__variables-container">
             {variables.map((variable) => (
-              <Box key={variable.name}>
-                <Typography variant="subtitle2" gutterBottom>
-                  {variable.name}
-                  {variable.format && (
-                    <Chip label={variable.format} size="small" sx={{ ml: 1, height: 20, fontSize: '0.7rem' }} />
-                  )}
-                </Typography>
-                <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 1 }}>
-                  {variable.detail}
-                </Typography>
+              <Box key={variable.name} className="command-variables-form__variable">
+                <Box className="command-variables-form__variable-header">
+                  <VariableHelpButton
+                    variableName={variable.name}
+                    variableDetail={variable.detail}
+                  />
+                  <Typography variant="subtitle2" className="command-variables-form__variable-title">
+                    {variable.name}
+                    {variable.format && (
+                      <Chip label={variable.format} size="small" className="command-variables-form__variable-chip" />
+                    )}
+                  </Typography>
+                </Box>
 
                 {variable.type === 'option' && variable.options ? (
-                  <FormControl fullWidth size="small">
+                  <FormControl fullWidth size="small" className="command-variables-form__select">
                     <Select
                       value={variableValues[variable.name] || ''}
                       onChange={(e) => onVariableChange(variable.name, e.target.value)}
@@ -80,6 +82,7 @@ const CommandVariablesForm: React.FC<CommandVariablesFormProps> = ({
                     value={variableValues[variable.name] || ''}
                     onChange={(e) => onVariableChange(variable.name, e.target.value)}
                     placeholder={`Enter ${variable.name}`}
+                    className="command-variables-form__input"
                   />
                 )}
               </Box>
@@ -87,7 +90,6 @@ const CommandVariablesForm: React.FC<CommandVariablesFormProps> = ({
           </Box>
         )}
       </Box>
-
     </Box>
   );
 };

@@ -1,0 +1,43 @@
+.command-variables-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__content {
+    flex: 1;
+    overflow: auto;
+  }
+
+  &__variables-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__variable-header {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  &__help-button {
+    padding: 4px;
+    color: #757575;
+
+    &:hover {
+      color: #1976d2;
+    }
+  }
+
+  &__variable-title {
+    display: flex;
+    align-items: center;
+  }
+
+  &__variable-chip {
+    margin-left: 8px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+}

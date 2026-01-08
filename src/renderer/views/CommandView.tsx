@@ -5,20 +5,15 @@
  * Allows editing command properties and executing the command.
  */
 
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
   TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   Button,
   Paper,
   Chip,
-  CircularProgress,
 } from '@mui/material';
 import { PlayArrow } from '@mui/icons-material';
 
@@ -30,12 +25,14 @@ import { fetchProjects } from '@store/projectsSlice';
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
 import CommandVariablesForm from '@components/CommandVariablesForm';
+import XtermTerminal from '@components/XtermTerminal';
+import SelectProjectPath from '@components/SelectProjectPath';
 
 // Utils
 import { applyFormat } from '@utils/formatValidation';
 
-// Lazy load terminal component
-const XtermTerminal = lazy(() => import('@components/XtermTerminal'));
+// Styles
+import './CommandView.scss';
 
 const CommandView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -113,7 +110,7 @@ const CommandView: React.FC = () => {
 
   if (!currentCommand) {
     return (
-      <Box sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Box className="command-view__loading">
         <Typography>Loading...</Typography>
       </Box>
     );
@@ -126,16 +123,16 @@ const CommandView: React.FC = () => {
   return (
     <ViewContainer title={currentCommand.name}>
       {/* Main content area */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+      <Box className="command-view__container">
         {/* Top section: Command editor and sidebar - scrollable content */}
-        <Box sx={{ display: 'flex', borderBottom: '1px solid', borderColor: 'divider', flex: 1, overflow: 'auto' }}>
+        <Box className="command-view__content" sx={{ borderColor: 'divider' }}>
           {/* Left: Command editor */}
-          <Box sx={{ flex: 1, p: 3, overflow: 'auto' }}>
-            <Typography variant="h6" gutterBottom>
+          <Box className="command-view__editor">
+            <Typography variant="h6" className="command-view__title" gutterBottom>
               Command Preview
             </Typography>
 
-            <Paper sx={{ p: 2, mb: 3, bgcolor: '#f5f5f5', fontFamily: 'monospace' }}>
+            <Paper className="command-view__preview">
               <TextField
                 fullWidth
                 multiline
@@ -144,16 +141,16 @@ const CommandView: React.FC = () => {
                 variant="standard"
                 InputProps={{
                   disableUnderline: true,
-                  style: { fontFamily: 'monospace', fontSize: '14px' },
+                  className: 'command-view__preview-field',
                 }}
               />
             </Paper>
 
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Box className="command-view__variables-section">
+              <Typography variant="body2" color="text.secondary" className="command-view__variables-label" gutterBottom>
                 Variables in command:
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+              <Box className="command-view__variables-chips">
                 {variables.map((variable) => (
                   <Chip
                     key={variable.name}
@@ -169,7 +166,7 @@ const CommandView: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
-                fullWidth
+                className="command-view__execute-button"
                 startIcon={<PlayArrow />}
                 onClick={handleExecute}
                 disabled={hasVariables && !allVariablesFilled()}
@@ -179,34 +176,23 @@ const CommandView: React.FC = () => {
             </Box>
 
             {currentCommand.projects && currentCommand.projects.length > 0 && (
-              <FormControl fullWidth sx={{ mb: 3 }}>
-                <InputLabel>Execution Path</InputLabel>
-                <Select value={selectedProjectPath} label="Execution Path" onChange={(e) => setSelectedProjectPath(e.target.value)}>
-                  <MenuItem value="">Default (current directory)</MenuItem>
-                  {currentCommand.projects.map((projectName: string) => {
-                    const project = projects.find((p) => p.name === projectName);
-                    return project ? (
-                      <MenuItem key={project.name} value={project.path || ''}>
-                        {project.name} {project.path ? `(${project.path})` : ''}
-                      </MenuItem>
-                    ) : null;
-                  })}
-                </Select>
-              </FormControl>
+              <SelectProjectPath
+                value={selectedProjectPath}
+                onChange={setSelectedProjectPath}
+                commandProjects={currentCommand.projects}
+                allProjects={projects}
+                className="command-view__project-select"
+              />
             )}
           </Box>
 
           {/* Right sidebar: Variables form */}
           {hasVariables && (
             <Paper
+              className="command-view__sidebar"
               sx={{
-                width: 350,
-                p: 3,
-                borderLeft: '1px solid',
+                height: 'fit-content',
                 borderColor: 'divider',
-                borderRadius: 0,
-                display: 'flex',
-                flexDirection: 'column',
               }}
             >
               <CommandVariablesForm
@@ -218,30 +204,13 @@ const CommandView: React.FC = () => {
           )}
         </Box>
 
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 300, backgroundColor: '#2d2d30', borderTop: '1px solid #e0e0e0' }}>
+
+        </div>
+
         {/* Bottom section: Terminal (fixed height 250px) */}
-        <Box sx={{ height: '250px', flexShrink: 0, mt: 2 }}>
-          <Suspense
-            fallback={
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  bgcolor: '#1e1e1e',
-                  gap: 2,
-                }}
-              >
-                <CircularProgress size={40} sx={{ color: '#4ec9b0' }} />
-                <Typography variant="body2" sx={{ color: '#cccccc' }}>
-                  Loading terminal...
-                </Typography>
-              </Box>
-            }
-          >
-            <XtermTerminal workingDir={selectedProjectPath || undefined} commandToExecute={commandToExecute?.command} />
-          </Suspense>
+        <Box className="command-view__terminal">
+          <XtermTerminal workingDir={selectedProjectPath || undefined} commandToExecute={commandToExecute?.command} />
         </Box>
       </Box>
     </ViewContainer>

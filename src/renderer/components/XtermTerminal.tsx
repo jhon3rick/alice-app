@@ -6,13 +6,17 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, IconButton, Typography, CircularProgress } from '@mui/material';
+import { IconButton, Typography, CircularProgress } from '@mui/material';
 import { Close, Refresh } from '@mui/icons-material';
 import { Terminal } from 'xterm';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
+
 import { terminalThemeDark } from '@const/terminalTheme';
+import { debounce } from '@utils/debounce';
+
 import 'xterm/css/xterm.css';
+import './XtermTerminal.scss';
 
 interface XtermTerminalProps {
   workingDir?: string;
@@ -31,9 +35,10 @@ const XtermTerminal: React.FC<XtermTerminalProps> = ({ workingDir, onClose, comm
   useEffect(() => {
     if (!terminalRef.current) return;
 
-    // Wait for the next animation frame to ensure DOM is fully painted
-    requestAnimationFrame(() => {
-      if (!terminalRef.current) return;
+    let mounted = true;
+
+    const initTerminal = () => {
+      if (!terminalRef.current || !mounted) return;
 
       // Create terminal instance
       const term = new Terminal({
@@ -54,56 +59,81 @@ const XtermTerminal: React.FC<XtermTerminalProps> = ({ workingDir, onClose, comm
       // Open terminal in DOM
       term.open(terminalRef.current);
 
-      // Store refs before fitting
+      // Store refs
       xtermRef.current = term;
       fitAddonRef.current = fitAddon;
 
-      // Fit terminal after ensuring it's fully rendered
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          try {
-            if (terminalRef.current && terminalRef.current.offsetWidth > 0) {
-              fitAddon.fit();
-              setIsReady(true);
-            }
-          } catch (error) {
-            console.error('Error fitting terminal:', error);
-          }
-        }, 150);
-      });
+      // Show terminal immediately
+      setIsReady(true);
 
       // Initialize PTY session
       initializeTerminal(term, workingDir);
 
-      // Handle resize with debounce
-      let resizeTimeout: NodeJS.Timeout;
-      const handleResize = () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          try {
-            if (terminalRef.current && terminalRef.current.offsetWidth > 0) {
-              fitAddon.fit();
-              if (terminalId) {
-                window.electronAPI.resizeTerminal(terminalId, term.cols, term.rows);
-              }
-            }
-          } catch (error) {
-            console.error('Error resizing terminal:', error);
+      // Fit terminal with multiple attempts
+      const attemptFit = (attempts = 0) => {
+        if (!mounted || attempts > 50) {
+          if (attempts > 50) {
+            console.warn('Failed to fit terminal after multiple attempts');
           }
-        }, 100);
+          return;
+        }
+
+        try {
+          if (terminalRef.current) {
+            const width = terminalRef.current.offsetWidth;
+            const height = terminalRef.current.offsetHeight;
+
+            if (width > 0 && height > 0) {
+              fitAddon.fit();
+              console.log(`Terminal fitted successfully: ${width}x${height}`);
+            } else {
+              console.log(`Attempt ${attempts}: Waiting for dimensions (${width}x${height})`);
+              // Retry after a short delay
+              setTimeout(() => attemptFit(attempts + 1), 50);
+            }
+          }
+        } catch (error) {
+          console.error('Error fitting terminal:', error);
+        }
       };
+
+      // Start fitting attempts after a brief delay to let DOM settle
+      setTimeout(() => attemptFit(), 50);
+
+      // Handle resize with debounce
+      const handleResize = debounce(() => {
+        try {
+          if (terminalRef.current && terminalRef.current.offsetWidth > 0) {
+            fitAddon.fit();
+            if (terminalId) {
+              window.electronAPI.resizeTerminal(terminalId, term.cols, term.rows);
+            }
+          }
+        } catch (error) {
+          console.error('Error resizing terminal:', error);
+        }
+      }, 500);
 
       window.addEventListener('resize', handleResize);
 
       // Cleanup
       return () => {
+        mounted = false;
         window.removeEventListener('resize', handleResize);
         if (terminalId) {
           window.electronAPI.closeTerminal(terminalId);
         }
         term.dispose();
       };
-    });
+    };
+
+    // Use setTimeout to ensure component is fully mounted
+    const timeoutId = setTimeout(initTerminal, 0);
+
+    return () => {
+      clearTimeout(timeoutId);
+      mounted = false;
+    };
   }, []);
 
   const initializeTerminal = async (term: Terminal, cwd?: string) => {
@@ -145,71 +175,33 @@ const XtermTerminal: React.FC<XtermTerminalProps> = ({ workingDir, onClose, comm
   }, [commandToExecute, terminalId]);
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        bgcolor: '#1e1e1e',
-        borderRadius: 1,
-        overflow: 'hidden',
-      }}
-    >
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          bgcolor: '#2d2d30',
-          px: 2,
-          py: 1,
-          borderBottom: '1px solid #3e3e42',
-        }}
-      >
-        <Typography variant="body2" sx={{ color: '#cccccc', fontWeight: 500 }}>
-          Terminal
+    <div className="xterm-terminal">
+      {/* Loading overlay - shown until terminal is ready */}
+      <div className={`xterm-terminal__loading ${isReady ? 'xterm-terminal__loading--hidden' : ''}`}>
+        <CircularProgress size={40} className="xterm-terminal__loading-spinner" />
+        <Typography variant="body2" className="xterm-terminal__loading-text">
+          Loading terminal...
         </Typography>
-        <Box>
-          <IconButton size="small" onClick={handleRefresh} sx={{ color: '#cccccc', mr: 1 }}>
-            <Refresh fontSize="small" />
-          </IconButton>
-          {onClose && (
-            <IconButton size="small" onClick={onClose} sx={{ color: '#cccccc' }}>
-              <Close fontSize="small" />
+      </div>
+
+      {/* Terminal container - always rendered */}
+      <div className="xterm-terminal__container">
+        <div className="xterm-terminal__header">
+          <span className="xterm-terminal__title">Terminal</span>
+          <div className="xterm-terminal__actions">
+            <IconButton size="small" onClick={handleRefresh} className="xterm-terminal__action-button">
+              <Refresh fontSize="small" />
             </IconButton>
-          )}
-        </Box>
-      </Box>
-      <Box
-        ref={terminalRef}
-        sx={{
-          flex: 1,
-          overflow: 'hidden',
-          p: 1,
-          position: 'relative',
-        }}
-      >
-        {!isReady && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 2,
-            }}
-          >
-            <CircularProgress size={32} sx={{ color: '#4ec9b0' }} />
-            <Typography variant="body2" sx={{ color: '#cccccc' }}>
-              Initializing terminal...
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    </Box>
+            {onClose && (
+              <IconButton size="small" onClick={onClose} className="xterm-terminal__action-button">
+                <Close fontSize="small" />
+              </IconButton>
+            )}
+          </div>
+        </div>
+        <div ref={terminalRef} className="xterm-terminal__content" />
+      </div>
+    </div>
   );
 };
 
