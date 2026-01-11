@@ -1,0 +1,9 @@
+@use '../styles/variables' as *;
+
+.cmd-template-list {
+  &__filters {
+    margin-bottom: $spacing-lg;
+    display: flex;
+    gap: $spacing-sm;
+  }
+}

@@ -1,5 +1,5 @@
 /**
- * ConfigView
+ * Config
  *
  * View component for application configuration.
  * Allows editing and saving configuration settings.
@@ -15,9 +15,9 @@ import { fetchConfig, updateConfigValue } from '@store/configSlice';
 import SelectFolder from '@components/SelectFolder';
 import ViewContainer from '@ui/ViewContainer';
 
-import './ConfigView.scss';
+import './Config.scss';
 
-const ConfigView: React.FC = () => {
+const Config: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const { config } = useAppSelector((state) => state.config);
@@ -151,4 +151,4 @@ const ConfigView: React.FC = () => {
   );
 };
 
-export default ConfigView;
+export default Config;

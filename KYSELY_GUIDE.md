@@ -24,7 +24,7 @@ El archivo [schema.ts](src/main/database/schema.ts) contiene:
 
 ### 1. Interfaces de Tablas
 ```typescript
-export interface CommandsTable {
+export interface CommandTemplatesTable {
   id: Generated<number>;              // Auto-generado
   codeindex: string | null;
   name: string;
@@ -41,7 +41,7 @@ export interface CommandsTable {
 export interface Database {
   projects: ProjectsTable;
   tags: TagsTable;
-  commands: CommandsTable;
+  command_templates: CommandTemplatesTable;
   command_projects: CommandProjectsTable;
   command_tags: CommandTagsTable;
   config: ConfigTable;
@@ -50,9 +50,9 @@ export interface Database {
 
 ### 3. Helper Types
 ```typescript
-export type Command = Selectable<CommandsTable>;      // Para SELECT
-export type NewCommand = Insertable<CommandsTable>;   // Para INSERT
-export type CommandUpdate = Updateable<CommandsTable>; // Para UPDATE
+export type Command = Selectable<CommandTemplatesTable>;      // Para SELECT
+export type NewCommand = Insertable<CommandTemplatesTable>;   // Para INSERT
+export type CommandUpdate = Updateable<CommandTemplatesTable>; // Para UPDATE
 ```
 
 ## Ejemplos de Uso
@@ -69,7 +69,7 @@ const projects = await db
 
 // Select con WHERE
 const command = await db
-  .selectFrom('commands')
+  .selectFrom('command_templates')
   .selectAll()
   .where('id', '=', commandId)
   .executeTakeFirst();
@@ -84,7 +84,7 @@ const projects = await db
 
 // Select con filtros complejos
 const commands = await db
-  .selectFrom('commands as c')
+  .selectFrom('command_templates as c')
   .selectAll('c')
   .where((eb) =>
     eb.or([
@@ -96,7 +96,7 @@ const commands = await db
 
 // Select con subconsulta
 const commands = await db
-  .selectFrom('commands')
+  .selectFrom('command_templates')
   .selectAll()
   .where('id', 'in', (eb) =>
     eb
@@ -163,7 +163,7 @@ await db
 
 // Update con múltiples condiciones
 await db
-  .updateTable('commands')
+  .updateTable('command_templates')
   .set({
     name: newName,
     detail: newDetail,
@@ -197,7 +197,7 @@ await db
 
 ```typescript
 let query = db
-  .selectFrom('commands as c')
+  .selectFrom('command_templates as c')
   .selectAll('c')
   .distinct();
 
@@ -221,7 +221,7 @@ const commands = await query.execute();
 await db.transaction().execute(async (trx) => {
   // Crear comando
   const result = await trx
-    .insertInto('commands')
+    .insertInto('command_templates')
     .values({ name: 'Cmd', detail: 'Detail', resumen: 'Resume', steps: '[]' })
     .executeTakeFirstOrThrow();
 
@@ -294,7 +294,7 @@ ipcMain.handle('get-projects', () => {
 ### Antes (better-sqlite3 directo)
 ```typescript
 const stmt = db.prepare(`
-  SELECT DISTINCT c.* FROM commands c
+  SELECT DISTINCT c.* FROM command_templates c
   LEFT JOIN command_projects cp ON c.id = cp.command_id
   WHERE cp.project_id = ? OR cp.project_id IS NULL
 `);
@@ -310,7 +310,7 @@ const commands = stmt.all(projectId);
 ### Ahora (Kysely)
 ```typescript
 const commands = await db
-  .selectFrom('commands as c')
+  .selectFrom('command_templates as c')
   .leftJoin('command_projects as cp', 'c.id', 'cp.command_id')
   .selectAll('c')
   .where((eb) =>
@@ -341,7 +341,7 @@ Los siguientes archivos fueron actualizados para usar Kysely:
 
 1. ✅ [src/main/database/schema.ts](src/main/database/schema.ts) - Nuevos tipos
 2. ✅ [src/main/database/Database.ts](src/main/database/Database.ts) - Inicialización de Kysely
-3. ✅ [src/main/services/handlerModules/apiCommands.ts](src/main/services/handlerModules/apiCommands.ts)
+3. ✅ [src/main/services/handlerModules/apiCommandTemplates.ts](src/main/services/handlerModules/apiCommandTemplates.ts)
 4. ✅ [src/main/services/handlerModules/apiProjects.ts](src/main/services/handlerModules/apiProjects.ts)
 5. ✅ [src/main/services/handlerModules/apiTags.ts](src/main/services/handlerModules/apiTags.ts)
 6. ✅ [src/main/services/handlerModules/apiConfig.ts](src/main/services/handlerModules/apiConfig.ts)

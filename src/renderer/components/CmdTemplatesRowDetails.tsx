@@ -1,5 +1,5 @@
 /**
- * CommandRowDetail
+ * CmdTemplatesRowDetails
  *
  * Component for displaying the expanded details of a command,
  * including description and list of command steps.
@@ -7,15 +7,15 @@
 
 import React from 'react';
 import { Typography } from '@mui/material';
-import type { Command } from '@tstypes/dbmodules';
+import type { CommandTemplate } from '@tstypes/dbmodules';
 
-import './CommandRowDetail.scss';
+import './CmdTemplatesRowDetails.scss';
 
-interface CommandRowDetailProps {
-  command: Command;
+interface CmdTemplatesRowDetailsProps {
+  command: CommandTemplate;
 }
 
-const CommandRowDetail: React.FC<CommandRowDetailProps> = ({ command }) => {
+const CmdTemplatesRowDetails: React.FC<CmdTemplatesRowDetailsProps> = ({ command }) => {
   return (
     <div className="command-row-detail">
       {command.detail && (
@@ -30,7 +30,7 @@ const CommandRowDetail: React.FC<CommandRowDetailProps> = ({ command }) => {
       )}
 
       <Typography variant="subtitle2" className="command-row-detail__section-title">
-        Commands:
+        CommandTemplates:
       </Typography>
       {command.steps && command.steps.length > 0 ? (
         <div className="command-row-detail__steps-container">
@@ -52,4 +52,4 @@ const CommandRowDetail: React.FC<CommandRowDetailProps> = ({ command }) => {
   );
 };
 
-export default CommandRowDetail;
+export default CmdTemplatesRowDetails;

@@ -175,31 +175,33 @@ const XtermTerminal: React.FC<XtermTerminalProps> = ({ workingDir, onClose, comm
   }, [commandToExecute, terminalId]);
 
   return (
-    <div className="xterm-terminal">
-      {/* Loading overlay - shown until terminal is ready */}
-      <div className={`xterm-terminal__loading ${isReady ? 'xterm-terminal__loading--hidden' : ''}`}>
-        <CircularProgress size={40} className="xterm-terminal__loading-spinner" />
-        <Typography variant="body2" className="xterm-terminal__loading-text">
-          Loading terminal...
-        </Typography>
-      </div>
-
-      {/* Terminal container - always rendered */}
-      <div className="xterm-terminal__container">
-        <div className="xterm-terminal__header">
-          <span className="xterm-terminal__title">Terminal</span>
-          <div className="xterm-terminal__actions">
-            <IconButton size="small" onClick={handleRefresh} className="xterm-terminal__action-button">
-              <Refresh fontSize="small" />
-            </IconButton>
-            {onClose && (
-              <IconButton size="small" onClick={onClose} className="xterm-terminal__action-button">
-                <Close fontSize="small" />
-              </IconButton>
-            )}
-          </div>
+    <div className="xterm-terminal-wrapper">
+      <div className="xterm-terminal">
+        {/* Loading overlay - shown until terminal is ready */}
+        <div className={`xterm-terminal__loading ${isReady ? 'xterm-terminal__loading--hidden' : ''}`}>
+          <CircularProgress size={40} className="xterm-terminal__loading-spinner" />
+          <Typography variant="body2" className="xterm-terminal__loading-text">
+            Loading terminal...
+          </Typography>
         </div>
-        <div ref={terminalRef} className="xterm-terminal__content" />
+
+        {/* Terminal container - always rendered */}
+        <div className="xterm-terminal__container">
+          <div className="xterm-terminal__header">
+            <span className="xterm-terminal__title">Terminal</span>
+            <div className="xterm-terminal__actions">
+              <IconButton size="small" onClick={handleRefresh} className="xterm-terminal__action-button">
+                <Refresh fontSize="small" />
+              </IconButton>
+              {onClose && (
+                <IconButton size="small" onClick={onClose} className="xterm-terminal__action-button">
+                  <Close fontSize="small" />
+                </IconButton>
+              )}
+            </div>
+          </div>
+          <div ref={terminalRef} className="xterm-terminal__content" />
+        </div>
       </div>
     </div>
   );

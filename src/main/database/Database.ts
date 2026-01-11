@@ -65,9 +65,9 @@ export class DatabaseService {
       .addColumn('updated_at', 'text', (col) => col.defaultTo('CURRENT_TIMESTAMP'))
       .execute();
 
-    // Create commands table
+    // Create command_templates table
     await this.db.schema
-      .createTable('commands')
+      .createTable('command_templates')
       .ifNotExists()
       .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
       .addColumn('codeindex', 'text', (col) => col.unique())
@@ -86,7 +86,7 @@ export class DatabaseService {
       .addColumn('command_id', 'integer', (col) => col.notNull())
       .addColumn('project_id', 'integer', (col) => col.notNull())
       .addPrimaryKeyConstraint('command_projects_pk', ['command_id', 'project_id'])
-      .addForeignKeyConstraint('command_projects_command_fk', ['command_id'], 'commands', ['id'], (cb) => cb.onDelete('cascade'))
+      .addForeignKeyConstraint('command_projects_command_fk', ['command_id'], 'command_templates', ['id'], (cb) => cb.onDelete('cascade'))
       .addForeignKeyConstraint('command_projects_project_fk', ['project_id'], 'projects', ['id'], (cb) => cb.onDelete('cascade'))
       .execute();
 
@@ -97,7 +97,7 @@ export class DatabaseService {
       .addColumn('command_id', 'integer', (col) => col.notNull())
       .addColumn('tag_id', 'integer', (col) => col.notNull())
       .addPrimaryKeyConstraint('command_tags_pk', ['command_id', 'tag_id'])
-      .addForeignKeyConstraint('command_tags_command_fk', ['command_id'], 'commands', ['id'], (cb) => cb.onDelete('cascade'))
+      .addForeignKeyConstraint('command_tags_command_fk', ['command_id'], 'command_templates', ['id'], (cb) => cb.onDelete('cascade'))
       .addForeignKeyConstraint('command_tags_tag_fk', ['tag_id'], 'tags', ['id'], (cb) => cb.onDelete('cascade'))
       .execute();
 

@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
 import type { Kysely } from 'kysely';
 
-import type { Command, Step } from '@tstypes/dbmodules';
+import type { CommandTemplate, Step } from '@tstypes/dbmodules';
 import type { Database } from '../../database/schema';
 
 // Helper functions
@@ -37,10 +37,10 @@ async function getOrCreateTag(db: Kysely<Database>, tagName: string): Promise<nu
   return Number(result.insertId);
 }
 
-export function setupCommandsHandlers(db: Kysely<Database>): void {
-  // Get commands with filters
-  ipcMain.handle('get-commands', async (_event, filters?: { projectId?: number; tagIds?: number[] }) => {
-    let query = db.selectFrom('commands as c').selectAll('c').distinct();
+export function setupCommandTemplatesHandlers(db: Kysely<Database>): void {
+  // Get command templates with filters
+  ipcMain.handle('get-command-templates', async (_event, filters?: { projectId?: number; tagIds?: number[] }) => {
+    let query = db.selectFrom('command_templates as c').selectAll('c').distinct();
 
     if (filters?.projectId !== undefined) {
       const projectId = filters.projectId;
@@ -56,10 +56,10 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
 
     query = query.orderBy('c.name', 'asc');
 
-    const commands = await query.execute();
+    const commandTemplates = await query.execute();
 
     const result = await Promise.all(
-      commands.map(async (cmd) => ({
+      commandTemplates.map(async (cmd) => ({
         ...cmd,
         steps: JSON.parse(cmd.steps) as Step[],
         projects: await getCommandProjects(db, cmd.id),
@@ -70,9 +70,9 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
     return result;
   });
 
-  // Get single command
-  ipcMain.handle('get-command', async (_event, id: number) => {
-    const cmd = await db.selectFrom('commands').selectAll().where('id', '=', id).executeTakeFirst();
+  // Get single command template
+  ipcMain.handle('get-command-template', async (_event, id: number) => {
+    const cmd = await db.selectFrom('command_templates').selectAll().where('id', '=', id).executeTakeFirst();
 
     if (!cmd) return null;
 
@@ -84,12 +84,12 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
     };
   });
 
-  // Create command
-  ipcMain.handle('create-command', async (_event, command: Command) => {
-    const { codeindex, name, detail, resumen, steps, projects, tags } = command;
+  // Create command template
+  ipcMain.handle('create-command-template', async (_event, commandTemplate: CommandTemplate) => {
+    const { codeindex, name, detail, resumen, steps, projects, tags } = commandTemplate;
 
     const result = await db
-      .insertInto('commands')
+      .insertInto('command_templates')
       .values({
         codeindex: codeindex || null,
         name,
@@ -133,17 +133,17 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
         .execute();
     }
 
-    return { id: commandId, ...command };
+    return { id: commandId, ...commandTemplate };
   });
 
-  // Update command
-  ipcMain.handle('update-command', async (_event, command: Command) => {
-    const { id, codeindex, name, detail, resumen, steps, projects, tags } = command;
+  // Update command template
+  ipcMain.handle('update-command-template', async (_event, commandTemplate: CommandTemplate) => {
+    const { id, codeindex, name, detail, resumen, steps, projects, tags } = commandTemplate;
 
-    if (!id) throw new Error('Command ID is required for update');
+    if (!id) throw new Error('CommandTemplate ID is required for update');
 
     await db
-      .updateTable('commands')
+      .updateTable('command_templates')
       .set({
         codeindex: codeindex || null,
         name,
@@ -191,12 +191,12 @@ export function setupCommandsHandlers(db: Kysely<Database>): void {
         .execute();
     }
 
-    return command;
+    return commandTemplate;
   });
 
-  // Delete command
-  ipcMain.handle('delete-command', async (_event, id: number) => {
-    await db.deleteFrom('commands').where('id', '=', id).execute();
+  // Delete command template
+  ipcMain.handle('delete-command-template', async (_event, id: number) => {
+    await db.deleteFrom('command_templates').where('id', '=', id).execute();
     return { success: true };
   });
 }

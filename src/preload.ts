@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Project, Tag, Command } from './renderer/tstypes/dbmodules';
+import type { Project, Tag, CommandTemplate } from './renderer/tstypes/dbmodules';
 
 // Type definitions for IPC communication
 export interface IpcResponse {
@@ -9,7 +9,7 @@ export interface IpcResponse {
   stderr?: string;
 }
 
-export interface CommandFilters {
+export interface CommandTemplateFilters {
   projectId?: number;
   tagIds?: number[];
 }
@@ -27,12 +27,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   updateTag: (tag: Tag) => ipcRenderer.invoke('update-tag', tag),
   deleteTag: (id: number) => ipcRenderer.invoke('delete-tag', id),
 
-  // Commands
-  getCommands: (filters?: CommandFilters) => ipcRenderer.invoke('get-commands', filters),
-  getCommand: (id: number) => ipcRenderer.invoke('get-command', id),
-  createCommand: (command: Omit<Command, 'id'>) => ipcRenderer.invoke('create-command', command),
-  updateCommand: (command: Command) => ipcRenderer.invoke('update-command', command),
-  deleteCommand: (id: number) => ipcRenderer.invoke('delete-command', id),
+  // Command Templates
+  getCommandTemplates: (filters?: CommandTemplateFilters) => ipcRenderer.invoke('get-command-templates', filters),
+  getCommandTemplate: (id: number) => ipcRenderer.invoke('get-command-template', id),
+  createCommandTemplate: (command: Omit<CommandTemplate, 'id'>) => ipcRenderer.invoke('create-command-template', command),
+  updateCommandTemplate: (command: CommandTemplate) => ipcRenderer.invoke('update-command-template', command),
+  deleteCommandTemplate: (id: number) => ipcRenderer.invoke('delete-command-template', id),
 
   // Config
   getConfig: () => ipcRenderer.invoke('get-config'),
@@ -74,11 +74,11 @@ declare global {
       createTag: (tag: Omit<Tag, 'id'>) => Promise<Tag>;
       updateTag: (tag: Tag) => Promise<Tag>;
       deleteTag: (id: number) => Promise<IpcResponse>;
-      getCommands: (filters?: CommandFilters) => Promise<Command[]>;
-      getCommand: (id: number) => Promise<Command | null>;
-      createCommand: (command: Omit<Command, 'id'>) => Promise<Command>;
-      updateCommand: (command: Command) => Promise<Command>;
-      deleteCommand: (id: number) => Promise<IpcResponse>;
+      getCommandTemplates: (filters?: CommandTemplateFilters) => Promise<CommandTemplate[]>;
+      getCommandTemplate: (id: number) => Promise<CommandTemplate | null>;
+      createCommandTemplate: (command: Omit<CommandTemplate, 'id'>) => Promise<CommandTemplate>;
+      updateCommandTemplate: (command: CommandTemplate) => Promise<CommandTemplate>;
+      deleteCommandTemplate: (id: number) => Promise<IpcResponse>;
       getConfig: () => Promise<Record<string, string>>;
       updateConfig: (key: string, value: string) => Promise<{ key: string; value: string }>;
       importJson: (filePath: string) => Promise<IpcResponse>;

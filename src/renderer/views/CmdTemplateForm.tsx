@@ -1,10 +1,10 @@
 /**
- * CommandCreate
+ * CmdTemplateForm
  *
  * View component for creating and editing commands with full form.
  * Includes project selector, tags selector, name field, and JSON textarea for steps configuration.
  * Validates JSON and Step[] interface before saving.
- * Supports both create mode (/commands/new) and edit mode (/commands/:id/edit).
+ * Supports both create mode (/cmd-templates/new) and edit mode (/cmd-templates/:id/edit).
  */
 
 import React, { useState, useEffect } from 'react';
@@ -14,10 +14,10 @@ import { Save } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { addCommand, modifyCommand, fetchCommand, clearCurrentCommand } from '@store/commandsSlice';
+import { addCommandTemplate, modifyCommandTemplate, fetchCommandTemplate, clearCurrentCommandTemplate } from '@store/commandTemplatesSlice';
 
 // Types
-import type { Step, Command } from '@tstypes/dbmodules';
+import type { Step, CommandTemplate } from '@tstypes/dbmodules';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
@@ -25,14 +25,14 @@ import SelectProjects from '@components/SelectProjects';
 import SelectTags from '@components/SelectTags';
 import StepsJsonEditor from '@components/StepsJsonEditor';
 
-import './CommandCreate.scss';
+import './CmdTemplateForm.scss';
 
-const CommandCreate: React.FC = () => {
+const CmdTemplateForm: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
 
-  const { currentCommand } = useAppSelector((state) => state.commands);
+  const { currentCommand } = useAppSelector((state) => state.commandTemplates);
 
   const isEditMode = !!id;
 
@@ -54,10 +54,12 @@ const CommandCreate: React.FC = () => {
 
   useEffect(() => {
     if (isEditMode && id) {
-      dispatch(fetchCommand(Number(id)));
+      dispatch(fetchCommandTemplate(Number(id)));
     }
 
-    return () => (dispatch(clearCurrentCommand()));
+    return () => {
+      dispatch(clearCurrentCommandTemplate());
+    };
   }, [dispatch, isEditMode, id]);
 
   // Load command data when editing
@@ -111,7 +113,7 @@ const CommandCreate: React.FC = () => {
     }
 
     // Create or update command object
-    const commandData: Command = {
+    const commandData: CommandTemplate = {
       ...(isEditMode && currentCommand?.id ? { id: currentCommand.id } : {}),
       name: formData.name.trim(),
       resumen: formData.resumen.trim(),
@@ -124,11 +126,11 @@ const CommandCreate: React.FC = () => {
 
     try {
       if (isEditMode) {
-        await dispatch(modifyCommand(commandData)).unwrap();
+        await dispatch(modifyCommandTemplate(commandData)).unwrap();
       } else {
-        await dispatch(addCommand(commandData)).unwrap();
+        await dispatch(addCommandTemplate(commandData)).unwrap();
       }
-      navigate('/commands');
+      navigate('/cmd-templates');
     } catch (error) {
       console.error(`Failed to ${isEditMode ? 'update' : 'create'} command:`, error);
       setValidationError(`Failed to ${isEditMode ? 'update' : 'create'} command. Please try again.`);
@@ -136,8 +138,8 @@ const CommandCreate: React.FC = () => {
   };
 
   return (
-    <ViewContainer title={isEditMode ? 'Edit Command' : 'Create Command'} className="command-create">
-      <Box className="command-create__form">
+    <ViewContainer title={isEditMode ? 'Edit Command' : 'Create Command'} className="cmd-template-form">
+      <Box className="cmd-template-form__body">
         <TextField
           sx={{ mb: 2 }}
           label="Command Name"
@@ -205,7 +207,7 @@ const CommandCreate: React.FC = () => {
           </Alert>
         )}
 
-        <Box className="command-create__actions">
+        <Box className="cmd-template-form__actions">
           <Button
             variant="contained"
             startIcon={<Save />}
@@ -220,4 +222,4 @@ const CommandCreate: React.FC = () => {
   );
 };
 
-export default CommandCreate;
+export default CmdTemplateForm;

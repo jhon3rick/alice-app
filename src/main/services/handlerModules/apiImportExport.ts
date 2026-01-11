@@ -79,13 +79,13 @@ export function setupImportExportHandlers(db: Kysely<Database>): void {
           const { codeindex, name, detail, resumen, steps, project, tags } = command;
 
           if (codeindex) {
-            const existing = await db.selectFrom('commands').select('id').where('codeindex', '=', codeindex).executeTakeFirst();
+            const existing = await db.selectFrom('command_templates').select('id').where('codeindex', '=', codeindex).executeTakeFirst();
 
             let commandId: number;
 
             if (existing) {
               await db
-                .updateTable('commands')
+                .updateTable('command_templates')
                 .set({
                   name,
                   detail,
@@ -99,7 +99,7 @@ export function setupImportExportHandlers(db: Kysely<Database>): void {
               commandId = existing.id;
             } else {
               const result = await db
-                .insertInto('commands')
+                .insertInto('command_templates')
                 .values({
                   codeindex,
                   name,
@@ -165,7 +165,7 @@ export function setupImportExportHandlers(db: Kysely<Database>): void {
   ipcMain.handle('export-json', async (_event, exportPath: string) => {
     try {
       const projects = await db.selectFrom('projects').selectAll().execute();
-      const commands = await db.selectFrom('commands').selectAll().execute();
+      const commands = await db.selectFrom('command_templates').selectAll().execute();
 
       const exportData = {
         projects: projects.map((p) => ({

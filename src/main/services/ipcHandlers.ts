@@ -2,7 +2,7 @@ import { databaseService } from '../database/Database';
 import {
   setupProjectsHandlers,
   setupTagsHandlers,
-  setupCommandsHandlers,
+  setupCommandTemplatesHandlers,
   setupConfigHandlers,
   setupImportExportHandlers,
   setupElectronHandlers,
@@ -23,7 +23,7 @@ export async function setupIpcHandlers(): Promise<void> {
   if (db) {
     setupProjectsHandlers(db);
     setupTagsHandlers(db);
-    setupCommandsHandlers(db);
+    setupCommandTemplatesHandlers(db);
     setupConfigHandlers(db);
     setupImportExportHandlers(db);
   }

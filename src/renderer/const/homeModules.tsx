@@ -17,7 +17,7 @@ export const homeModules: HomeModule[] = [
     title: 'Commands',
     description: 'Manage and execute command templates',
     icon: <TerminalIcon sx={{ fontSize: 60 }} />,
-    path: '/commands',
+    path: '/cmd-templates',
     color: '#018790',
   },
   {

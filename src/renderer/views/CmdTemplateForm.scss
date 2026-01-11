@@ -1,7 +1,7 @@
 @use '../styles/variables' as *;
 
-.command-create {
-  &__form {
+.cmd-template-form {
+  &__body {
     display: flex;
     flex-direction: column;
     gap: $spacing-md;

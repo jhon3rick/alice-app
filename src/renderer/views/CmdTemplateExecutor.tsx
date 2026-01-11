@@ -1,30 +1,30 @@
 /**
- * CommandView
+ * CmdTemplateExecutor
  *
- * View component for displaying and editing command details.
- * Allows editing command properties and executing the command.
+ * View component for displaying and editing command template details.
+ * Allows editing command properties and executing the command template.
  */
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Box,
-  Typography,
-  TextField,
-  Button,
-  Paper,
   Chip,
+  Paper,
+  Button,
+  TextField,
+  Typography,
 } from '@mui/material';
 import { PlayArrow } from '@mui/icons-material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { fetchCommand, clearCurrentCommand } from '@store/commandsSlice';
+import { fetchCommandTemplate, clearCurrentCommandTemplate } from '@store/commandTemplatesSlice';
 import { fetchProjects } from '@store/projectsSlice';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
-import CommandVariablesForm from '@components/CommandVariablesForm';
+import CmdVariablesForm from '@components/CmdVariablesForm';
 import XtermTerminal from '@components/XtermTerminal';
 import SelectProjectPath from '@components/SelectProjectPath';
 
@@ -32,13 +32,13 @@ import SelectProjectPath from '@components/SelectProjectPath';
 import { applyFormat } from '@utils/formatValidation';
 
 // Styles
-import './CommandView.scss';
+import './CmdTemplateExecutor.scss';
 
-const CommandView: React.FC = () => {
+const CmdTemplateExecutor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
 
-  const { currentCommand } = useAppSelector((state) => state.commands);
+  const { currentCommand } = useAppSelector((state) => state.commandTemplates);
   const { projects } = useAppSelector((state) => state.projects);
 
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
@@ -49,11 +49,11 @@ const CommandView: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchCommand(Number(id)));
+      dispatch(fetchCommandTemplate(Number(id)));
       dispatch(fetchProjects());
     }
     return () => {
-      dispatch(clearCurrentCommand());
+      dispatch(clearCurrentCommandTemplate());
     };
   }, [id, dispatch]);
 
@@ -110,7 +110,7 @@ const CommandView: React.FC = () => {
 
   if (!currentCommand) {
     return (
-      <Box className="command-view__loading">
+      <Box className="cmd-template-executor__loading">
         <Typography>Loading...</Typography>
       </Box>
     );
@@ -123,16 +123,16 @@ const CommandView: React.FC = () => {
   return (
     <ViewContainer title={currentCommand.name}>
       {/* Main content area */}
-      <Box className="command-view__container">
+      <Box className="cmd-template-executor__container">
         {/* Top section: Command editor and sidebar - scrollable content */}
-        <Box className="command-view__content" sx={{ borderColor: 'divider' }}>
+        <Box className="cmd-template-executor__content" sx={{ borderColor: 'divider' }}>
           {/* Left: Command editor */}
-          <Box className="command-view__editor">
-            <Typography variant="h6" className="command-view__title" gutterBottom>
+          <Box className="cmd-template-executor__editor">
+            <Typography variant="h6" className="cmd-template-executor__title" gutterBottom>
               Command Preview
             </Typography>
 
-            <Paper className="command-view__preview">
+            <Paper className="cmd-template-executor__preview">
               <TextField
                 fullWidth
                 multiline
@@ -141,16 +141,16 @@ const CommandView: React.FC = () => {
                 variant="standard"
                 InputProps={{
                   disableUnderline: true,
-                  className: 'command-view__preview-field',
+                  className: 'cmd-template-executor__preview-field',
                 }}
               />
             </Paper>
 
-            <Box className="command-view__variables-section">
-              <Typography variant="body2" color="text.secondary" className="command-view__variables-label" gutterBottom>
+            <Box className="cmd-template-executor__variables-section">
+              <Typography variant="body2" color="text.secondary" className="cmd-template-executor__variables-label" gutterBottom>
                 Variables in command:
               </Typography>
-              <Box className="command-view__variables-chips">
+              <Box className="cmd-template-executor__variables-chips">
                 {variables.map((variable) => (
                   <Chip
                     key={variable.name}
@@ -166,7 +166,7 @@ const CommandView: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
-                className="command-view__execute-button"
+                className="cmd-template-executor__execute-button"
                 startIcon={<PlayArrow />}
                 onClick={handleExecute}
                 disabled={hasVariables && !allVariablesFilled()}
@@ -181,7 +181,7 @@ const CommandView: React.FC = () => {
                 onChange={setSelectedProjectPath}
                 commandProjects={currentCommand.projects}
                 allProjects={projects}
-                className="command-view__project-select"
+                className="cmd-template-executor__project-select"
               />
             )}
           </Box>
@@ -189,13 +189,13 @@ const CommandView: React.FC = () => {
           {/* Right sidebar: Variables form */}
           {hasVariables && (
             <Paper
-              className="command-view__sidebar"
+              className="cmd-template-executor__sidebar"
               sx={{
                 height: 'fit-content',
                 borderColor: 'divider',
               }}
             >
-              <CommandVariablesForm
+              <CmdVariablesForm
                 variables={variables}
                 variableValues={variableValues}
                 onVariableChange={handleVariableChange}
@@ -204,12 +204,8 @@ const CommandView: React.FC = () => {
           )}
         </Box>
 
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 300, backgroundColor: '#2d2d30', borderTop: '1px solid #e0e0e0' }}>
-
-        </div>
-
-        {/* Bottom section: Terminal (fixed height 250px) */}
-        <Box className="command-view__terminal">
+        {/* Bottom section: Terminal (fixed height 300px) */}
+        <Box className="cmd-template-executor__terminal">
           <XtermTerminal workingDir={selectedProjectPath || undefined} commandToExecute={commandToExecute?.command} />
         </Box>
       </Box>
@@ -217,4 +213,4 @@ const CommandView: React.FC = () => {
   );
 };
 
-export default CommandView;
+export default CmdTemplateExecutor;

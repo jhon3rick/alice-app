@@ -23,8 +23,8 @@ export interface Step {
   variables: Variable[];
 }
 
-// Command - Application level (steps is parsed array)
-export interface Command {
+// CommandTemplate - Application level (steps is parsed array)
+export interface CommandTemplate {
   id?: number;
   codeindex?: string;
   name: string;
@@ -35,8 +35,8 @@ export interface Command {
   steps: Step[];
 }
 
-// StoredCommand - Database level (steps is JSON string, no project/tags)
-export interface StoredCommand extends Omit<Command, 'id' | 'steps' | 'project' | 'tags'> {
+// StoredCommandTemplate - Database level (steps is JSON string, no project/tags)
+export interface StoredCommandTemplate extends Omit<CommandTemplate, 'id' | 'steps' | 'project' | 'tags'> {
   id: number;
   steps: string; // JSON string in DB
 }

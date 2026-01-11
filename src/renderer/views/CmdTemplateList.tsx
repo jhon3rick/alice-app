@@ -1,5 +1,5 @@
 /**
- * CommandList
+ * CmdTemplateList
  *
  * View component for listing and filtering commands.
  * Displays commands in virtualized table with expandable rows.
@@ -11,29 +11,32 @@ import { Box } from '@mui/material';
 
 // Store
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { fetchCommands, setFilters, deleteCommand } from '@store/commandsSlice';
+import { fetchCommandTemplates, setFilters, removeCommandTemplate } from '@store/commandTemplatesSlice';
+
+// Types
+import type { CommandTemplate } from '@tstypes/dbmodules';
 
 // Custom Components
 import ViewContainer from '@ui/ViewContainer';
 import ActionsToolbar from '@ui/ActionsToolbar';
 import SelectProject from '@components/SelectProject';
 import SelectTags from '@components/SelectTags';
-import CommandsTable from '@components/CommandsTable';
+import CmdTemplatesTable from '@components/CmdTemplatesTable';
 
-import './CommandList.scss';
+import './CmdTemplateList.scss';
 
-const CommandList: React.FC = () => {
+const CmdTemplateList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { commands, loading } = useAppSelector((state) => state.commands);
+  const { commands, loading } = useAppSelector((state) => state.commandTemplates);
   const { tags } = useAppSelector((state) => state.tags);
 
   const [selectedProject, setSelectedProject] = useState<number | ''>('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   useEffect(() => {
-    dispatch(fetchCommands(undefined));
+    dispatch(fetchCommandTemplates(undefined));
   }, [dispatch]);
 
   // Memoize tagIds calculation to avoid recalculating on every render
@@ -52,7 +55,7 @@ const CommandList: React.FC = () => {
     );
 
     dispatch(
-      fetchCommands({
+      fetchCommandTemplates({
         projectId: selectedProject || undefined,
         tagIds: tagIds.length > 0 ? tagIds : undefined,
       })
@@ -60,8 +63,8 @@ const CommandList: React.FC = () => {
   }, [selectedProject, tagIds, dispatch]);
 
   const handleEdit = useCallback(
-    (command: Command) => {
-      navigate(`/commands/${command.id}/edit`);
+    (command: CommandTemplate) => {
+      navigate(`/cmd-templates/${command.id}/edit`);
     },
     [navigate]
   );
@@ -69,7 +72,7 @@ const CommandList: React.FC = () => {
   const handleDelete = useCallback(
     async (id: number) => {
       if (window.confirm('Are you sure you want to delete this command?')) {
-        await dispatch(deleteCommand(id));
+        await dispatch(removeCommandTemplate(id));
       }
     },
     [dispatch]
@@ -77,24 +80,24 @@ const CommandList: React.FC = () => {
 
   const handleViewDetail = useCallback(
     (id: number) => {
-      navigate(`/commands/${id}`);
+      navigate(`/cmd-templates/${id}`);
     },
     [navigate]
   );
 
   return (
     <ViewContainer title="commands">
-      <ActionsToolbar actions={[{ iconName: 'add', tooltip: 'Add Command', onClick: () => navigate('/commands/new') }]} />
-      <Box className="command-list__filters">
+      <ActionsToolbar actions={[{ iconName: 'add', tooltip: 'Add Command', onClick: () => navigate('/cmd-templates/new') }]} />
+      <Box className="cmd-template-list__filters">
         <SelectProject value={selectedProject} onChange={setSelectedProject} />
         <SelectTags value={selectedTags} onChange={setSelectedTags} />
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <CommandsTable commands={commands} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onViewDetail={handleViewDetail} />
+        <CmdTemplatesTable commands={commands} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onViewDetail={handleViewDetail} />
       </Box>
     </ViewContainer>
   );
 };
 
-export default CommandList;
+export default CmdTemplateList;

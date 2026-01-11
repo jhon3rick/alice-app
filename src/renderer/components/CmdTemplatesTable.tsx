@@ -1,8 +1,8 @@
 /**
- * CommandsTable
+ * CmdTemplatesTable
  *
- * Expandable table component for displaying commands.
- * Each row can be expanded to show command details and steps.
+ * Expandable table component for displaying command templates.
+ * Each row can be expanded to show command template details and steps.
  */
 
 import React, { useState } from 'react';
@@ -22,20 +22,20 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp, Edit, Delete, Terminal } from '@mui/icons-material';
-import type { Command } from '@tstypes/dbmodules';
-import CommandRowDetail from './CommandRowDetail';
+import type { CommandTemplate } from '@tstypes/dbmodules';
+import CmdTemplatesRowDetails from './CmdTemplatesRowDetails';
 
-import './CommandsTable.scss';
+import './CmdTemplatesTable.scss';
 
-interface CommandsTableProps {
-  commands: Command[];
+interface CmdTemplatesTableProps {
+  commands: CommandTemplate[];
   loading?: boolean;
-  onEdit: (command: Command) => void;
+  onEdit: (command: CommandTemplate) => void;
   onDelete: (id: number) => void;
   onViewDetail?: (id: number) => void;
 }
 
-const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false, onEdit, onDelete, onViewDetail }) => {
+const CmdTemplatesTable: React.FC<CmdTemplatesTableProps> = ({ commands, loading = false, onEdit, onDelete, onViewDetail }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
@@ -61,7 +61,7 @@ const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false
     });
   };
 
-  const paginatedCommands = commands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedCommandTemplates = commands.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
     return (
@@ -78,7 +78,7 @@ const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false
           <TableHead>
             <TableRow>
               <TableCell className="commands-table__header-expand-cell" />
-              <TableCell>Command</TableCell>
+              <TableCell>CommandTemplate</TableCell>
               <TableCell className="commands-table__header-tags-cell">Tags</TableCell>
               <TableCell className="commands-table__header-actions-cell" align="center">
                 Actions
@@ -86,14 +86,14 @@ const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedCommands.length === 0 ? (
+            {paginatedCommandTemplates.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} align="center" className="commands-table__empty-cell">
                   <Typography color="text.secondary">No commands found. Create one to get started.</Typography>
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedCommands.map((command) => {
+              paginatedCommandTemplates.map((command) => {
                 const isExpanded = expandedRows.has(command.id!);
                 return (
                   <React.Fragment key={command.id}>
@@ -155,7 +155,7 @@ const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false
                     <TableRow className={`commands-table__detail-row ${isExpanded ? 'commands-table__detail-row--expanded' : ''}`}>
                       <TableCell colSpan={4} className="commands-table__detail-cell">
                         <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-                          <CommandRowDetail command={command} />
+                          <CmdTemplatesRowDetails command={command} />
                         </Collapse>
                       </TableCell>
                     </TableRow>
@@ -167,16 +167,16 @@ const CommandsTable: React.FC<CommandsTableProps> = ({ commands, loading = false
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
-        component="div"
-        count={commands.length}
-        rowsPerPage={rowsPerPage}
         page={page}
+        count={commands.length}
+        component="div"
+        rowsPerPage={rowsPerPage}
         onPageChange={handleChangePage}
+        rowsPerPageOptions={[10, 25, 50, 100]}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
   );
 };
 
-export default CommandsTable;
+export default CmdTemplatesTable;

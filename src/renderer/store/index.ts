@@ -1,17 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import projectsReducer from './projectsSlice';
 import tagsReducer from './tagsSlice';
-import commandsReducer from './commandsSlice';
 import configReducer from './configSlice';
+import commandTemplatesReducer from './commandTemplatesSlice';
 
 import stateChangeLogger from './middlewares/stateChangeLogger';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const combineReducers = {
-  projects: projectsReducer,
   tags: tagsReducer,
-  commands: commandsReducer,
   config: configReducer,
+  projects: projectsReducer,
+  commandTemplates: commandTemplatesReducer,
 };
 
 export const store = configureStore({

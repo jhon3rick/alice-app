@@ -8,12 +8,12 @@ import { store } from '@store/index';
 import Splash from '@views/Splash';
 import About from '@views/About';
 import Home from '@views/Home';
-import CommandList from '@views/CommandList';
-import CommandCreate from '@views/CommandCreate';
-import CommandView from '@views/CommandView';
+import CmdTemplateList from '@views/CmdTemplateList';
+import CmdTemplateForm from '@views/CmdTemplateForm';
+import CmdTemplateExecutor from '@views/CmdTemplateExecutor';
 import ProjectList from '@views/ProjectList';
 import TagList from '@views/TagList';
-import ConfigView from '@views/ConfigView';
+import Config from '@views/Config';
 
 const theme = createTheme({
   palette: {
@@ -50,13 +50,13 @@ const App: React.FC = () => {
             <Route path="/splash" element={<Splash duration={4000} />} />
             <Route path="/about" element={<About />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/commands" element={<CommandList />} />
-            <Route path="/commands/new" element={<CommandCreate />} />
-            <Route path="/commands/:id/edit" element={<CommandCreate />} />
-            <Route path="/commands/:id" element={<CommandView />} />
+            <Route path="/cmd-templates" element={<CmdTemplateList />} />
+            <Route path="/cmd-templates/new" element={<CmdTemplateForm />} />
+            <Route path="/cmd-templates/:id/edit" element={<CmdTemplateForm />} />
+            <Route path="/cmd-templates/:id/execute" element={<CmdTemplateExecutor />} />
             <Route path="/projects" element={<ProjectList />} />
             <Route path="/tags" element={<TagList />} />
-            <Route path="/config" element={<ConfigView />} />
+            <Route path="/config" element={<Config />} />
           </Routes>
         </Router>
       </ThemeProvider>

@@ -1,5 +1,5 @@
 /**
- * CommandVariablesForm
+ * CmdVariablesForm
  *
  * Form component for editing command variables
  * Displays variable inputs and execute button
@@ -9,7 +9,7 @@ import React from 'react';
 import { Box, Typography, TextField, Select, MenuItem, FormControl, Chip } from '@mui/material';
 import VariableHelpButton from './VariableHelpButton';
 
-import './CommandVariablesForm.scss';
+import './CmdVariablesForm.scss';
 
 interface Variable {
   name: string;
@@ -19,13 +19,13 @@ interface Variable {
   options?: string[];
 }
 
-interface CommandVariablesFormProps {
+interface CmdVariablesFormProps {
   variables: Variable[];
   variableValues: Record<string, string>;
   onVariableChange: (variableName: string, value: string) => void;
 }
 
-const CommandVariablesForm: React.FC<CommandVariablesFormProps> = ({
+const CmdVariablesForm: React.FC<CmdVariablesFormProps> = ({
   variables,
   variableValues,
   onVariableChange,
@@ -94,4 +94,4 @@ const CommandVariablesForm: React.FC<CommandVariablesFormProps> = ({
   );
 };
 
-export default CommandVariablesForm;
+export default CmdVariablesForm;

@@ -18,7 +18,7 @@ export interface TagsTable {
   updated_at: ColumnType<Date, string | undefined, string>;
 }
 
-export interface CommandsTable {
+export interface CommandTemplatesTable {
   id: Generated<number>;
   codeindex: string | null;
   name: string;
@@ -49,7 +49,7 @@ export interface ConfigTable {
 export interface Database {
   projects: ProjectsTable;
   tags: TagsTable;
-  commands: CommandsTable;
+  command_templates: CommandTemplatesTable;
   command_projects: CommandProjectsTable;
   command_tags: CommandTagsTable;
   config: ConfigTable;
@@ -64,9 +64,9 @@ export type Tag = Selectable<TagsTable>;
 export type NewTag = Insertable<TagsTable>;
 export type TagUpdate = Updateable<TagsTable>;
 
-export type Command = Selectable<CommandsTable>;
-export type NewCommand = Insertable<CommandsTable>;
-export type CommandUpdate = Updateable<CommandsTable>;
+export type CommandTemplate = Selectable<CommandTemplatesTable>;
+export type NewCommandTemplate = Insertable<CommandTemplatesTable>;
+export type CommandTemplateUpdate = Updateable<CommandTemplatesTable>;
 
 export type CommandProject = Selectable<CommandProjectsTable>;
 export type NewCommandProject = Insertable<CommandProjectsTable>;
