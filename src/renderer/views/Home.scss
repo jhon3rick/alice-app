@@ -11,7 +11,7 @@
   }
 
   &__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: $spacing-4xl;
   }
 
   &__title {
@@ -37,4 +37,8 @@
       grid-template-columns: repeat(4, 1fr);
     }
   }
+}
+
+.view-container-home {
+  display: grid;
 }

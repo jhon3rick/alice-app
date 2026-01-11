@@ -7,17 +7,22 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Container, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { homeModules } from '@const/homeModules';
+import { useTheme } from '../contexts/ThemeContext';
 
 // Custom Components
 import HomeCard from '@ui/HomeCard';
-import ActionsToolbar, { IActionButton } from '@ui/ActionsToolbar';
+import ViewContainer from '@ui/ViewContainer';
+import ThemeToggle from '@components/ThemeToggle';
+import { IActionButton } from '@ui/ActionsToolbar';
 
 import './Home.scss';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { mode, setMode } = useTheme();
+
   const headerActions: IActionButton[] = [
     {
       iconName: 'info',
@@ -27,9 +32,13 @@ const Home: React.FC = () => {
   ];
 
   return (
-    <Container maxWidth="lg" className="home">
+    <ViewContainer
+      module="home"
+      showBackButton={false}
+      actions={headerActions}
+      customActions={<ThemeToggle currentTheme={mode} onThemeChange={setMode} />}
+    >
       <Box className="home__container">
-        <ActionsToolbar actions={headerActions} />
         <Box className="home__header">
           <Box>
             <Typography variant="h3" component="h1" className="home__title">
@@ -46,7 +55,7 @@ const Home: React.FC = () => {
           ))}
         </div>
       </Box>
-    </Container>
+    </ViewContainer>
   );
 };
 

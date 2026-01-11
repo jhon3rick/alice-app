@@ -1,0 +1,15 @@
+/**
+ * Global styles
+ *
+ * Specific styles for the Electron app layout.
+ * reset css with CssBaseline from Material-UI is already applied.
+ */
+
+body {
+  overflow: hidden; /* Prevent scrolling in Electron window */
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
