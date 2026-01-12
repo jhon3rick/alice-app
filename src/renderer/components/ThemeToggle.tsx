@@ -13,6 +13,9 @@ import {
   SettingsBrightness as AutoModeIcon
 } from '@mui/icons-material';
 
+// Constants
+import { styleActionButton } from '@ui/ActionButton';
+
 import './ThemeToggle.scss';
 
 export type ThemeMode = 'light' | 'dark' | 'auto';
@@ -62,13 +65,7 @@ const ThemeToggle: React.FC<IThemeToggle> = ({
         onClick={handleClick}
         className={`theme-toggle action-buttons ${className}`}
         aria-label={config.tooltip}
-        sx={{
-          width: 48,
-          height: 48,
-          '& svg': {
-            fontSize: 28,
-          },
-        }}
+        sx={styleActionButton}
       >
         {config.icon}
       </IconButton>

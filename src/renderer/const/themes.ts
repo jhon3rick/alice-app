@@ -1,14 +1,16 @@
+export const colorPrimaryMain = '#018790';
+
 export const lightTheme = {
   palette: {
     mode: 'light' as PaletteMode,
     primary: {
-      main: '#018790',
+      main: colorPrimaryMain,
       light: '#00B7B5',
       dark: '#005461',
     },
     secondary: {
       main: '#005461',
-      light: '#018790',
+      light: colorPrimaryMain,
       dark: '#003940',
     },
     background: {
@@ -17,7 +19,11 @@ export const lightTheme = {
     },
     text: {
       primary: '#005461',
-      secondary: '#018790',
+      secondary: colorPrimaryMain,
+    },
+    action: {
+      hover: 'rgba(1, 135, 144, 0.12)',
+      selected: 'rgba(1, 135, 144, 0.20)',
     },
   },
 };
@@ -28,10 +34,10 @@ export const darkTheme = {
     primary: {
       main: '#00B7B5',
       light: '#00E5E3',
-      dark: '#018790',
+      dark: colorPrimaryMain,
     },
     secondary: {
-      main: '#018790',
+      main: colorPrimaryMain,
       light: '#00B7B5',
       dark: '#005461',
     },
@@ -42,6 +48,10 @@ export const darkTheme = {
     text: {
       primary: '#E0E0E0',
       secondary: '#00B7B5',
+    },
+    action: {
+      hover: 'rgba(0, 183, 181, 0.15)',
+      selected: 'rgba(0, 183, 181, 0.25)',
     },
   },
 };

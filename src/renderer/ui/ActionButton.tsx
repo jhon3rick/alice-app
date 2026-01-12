@@ -7,10 +7,8 @@
  */
 
 import React from 'react';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton, Tooltip, SxProps, Theme } from '@mui/material';
 import { Info as InfoIcon, Add as AddIcon, Help as HelpIcon } from '@mui/icons-material';
-
-import './ActionButton.scss';
 
 type IconName = 'add' | 'info' | 'help';
 
@@ -28,6 +26,22 @@ const iconByType: Record<IconName, React.ReactElement> = {
   help: <HelpIcon />,
 };
 
+export const styleActionButton: SxProps<Theme> = {
+  color: 'primary.main',
+  bgcolor: 'transparent',
+  width: 48,
+  height: 48,
+  '&:hover': {
+    bgcolor: 'action.hover',
+  },
+  '&:active': {
+    bgcolor: 'action.selected',
+  },
+  '& svg': {
+    fontSize: 28,
+  },
+}
+
 const ActionButton: React.FC<IActionButton> = ({ iconName, tooltip, onClick, className = '', size = 'medium' }) => {
   if (!iconByType[iconName]) {
     return (console.warn(`ActionButton: Unsupported icon name "${iconName}" by ActionButton component.`), null);
@@ -37,15 +51,9 @@ const ActionButton: React.FC<IActionButton> = ({ iconName, tooltip, onClick, cla
     <IconButton
       size={size}
       onClick={onClick}
-      className={`action-buttons ${className}`}
       aria-label={tooltip}
-      sx={{
-        width: 48,
-        height: 48,
-        '& svg': {
-          fontSize: 28,
-        },
-      }}
+      className={className}
+      sx={styleActionButton}
     >
       {iconByType[iconName]}
     </IconButton>
