@@ -38,7 +38,7 @@ const CmdTemplateExecutor: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
 
-  const { currentCommand } = useAppSelector((state) => state.commandTemplates);
+  const { currentCommandTemplate } = useAppSelector((state) => state.commandTemplates);
   const { projects } = useAppSelector((state) => state.projects);
 
   const [variableValues, setVariableValues] = useState<Record<string, string>>({});
@@ -58,16 +58,16 @@ const CmdTemplateExecutor: React.FC = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
-    if (currentCommand && currentCommand.steps.length > 0) {
-      const initialCommand = currentCommand.steps[0].command;
+    if (currentCommandTemplate && currentCommandTemplate.steps.length > 0) {
+      const initialCommand = currentCommandTemplate.steps[0].command;
       setEditableCommand(initialCommand);
       updateFinalCommand(initialCommand, {});
     }
-  }, [currentCommand]);
+  }, [currentCommandTemplate]);
 
   const updateFinalCommand = (command: string, values: Record<string, string>) => {
     let result = command;
-    const variables = currentCommand?.steps[0]?.variables || [];
+    const variables = currentCommandTemplate?.steps[0]?.variables || [];
 
     variables.forEach((variable) => {
       const value = values[variable.name] || '';
@@ -83,8 +83,8 @@ const CmdTemplateExecutor: React.FC = () => {
     const newValues = { ...variableValues, [variableName]: value };
     setVariableValues(newValues);
 
-    if (currentCommand && currentCommand.steps.length > 0) {
-      updateFinalCommand(currentCommand.steps[0].command, newValues);
+    if (currentCommandTemplate && currentCommandTemplate.steps.length > 0) {
+      updateFinalCommand(currentCommandTemplate.steps[0].command, newValues);
     }
   };
 
@@ -94,8 +94,8 @@ const CmdTemplateExecutor: React.FC = () => {
   };
 
   const allVariablesFilled = () => {
-    if (!currentCommand || currentCommand.steps.length === 0) return true;
-    const variables = currentCommand.steps[0].variables || [];
+    if (!currentCommandTemplate || currentCommandTemplate.steps.length === 0) return true;
+    const variables = currentCommandTemplate.steps[0].variables || [];
     if (variables.length === 0) return true;
     return variables.every((v) => variableValues[v.name]?.trim());
   };
@@ -108,7 +108,7 @@ const CmdTemplateExecutor: React.FC = () => {
     setCommandToExecute({ command: finalCommand, timestamp: Date.now() });
   };
 
-  if (!currentCommand) {
+  if (!currentCommandTemplate) {
     return (
       <Box className="cmd-template-executor__loading">
         <Typography>Loading...</Typography>
@@ -116,12 +116,12 @@ const CmdTemplateExecutor: React.FC = () => {
     );
   }
 
-  const step = currentCommand.steps[0];
+  const step = currentCommandTemplate.steps[0];
   const variables = step?.variables || [];
   const hasVariables = variables.length > 0;
 
   return (
-    <ViewContainer title={currentCommand.name}>
+    <ViewContainer title={currentCommandTemplate.name}>
       {/* Main content area */}
       <Box className="cmd-template-executor__container">
         {/* Top section: Command editor and sidebar - scrollable content */}
@@ -175,11 +175,11 @@ const CmdTemplateExecutor: React.FC = () => {
               </Button>
             </Box>
 
-            {currentCommand.projects && currentCommand.projects.length > 0 && (
+            {currentCommandTemplate.projects && currentCommandTemplate.projects.length > 0 && (
               <SelectProjectPath
                 value={selectedProjectPath}
                 onChange={setSelectedProjectPath}
-                commandProjects={currentCommand.projects}
+                commandProjects={currentCommandTemplate.projects}
                 allProjects={projects}
                 className="cmd-template-executor__project-select"
               />

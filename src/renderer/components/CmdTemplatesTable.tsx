@@ -32,10 +32,10 @@ interface CmdTemplatesTableProps {
   loading?: boolean;
   onEdit: (command: CommandTemplate) => void;
   onDelete: (id: number) => void;
-  onViewDetail?: (id: number) => void;
+  onViewExecute?: (id: number) => void;
 }
 
-const CmdTemplatesTable: React.FC<CmdTemplatesTableProps> = ({ commands, loading = false, onEdit, onDelete, onViewDetail }) => {
+const CmdTemplatesTable: React.FC<CmdTemplatesTableProps> = ({ commands, loading = false, onEdit, onDelete, onViewExecute }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
@@ -126,11 +126,11 @@ const CmdTemplatesTable: React.FC<CmdTemplatesTableProps> = ({ commands, loading
                       </TableCell>
                       <TableCell align="center" className="commands-table__cell-top-align">
                         <div className="commands-table__actions-container">
-                          {onViewDetail && (
+                          {onViewExecute && (
                             <IconButton
                               size="small"
                               color="default"
-                              onClick={(e) => { e.stopPropagation(); onViewDetail(command.id!); }}
+                              onClick={(e) => { e.stopPropagation(); onViewExecute(command.id!); }}
                             >
                               <Terminal fontSize="small" />
                             </IconButton>

@@ -32,7 +32,7 @@ const CmdTemplateForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const { id } = useParams<{ id: string }>();
 
-  const { currentCommand } = useAppSelector((state) => state.commandTemplates);
+  const { currentCommandTemplate } = useAppSelector((state) => state.commandTemplates);
 
   const isEditMode = !!id;
 
@@ -64,19 +64,19 @@ const CmdTemplateForm: React.FC = () => {
 
   // Load command data when editing
   useEffect(() => {
-    if (isEditMode && currentCommand) {
+    if (isEditMode && currentCommandTemplate) {
       setFormData({
-        name: currentCommand.name,
-        resumen: currentCommand.resumen,
-        detail: currentCommand.detail || '',
-        codeindex: currentCommand.codeindex || '',
-        selectedProjects: currentCommand.projects || [],
-        selectedTags: currentCommand.tags || [],
+        name: currentCommandTemplate.name,
+        resumen: currentCommandTemplate.resumen,
+        detail: currentCommandTemplate.detail || '',
+        codeindex: currentCommandTemplate.codeindex || '',
+        selectedProjects: currentCommandTemplate.projects || [],
+        selectedTags: currentCommandTemplate.tags || [],
       });
-      setStepsJson(JSON.stringify(currentCommand.steps, null, 2));
+      setStepsJson(JSON.stringify(currentCommandTemplate.steps, null, 2));
       setIsStepsValid(true);
     }
-  }, [isEditMode, currentCommand]);
+  }, [isEditMode, currentCommandTemplate]);
 
   const handleInputChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
@@ -114,7 +114,7 @@ const CmdTemplateForm: React.FC = () => {
 
     // Create or update command object
     const commandData: CommandTemplate = {
-      ...(isEditMode && currentCommand?.id ? { id: currentCommand.id } : {}),
+      ...(isEditMode && currentCommandTemplate?.id ? { id: currentCommandTemplate.id } : {}),
       name: formData.name.trim(),
       resumen: formData.resumen.trim(),
       detail: formData.detail.trim(),

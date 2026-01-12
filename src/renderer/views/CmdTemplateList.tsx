@@ -1,8 +1,8 @@
 /**
  * CmdTemplateList
  *
- * View component for listing and filtering commands.
- * Displays commands in virtualized table with expandable rows.
+ * View component for listing and filtering command-templates.
+ * Displays command-templates in virtualized table with expandable rows.
  */
 
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
@@ -29,7 +29,7 @@ const CmdTemplateList: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const { commands, loading } = useAppSelector((state) => state.commandTemplates);
+  const { commandTemplates, loading } = useAppSelector((state) => state.commandTemplates);
   const { tags } = useAppSelector((state) => state.tags);
 
   const [selectedProject, setSelectedProject] = useState<number | ''>('');
@@ -78,15 +78,15 @@ const CmdTemplateList: React.FC = () => {
     [dispatch]
   );
 
-  const handleViewDetail = useCallback(
+  const handleViewExecute = useCallback(
     (id: number) => {
-      navigate(`/cmd-templates/${id}`);
+      navigate(`/cmd-templates/${id}/execute`);
     },
     [navigate]
   );
 
   return (
-    <ViewContainer title="commands">
+    <ViewContainer title="command templates">
       <ActionsToolbar actions={[{ iconName: 'add', tooltip: 'Add Command', onClick: () => navigate('/cmd-templates/new') }]} />
       <Box className="cmd-template-list__filters">
         <SelectProject value={selectedProject} onChange={setSelectedProject} />
@@ -94,7 +94,7 @@ const CmdTemplateList: React.FC = () => {
       </Box>
 
       <Box sx={{ mt: 2 }}>
-        <CmdTemplatesTable commands={commands} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onViewDetail={handleViewDetail} />
+        <CmdTemplatesTable commands={commandTemplates} loading={loading} onEdit={handleEdit} onDelete={handleDelete} onViewExecute={handleViewExecute} />
       </Box>
     </ViewContainer>
   );

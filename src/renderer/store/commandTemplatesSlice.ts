@@ -4,8 +4,8 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { CommandTemplate } from '@tstypes/dbmodules';
 
 interface CommandTemplatesState {
-  commands: CommandTemplate[];
-  currentCommand: CommandTemplate | null;
+  commandTemplates: CommandTemplate[];
+  currentCommandTemplate: CommandTemplate | null;
   loading: boolean;
   error: string | null;
   filters: {
@@ -15,7 +15,7 @@ interface CommandTemplatesState {
 }
 
 const initialState: CommandTemplatesState = {
-  commands: [],
+  commandTemplates: [],
   currentCommandTemplate: null,
   loading: false,
   error: null,
@@ -43,8 +43,8 @@ export const removeCommandTemplate = createAsyncThunk('command-templates/remove'
   return id;
 });
 
-const commandsSlice = createSlice({
-  name: 'commands',
+const commandTemplatesSlice = createSlice({
+  name: 'commandTemplates',
   initialState,
   reducers: {
     setFilters: (state, action: PayloadAction<{ projectId?: number; tagIds?: number[] }>) => {
@@ -62,7 +62,7 @@ const commandsSlice = createSlice({
       })
       .addCase(fetchCommandTemplates.fulfilled, (state, action) => {
         state.loading = false;
-        state.commands = action.payload;
+        state.commandTemplates = action.payload;
       })
       .addCase(fetchCommandTemplates.rejected, (state, action) => {
         state.loading = false;
@@ -72,19 +72,19 @@ const commandsSlice = createSlice({
         state.currentCommandTemplate = action.payload;
       })
       .addCase(addCommandTemplate.fulfilled, (state, action) => {
-        state.commands.push(action.payload);
+        state.commandTemplates.push(action.payload);
       })
       .addCase(modifyCommandTemplate.fulfilled, (state, action) => {
-        const index = state.commands.findIndex((c) => c.id === action.payload.id);
+        const index = state.commandTemplates.findIndex((c) => c.id === action.payload.id);
         if (index !== -1) {
-          state.commands[index] = action.payload;
+          state.commandTemplates[index] = action.payload;
         }
       })
       .addCase(removeCommandTemplate.fulfilled, (state, action) => {
-        state.commands = state.commands.filter((c) => c.id !== action.payload);
+        state.commandTemplates = state.commandTemplates.filter((c) => c.id !== action.payload);
       });
   },
 });
 
-export const { setFilters, clearCurrentCommandTemplate } = commandsSlice.actions;
-export default commandsSlice.reducer;
+export const { setFilters, clearCurrentCommandTemplate } = commandTemplatesSlice.actions;
+export default commandTemplatesSlice.reducer;
