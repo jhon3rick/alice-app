@@ -1,3 +1,5 @@
+import { PaletteMode } from '@mui/material';
+
 export const colorPrimaryMain = '#018790';
 
 export const lightTheme = {
