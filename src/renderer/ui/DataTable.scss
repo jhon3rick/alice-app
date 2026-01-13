@@ -1,8 +1,18 @@
 .data-table {
   width: 100%;
 
-  .MuiDataGrid-cell:focus {
-    outline: none;
+  .MuiDataGrid-cell:focus,
+  .MuiDataGrid-cell:focus-within {
+    outline: none !important;
+  }
+
+  .MuiDataGrid-cell--withFocusRing {
+    outline: none !important;
+  }
+
+  .MuiDataGrid-columnHeader:focus,
+  .MuiDataGrid-columnHeader:focus-within {
+    outline: none !important;
   }
 
   .MuiDataGrid-row:hover {

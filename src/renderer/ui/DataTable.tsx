@@ -7,7 +7,7 @@
 
 import React, { useMemo } from 'react';
 import { DataGrid, GridColDef, GridRowsProp, GridActionsCellItem } from '@mui/x-data-grid';
-import { Paper } from '@mui/material';
+import { Paper, useTheme } from '@mui/material';
 
 import DataTableAction from './DataTableAction';
 
@@ -42,6 +42,8 @@ function DataTable<T extends { id: number | string }>({
   onEditRow,
   onDeleteRow,
 }: DataTableProps<T>) {
+  const theme = useTheme();
+
   const columnsWithActions = useMemo<GridColDef[]>(() => {
     if (!onEditRow && !onDeleteRow) {
       return columns;
@@ -85,7 +87,14 @@ function DataTable<T extends { id: number | string }>({
   }, [columns, onEditRow, onDeleteRow]);
 
   return (
-    <Paper className={`data-table ${onRowClick ? 'clickable' : ''}`}>
+    <Paper
+      className={`data-table ${onRowClick ? 'clickable' : ''}`}
+      sx={{
+        '& .MuiDataGrid-row:hover': {
+          backgroundColor: theme.palette.action.hover,
+        },
+      }}
+    >
       <DataGrid
         rows={rows as GridRowsProp}
         columns={columnsWithActions}

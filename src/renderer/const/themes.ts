@@ -24,7 +24,7 @@ export const lightTheme = {
       secondary: colorPrimaryMain,
     },
     action: {
-      hover: 'rgba(1, 135, 144, 0.12)',
+      hover: 'rgb(160, 160, 160)',
       selected: 'rgba(1, 135, 144, 0.20)',
     },
   },
@@ -52,7 +52,7 @@ export const darkTheme = {
       secondary: '#00B7B5',
     },
     action: {
-      hover: 'rgba(0, 183, 181, 0.15)',
+      hover: 'rgba(0, 0, 0, 0.08)',
       selected: 'rgba(0, 183, 181, 0.25)',
     },
   },
