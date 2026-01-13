@@ -130,7 +130,7 @@ const CmdTemplateForm: React.FC = () => {
       } else {
         await dispatch(addCommandTemplate(commandData)).unwrap();
       }
-      navigate('/cmd-templates');
+      navigate(-1);
     } catch (error) {
       console.error(`Failed to ${isEditMode ? 'update' : 'create'} command:`, error);
       setValidationError(`Failed to ${isEditMode ? 'update' : 'create'} command. Please try again.`);
