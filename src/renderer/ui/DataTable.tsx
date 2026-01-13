@@ -8,7 +8,8 @@
 import React, { useMemo } from 'react';
 import { DataGrid, GridColDef, GridRowsProp, GridActionsCellItem } from '@mui/x-data-grid';
 import { Paper } from '@mui/material';
-import { Edit, Delete } from '@mui/icons-material';
+
+import DataTableAction from './DataTableAction';
 
 import './DataTable.scss';
 
@@ -24,7 +25,7 @@ export interface DataTableProps<T extends { id: number | string }> {
   checkboxSelection?: boolean;
   getRowId?: (row: T) => string | number;
   onEditRow?: (row: T) => void;
-  onDeleteRow?: (id: number | string) => void;
+  onDeleteRow?: (row: T) => void;
 }
 
 function DataTable<T extends { id: number | string }>({
@@ -53,14 +54,29 @@ function DataTable<T extends { id: number | string }>({
       width: 100,
       getActions: (params) => {
         const actions = [];
+
         if (onEditRow) {
-          actions.push(<GridActionsCellItem icon={<Edit />} label="Edit" color="primary" onClick={() => onEditRow(params.row as T)} tooltip="Edit" />);
-        }
-        if (onDeleteRow) {
           actions.push(
-            <GridActionsCellItem icon={<Delete />} label="Delete" color="error" onClick={() => onDeleteRow(params.row.id)} showInMenu={false} tooltip="Delete" />
+            <DataTableAction
+              key={`edit-${params.row.id}`}
+              type="edit"
+              row={params.row as T}
+              onClick={onEditRow}
+            />
           );
         }
+
+        if (onDeleteRow) {
+          actions.push(
+            <DataTableAction
+              key={`delete-${params.row.id}`}
+              type="delete"
+              row={params.row as T}
+              onClick={onDeleteRow}
+            />
+          );
+        }
+
         return actions;
       },
     };

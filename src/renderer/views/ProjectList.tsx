@@ -87,9 +87,9 @@ const ProjectList: React.FC = () => {
     handleCloseDialog();
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (project: StoredProject) => {
     if (confirm('Are you sure you want to delete this project?')) {
-      await dispatch(removeProject(id));
+      await dispatch(removeProject(project.id));
     }
   };
 

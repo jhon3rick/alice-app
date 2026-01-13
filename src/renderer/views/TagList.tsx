@@ -81,9 +81,9 @@ const TagList: React.FC = () => {
     handleCloseDialog();
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (tag: StoredTag) => {
     if (confirm('Are you sure you want to delete this tag?')) {
-      await dispatch(removeTag(id));
+      await dispatch(removeTag(tag.id));
     }
   };
 
@@ -101,9 +101,9 @@ const TagList: React.FC = () => {
         rows={tags}
         columns={columnsSchema}
         pageSize={10}
-        pageSizeOptions={[5, 10, 25, 50]}
         onEditRow={handleOpenDialog}
         onDeleteRow={handleDelete}
+        pageSizeOptions={[5, 10, 25, 50]}
       />
       <ModalNewTag open={dialogOpen} editingTag={editingTag} onClose={handleCloseDialog} onSave={handleSave} />
     </ViewContainer>
