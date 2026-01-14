@@ -1,7 +1,7 @@
 /**
  * RenderDevIcon
  *
- * Component for rendering technology icons from Simple Icons library.
+ * Component for rendering technology icons from SVGL library.
  * Takes an icon name and displays the corresponding icon.
  */
 
@@ -21,7 +21,7 @@ const RenderDevIcon: React.FC<RenderDevIconProps> = ({ iconName, size = 20 }) =>
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <IconComponent size={size} />
+      <IconComponent width={size} height={size} />
     </Box>
   );
 };

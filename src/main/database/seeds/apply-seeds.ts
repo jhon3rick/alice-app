@@ -28,7 +28,7 @@ export async function applySeeds(db: Kysely<Database>): Promise<void> {
   const seeds = getAllSeeds();
 
   // Iterate through all seed categories
-  for (const [tableName, seedData] of Object.entries(seeds) as [SeedableTable, T[]][]) {
+  for (const [tableName, seedData] of Object.entries(seeds) as [SeedableTable, unknown[]][]) {
     if (!seedData || seedData.length === 0) {
       continue;
     }
@@ -60,7 +60,7 @@ export async function applySeeds(db: Kysely<Database>): Promise<void> {
  */
 async function isTableEmpty(db: Kysely<Database>, tableName: SeedableTable): Promise<boolean> {
   const result = await db
-    .selectFrom(tableName as See)
+    .selectFrom(tableName as keyof Database)
     .selectAll()
     .limit(1)
     .execute();
@@ -78,14 +78,14 @@ async function isTableEmpty(db: Kysely<Database>, tableName: SeedableTable): Pro
 async function insertSeedData(
   db: Kysely<Database>,
   tableName: SeedableTable,
-  seedData: T[]
+  seedData: unknown[]
 ): Promise<void> {
   // Insert records one by one to handle potential conflicts gracefully
   for (const record of seedData) {
     try {
       await db
-        .insertInto(tableName as SeedableTable)
-        .values(record)
+        .insertInto(tableName as keyof Database)
+        .values(record as never)
         .execute();
     } catch (error) {
       console.warn(`Warning: Could not insert ${tableName} record:`, record, error);
@@ -107,7 +107,7 @@ export async function forceReloadSeeds(db: Kysely<Database>): Promise<void> {
 
   console.log('⚠ Force reloading seed data (this will clear existing data)...');
 
-  for (const [tableName, seedData] of Object.entries(seeds) as [SeedableTable, T[]][]) {
+  for (const [tableName, seedData] of Object.entries(seeds) as [SeedableTable, unknown[]][]) {
     if (!seedData || seedData.length === 0) {
       continue;
     }
@@ -115,7 +115,7 @@ export async function forceReloadSeeds(db: Kysely<Database>): Promise<void> {
     try {
       // Delete all existing records
       await db
-        .deleteFrom(tableName as SeedableTable)
+        .deleteFrom(tableName as keyof Database)
         .execute();
 
       // Insert fresh seed data

@@ -1,7 +1,7 @@
 /**
  * SelectDevIcon
  *
- * Component for selecting technology icons from Simple Icons library.
+ * Component for selecting technology icons from SVGL library.
  * Uses Autocomplete for a native select-like experience with search/filter.
  */
 
@@ -33,7 +33,12 @@ const SelectDevIcon: React.FC<SelectDevIconProps> = ({ value, onChange, label })
         onChange(newValue ? newValue.name : '');
       }}
       options={AVAILABLE_ICONS}
-      getOptionLabel={(option) => option.label}
+      getOptionLabel={(option) => {
+        if (option.variant) {
+          return `${option.label} (${option.variant})`;
+        }
+        return option.label;
+      }}
       isOptionEqualToValue={(option, value) => option.name === value.name}
       ListboxProps={{
         style: {
@@ -48,7 +53,7 @@ const SelectDevIcon: React.FC<SelectDevIconProps> = ({ value, onChange, label })
             ...params.InputProps,
             startAdornment: SelectedIconComponent && (
               <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, mr: 0.5 }}>
-                <SelectedIconComponent size={20} />
+                <SelectedIconComponent width={20} height={20} />
               </Box>
             ),
           }}
@@ -56,19 +61,28 @@ const SelectDevIcon: React.FC<SelectDevIconProps> = ({ value, onChange, label })
       )}
       renderOption={(props, option) => {
         const IconComponent = getIconComponent(option.name);
+        const { key, ...otherProps } = props;
         return (
           <Box
             component="li"
-            {...props}
+            key={option.name}
+            {...otherProps}
             className="select-icon__option"
             sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}
           >
             {IconComponent && (
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconComponent size={20} />
+                <IconComponent width={20} height={20} />
               </Box>
             )}
-            <span>{option.label}</span>
+            <span>
+              {option.label}
+              {option.variant && (
+                <span style={{ fontSize: '0.85em', opacity: 0.7, marginLeft: '4px' }}>
+                  ({option.variant})
+                </span>
+              )}
+            </span>
           </Box>
         );
       }}

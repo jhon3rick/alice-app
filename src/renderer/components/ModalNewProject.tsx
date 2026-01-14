@@ -23,7 +23,11 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
 
   useEffect(() => {
     if (editingProject) {
-      setFormData(editingProject);
+      setFormData({
+        name: editingProject.name,
+        path: editingProject.path || '',
+        codeindex: editingProject.codeindex,
+      });
     } else {
       setFormData({ name: '', path: '', codeindex: '' });
     }

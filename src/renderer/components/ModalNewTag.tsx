@@ -65,7 +65,7 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
     setFormData((prev) => ({ ...prev, codeindex: e.target.value }));
   }, []);
 
-  const handleChangeIcon = useCallback((icon) => {
+  const handleChangeIcon = useCallback((icon: string) => {
     setFormData((prev) => ({ ...prev, icon }));
   }, []);
 

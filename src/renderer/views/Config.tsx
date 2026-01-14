@@ -57,7 +57,8 @@ const Config: React.FC = () => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
         try {
-          const result = await window.electronAPI.importJson(file.path);
+          const filePath = (file as unknown as { path: string }).path;
+          const result = await window.electronAPI.importJson(filePath);
           if (result.success) {
             setSnackbar({ open: true, message: 'JSON imported successfully', severity: 'success' });
           } else {
