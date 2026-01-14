@@ -57,12 +57,8 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
   };
 
   // Form field change handlers
-  const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, name: e.target.value }));
-  }, []);
-
-  const handleChangeCodeIndex = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, codeindex: e.target.value }));
+  const handleInputChange = useCallback((field: keyof Tag) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   }, []);
 
   const handleChangeIcon = useCallback((icon: string) => {
@@ -87,7 +83,7 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
           label="Tag Name"
           fullWidth
           value={formData.name}
-          onChange={handleChangeName}
+          onChange={handleInputChange('name')}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -95,7 +91,7 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
           label="Code Index"
           fullWidth
           value={formData.codeindex}
-          onChange={handleChangeCodeIndex}
+          onChange={handleInputChange('codeindex')}
           helperText="Optional: Unique identifier for JSON import/export"
           sx={{ mb: 3 }}
         />

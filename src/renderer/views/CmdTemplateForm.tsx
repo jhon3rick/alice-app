@@ -7,7 +7,7 @@
  * Supports both create mode (/cmd-templates/new) and edit mode (/cmd-templates/:id/edit).
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TextField, Button, Box, Alert } from '@mui/material';
 import { Save } from '@mui/icons-material';
@@ -78,9 +78,13 @@ const CmdTemplateForm: React.FC = () => {
     }
   }, [isEditMode, currentCommandTemplate]);
 
-  const handleInputChange = (field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-  };
+  }, []);
+
+  const handleArrayChange = useCallback((field: 'selectedProjects' | 'selectedTags') => (values: string[]) => {
+    setFormData((prev) => ({ ...prev, [field]: values }));
+  }, []);
 
   const handleStepsValidation = (isValid: boolean) => {
     setIsStepsValid(isValid);
@@ -186,14 +190,14 @@ const CmdTemplateForm: React.FC = () => {
         <Box sx={{ mb: 2 }}>
           <SelectProjects
             value={formData.selectedProjects}
-            onChange={(projects) => setFormData((prev) => ({ ...prev, selectedProjects: projects }))}
+            onChange={handleArrayChange('selectedProjects')}
           />
         </Box>
 
         <Box sx={{ mb: 2 }}>
           <SelectTags
             value={formData.selectedTags}
-            onChange={(tags) => setFormData((prev) => ({ ...prev, selectedTags: tags }))}
+            onChange={handleArrayChange('selectedTags')}
           />
         </Box>
 

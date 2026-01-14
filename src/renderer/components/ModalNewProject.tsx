@@ -39,16 +39,8 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
   };
 
   // Form field change handlers
-  const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, name: e.target.value }));
-  }, []);
-
-  const handleChangePath = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, path: e.target.value }));
-  }, []);
-
-  const handleChangeCodeIndex = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, codeindex: e.target.value }));
+  const handleInputChange = useCallback((field: keyof typeof formData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   }, []);
 
   const handleClose = useCallback(() => {
@@ -69,7 +61,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Project Name"
           fullWidth
           value={formData.name}
-          onChange={handleChangeName}
+          onChange={handleInputChange('name')}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -77,7 +69,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Project Path"
           fullWidth
           value={formData.path}
-          onChange={handleChangePath}
+          onChange={handleInputChange('path')}
           helperText="Optional: Specific directory path for command execution"
           sx={{ mb: 2 }}
         />
@@ -86,7 +78,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Code Index"
           fullWidth
           value={formData.codeindex}
-          onChange={handleChangeCodeIndex}
+          onChange={handleInputChange('codeindex')}
           helperText="Optional: Unique identifier for JSON import/export"
         />
       </DialogContent>
