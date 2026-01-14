@@ -37,14 +37,14 @@ const columnsSchema: GridColDef[] = [
     flex: 1,
     field: 'codeindex',
     headerName: 'Code Index',
-    minWidth: 50,
-    maxWidth: 100,
+    minWidth: 100,
+    maxWidth: 200,
     valueGetter: (value) => value || '-',
   },
   {
     flex: 1,
     field: 'name',
-    headerName: 'Flag',
+    headerName: 'Name',
     minWidth: 150,
   },
 ];

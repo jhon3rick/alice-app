@@ -4,6 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { Kysely, SqliteDialect } from 'kysely';
 import type { Database } from './schema';
+import { applySeeds } from './seeds/apply-seeds';
 
 export class DatabaseService {
   private sqliteDb: Sqlite.Database | null = null;
@@ -125,6 +126,9 @@ export class DatabaseService {
       .values({ key: 'exportPath', value: path.join(userDataPath, 'exports') })
       .onConflict((oc) => oc.column('key').doNothing())
       .execute();
+
+    // Apply seed data
+    await applySeeds(this.db);
   }
 
   getDatabase(): Kysely<Database> | null {
