@@ -14,6 +14,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "clean": "rm -rf node_modules/.cache .webpack dist out && echo 'Cache cleared successfully!'",
+    "reset:db": "rm -f \"$HOME/Library/Application Support/alice-app/alice.db\" && echo 'Database reset successfully!'",
     "rebuild": "electron-rebuild -f -w node-pty",
     "postinstall": "electron-rebuild -f -w node-pty"
   },
