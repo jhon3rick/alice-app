@@ -1,0 +1,15 @@
+.data-table-filter {
+  &__container {
+    padding: 10px;
+    display: inline-flex;
+    z-index: 999;
+    position: relative;
+    transform: translateY(2px);
+    border-radius: 4px 4px 0 0;
+    border-bottom: none!important;
+  }
+
+  &__input {
+    width: 300px;
+  }
+}

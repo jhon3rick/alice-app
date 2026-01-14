@@ -113,10 +113,11 @@ const TagList: React.FC = () => {
       <DataTable
         rows={tags}
         columns={columnsSchema}
-        pageSize={10}
+        pageSize={25}
         onEditRow={handleOpenDialog}
         onDeleteRow={handleDelete}
         pageSizeOptions={[5, 10, 25, 50]}
+        filterByFields={['name', 'codeindex']}
       />
       <ModalNewTag open={dialogOpen} editingTag={editingTag} onClose={handleCloseDialog} onSave={handleSave} />
     </ViewContainer>

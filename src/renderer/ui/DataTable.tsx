@@ -10,6 +10,8 @@ import { DataGrid, GridColDef, GridRowsProp, GridActionsCellItem } from '@mui/x-
 import { Paper, useTheme } from '@mui/material';
 
 import DataTableAction from './DataTableAction';
+import DataTableFilter from './DataTableFilter';
+import { useDataTableFilter } from '../hooks/useDataTableFilter';
 
 import './DataTable.scss';
 
@@ -26,6 +28,7 @@ export interface DataTableProps<T extends { id: number | string }> {
   getRowId?: (row: T) => string | number;
   onEditRow?: (row: T) => void;
   onDeleteRow?: (row: T) => void;
+  filterByFields?: string[];
 }
 
 function DataTable<T extends { id: number | string }>({
@@ -41,8 +44,14 @@ function DataTable<T extends { id: number | string }>({
   getRowId,
   onEditRow,
   onDeleteRow,
+  filterByFields,
 }: DataTableProps<T>) {
   const theme = useTheme();
+
+  const { filteredData, filterText, setFilterText } = useDataTableFilter({
+    data: rows,
+    filterByFields,
+  });
 
   const columnsWithActions = useMemo<GridColDef[]>(() => {
     if (!onEditRow && !onDeleteRow) {
@@ -88,15 +97,21 @@ function DataTable<T extends { id: number | string }>({
 
   return (
     <Paper
-      className={`data-table ${onRowClick ? 'clickable' : ''}`}
+      className="data-table"
       sx={{
         '& .MuiDataGrid-row:hover': {
           backgroundColor: theme.palette.action.hover,
         },
       }}
     >
+      {filterByFields && filterByFields.length > 0 && (
+        <DataTableFilter
+          filterText={filterText}
+          onFilterChange={setFilterText}
+        />
+      )}
       <DataGrid
-        rows={rows as GridRowsProp}
+        rows={filteredData as GridRowsProp}
         columns={columnsWithActions}
         loading={loading}
         initialState={{
