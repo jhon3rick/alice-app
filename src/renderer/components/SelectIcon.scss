@@ -1,0 +1,48 @@
+.select-icon {
+  &__option {
+    padding: 8px 12px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease;
+
+    // Hover state (mouse)
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04) !important;
+    }
+
+    // Focused state (keyboard navigation with arrow keys)
+    &[aria-selected="true"] {
+      background-color: rgba(25, 118, 210, 0.12) !important;
+      font-weight: 500;
+    }
+
+    // MUI also applies .Mui-focused class during keyboard navigation
+    &.Mui-focused {
+      background-color: rgba(25, 118, 210, 0.12) !important;
+    }
+
+    span {
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .select-icon {
+    &__option {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      // Focused state in dark theme
+      &[aria-selected="true"] {
+        background-color: rgba(144, 202, 249, 0.16) !important;
+      }
+
+      &.Mui-focused {
+        background-color: rgba(144, 202, 249, 0.16) !important;
+      }
+    }
+  }
+}
