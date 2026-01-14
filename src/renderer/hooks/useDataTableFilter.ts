@@ -7,12 +7,12 @@
 
 import { useState, useMemo } from 'react';
 
-export interface UseTableFilterOptions<T> {
+export interface UseDataTableFilterOptions<T> {
   data: T[];
   filterByFields?: string[];
 }
 
-export interface UseTableFilterReturn<T> {
+export interface UseDataTableFilterReturn<T> {
   filteredData: T[];
   filterText: string;
   setFilterText: (text: string) => void;
@@ -50,8 +50,8 @@ export function useDataTableFilter<T>({
     const endsWithWildcard = searchText.endsWith('%');
     const cleanText = searchText.replace(/^%|%$/g, '').toLowerCase();
 
-    return data.filter((row) => {
-      return filterByFields.some((field) => {
+    return data.filter((row: T) => {
+      return filterByFields.some((field: string) => {
         const value = String((row as Record<string, unknown>)[field] || '').toLowerCase();
 
         if (startsWithWildcard && endsWithWildcard) {

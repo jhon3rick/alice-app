@@ -25,13 +25,18 @@ rules.push({
   ],
 });
 
+rules.push({
+  test: /\.svg$/,
+  type: 'asset/source',
+});
+
 export const rendererConfig: Configuration = {
   module: {
     rules,
   },
   plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.svg'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@main': path.resolve(__dirname, 'src/main'),
@@ -43,6 +48,7 @@ export const rendererConfig: Configuration = {
       '@utils': path.resolve(__dirname, 'src/renderer/utils'),
       '@const': path.resolve(__dirname, 'src/renderer/const'),
       '@ui': path.resolve(__dirname, 'src/renderer/ui'),
+      '@assets': path.resolve(__dirname, 'src/renderer/assets'),
     },
   },
 };

@@ -11,6 +11,7 @@ import { Paper, useTheme } from '@mui/material';
 
 import DataTableAction from './DataTableAction';
 import DataTableFilter from './DataTableFilter';
+import DataTableEmpty from './DataTableEmpty';
 import { useDataTableFilter } from '../hooks/useDataTableFilter';
 
 import './DataTable.scss';
@@ -23,6 +24,7 @@ export interface DataTableProps<T extends { id: number | string }> {
   pageSizeOptions?: number[];
   disableRowSelectionOnClick?: boolean;
   autoHeight?: boolean;
+  height?: number | string;
   onRowClick?: (row: T) => void;
   checkboxSelection?: boolean;
   getRowId?: (row: T) => string | number;
@@ -38,7 +40,8 @@ function DataTable<T extends { id: number | string }>({
   pageSize = 10,
   pageSizeOptions = [5, 10, 25, 50, 100],
   disableRowSelectionOnClick = true,
-  autoHeight = true,
+  autoHeight = false,
+  height = '100%',
   onRowClick,
   checkboxSelection = false,
   getRowId,
@@ -95,16 +98,21 @@ function DataTable<T extends { id: number | string }>({
     return [...columns, actionsColumn];
   }, [columns, onEditRow, onDeleteRow]);
 
+  const hasData = filteredData.length > 0;
+
   return (
     <Paper
       className="data-table"
       sx={{
+        height: autoHeight ? 'auto' : hasData ? height : '500px',
+        display: 'flex',
+        flexDirection: 'column',
         '& .MuiDataGrid-row:hover': {
           backgroundColor: theme.palette.action.hover,
         },
       }}
     >
-      {filterByFields && filterByFields.length > 0 && (
+      {filterByFields && filterByFields.length > 0 && rows.length > 0 && (
         <DataTableFilter
           filterText={filterText}
           onFilterChange={setFilterText}
@@ -125,6 +133,10 @@ function DataTable<T extends { id: number | string }>({
         onRowClick={(params) => onRowClick?.(params.row as T)}
         checkboxSelection={checkboxSelection}
         getRowId={getRowId}
+        slots={{
+          noRowsOverlay: DataTableEmpty,
+        }}
+        hideFooter={!hasData}
       />
     </Paper>
   );

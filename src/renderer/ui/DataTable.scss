@@ -22,4 +22,12 @@
   &.clickable .MuiDataGrid-row:hover {
     cursor: pointer;
   }
+
+  .MuiDataGrid-overlayWrapper {
+    min-height: 400px;
+  }
+
+  .MuiDataGrid-overlay {
+    background-color: transparent;
+  }
 }

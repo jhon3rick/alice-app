@@ -24,6 +24,7 @@
       "@utils/*": ["src/renderer/utils/*"],
       "@const/*": ["src/renderer/const/*"],
       "@ui/*": ["src/renderer/ui/*"],
+      "@assets/*": ["src/renderer/assets/*"],
       "*": ["node_modules/*"]
     }
   },
