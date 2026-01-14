@@ -10,10 +10,11 @@ export function setupTagsHandlers(db: Kysely<Database>): void {
   });
 
   // Create tag
-  ipcMain.handle('create-tag', async (_event, tag: { codeindex?: string; name: string }) => {
+  ipcMain.handle('create-tag', async (_event, tag: { codeindex: string; name: string, icon?: string }) => {
     const newTag: NewTag = {
-      codeindex: tag.codeindex || null,
+      codeindex: tag.codeindex,
       name: tag.name,
+      icon: tag.icon || null,
     };
 
     const result = await db.insertInto('tags').values(newTag).executeTakeFirstOrThrow();
@@ -22,10 +23,11 @@ export function setupTagsHandlers(db: Kysely<Database>): void {
   });
 
   // Update tag
-  ipcMain.handle('update-tag', async (_event, tag: { id: number; codeindex?: string; name: string }) => {
+  ipcMain.handle('update-tag', async (_event, tag: { id: number; codeindex: string; name: string, icon?: string }) => {
     const updateData: TagUpdate = {
-      codeindex: tag.codeindex || null,
+      codeindex: tag.codeindex,
       name: tag.name,
+      icon: tag.icon || null,
       updated_at: new Date().toISOString(),
     };
 

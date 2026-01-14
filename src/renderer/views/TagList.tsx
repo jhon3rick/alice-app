@@ -13,6 +13,7 @@ import { fetchTags, addTag, modifyTag, removeTag } from '@store/tagsSlice';
 
 // Custom Components
 import ModalNewTag from '@components/ModalNewTag';
+import RenderDevIcon from '@ui/RenderDevIcon';
 import ViewContainer from '@ui/ViewContainer';
 import DataTable, { GridColDef } from '@ui/DataTable';
 import { IActionButton } from '@ui/ActionsToolbar';
@@ -25,15 +26,25 @@ import './TagList.scss';
 const columnsSchema: GridColDef[] = [
   {
     flex: 1,
+    field: 'icon',
+    headerName: '',
+    minWidth: 40,
+    maxWidth: 40,
+    display: 'flex',
+    renderCell: (params) => <RenderDevIcon iconName={params.value as string} />,
+  },
+  {
+    flex: 1,
     field: 'codeindex',
     headerName: 'Code Index',
     minWidth: 50,
+    maxWidth: 100,
     valueGetter: (value) => value || '-',
   },
   {
     flex: 1,
     field: 'name',
-    headerName: 'Name',
+    headerName: 'Flag',
     minWidth: 150,
   },
 ];
@@ -60,12 +71,13 @@ const TagList: React.FC = () => {
     setEditingTag(null);
   };
 
-  const handleSave = async (formData: { name: string; codeindex?: string }) => {
+  const handleSave = async (formData: { name: string; codeindex: string; icon?: string }) => {
     if (editingTag) {
       await dispatch(
         modifyTag({
           id: editingTag.id,
           name: formData.name,
+          icon: formData.icon,
           codeindex: formData.codeindex,
         })
       );
@@ -73,6 +85,7 @@ const TagList: React.FC = () => {
       await dispatch(
         addTag({
           name: formData.name,
+          icon: formData.icon,
           codeindex: formData.codeindex,
         })
       );

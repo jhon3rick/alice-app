@@ -5,7 +5,7 @@
  * Provides form fields for project name, path, and code index.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 
 // Types
@@ -15,7 +15,7 @@ interface ModalNewProjectProps {
   open: boolean;
   editingProject: Project | null;
   onClose: () => void;
-  onSave: (formData: { name: string; path?: string; codeindex?: string }) => void;
+  onSave: (formData: { name: string; path: string; codeindex: string }) => void;
 }
 
 const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject, onClose, onSave }) => {
@@ -23,11 +23,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
 
   useEffect(() => {
     if (editingProject) {
-      setFormData({
-        name: editingProject.name,
-        path: editingProject.path || '',
-        codeindex: editingProject.codeindex || '',
-      });
+      setFormData(editingProject);
     } else {
       setFormData({ name: '', path: '', codeindex: '' });
     }
@@ -35,23 +31,32 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
 
   const handleSave = () => {
     if (!formData.name.trim()) return;
-
-    onSave({
-      name: formData.name,
-      path: formData.path || undefined,
-      codeindex: formData.codeindex || undefined,
-    });
-
-    setFormData({ name: '', path: '', codeindex: '' });
+    onSave(formData);
   };
 
-  const handleClose = () => {
-    setFormData({ name: '', path: '', codeindex: '' });
+  // Form field change handlers
+  const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, name: e.target.value }));
+  }, []);
+
+  const handleChangePath = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, path: e.target.value }));
+  }, []);
+
+  const handleChangeCodeIndex = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, codeindex: e.target.value }));
+  }, []);
+
+  const handleClose = useCallback(() => {
     onClose();
-  };
+  }, [onClose]);
+
+  const handleExited = useCallback(() => {
+    setFormData({ name: '', path: '', codeindex: '' });
+  }, []);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth TransitionProps={{ onExited: handleExited }}>
       <DialogTitle>{editingProject ? 'Edit Project' : 'Add Project'}</DialogTitle>
       <DialogContent>
         <TextField
@@ -60,7 +65,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Project Name"
           fullWidth
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={handleChangeName}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -68,7 +73,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Project Path"
           fullWidth
           value={formData.path}
-          onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+          onChange={handleChangePath}
           helperText="Optional: Specific directory path for command execution"
           sx={{ mb: 2 }}
         />
@@ -77,7 +82,7 @@ const ModalNewProject: React.FC<ModalNewProjectProps> = ({ open, editingProject,
           label="Code Index"
           fullWidth
           value={formData.codeindex}
-          onChange={(e) => setFormData({ ...formData, codeindex: e.target.value })}
+          onChange={handleChangeCodeIndex}
           helperText="Optional: Unique identifier for JSON import/export"
         />
       </DialogContent>

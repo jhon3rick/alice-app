@@ -2,11 +2,22 @@
  * ModalNewTag
  *
  * Modal component for creating or editing tags.
- * Provides form fields for tag name and code index.
+ * Provides form fields for tag name, code index, and icon selection.
  */
 
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+} from '@mui/material';
+
+// Components
+import SelectDevIcon from '@ui/SelectDevIcon';
 
 // Types
 import { Tag } from '@tstypes/dbmodules';
@@ -15,20 +26,21 @@ interface ModalNewTagProps {
   open: boolean;
   editingTag: Tag | null;
   onClose: () => void;
-  onSave: (formData: { name: string; codeindex?: string }) => void;
+  onSave: (formData: { name: string; codeindex?: string; icon?: string }) => void;
 }
 
 const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, onSave }) => {
-  const [formData, setFormData] = useState({ name: '', codeindex: '' });
+  const [formData, setFormData] = useState<Tag>({ name: '', codeindex: '', icon: '' });
 
   useEffect(() => {
     if (editingTag) {
       setFormData({
         name: editingTag.name,
         codeindex: editingTag.codeindex || '',
+        icon: editingTag.icon || '',
       });
     } else {
-      setFormData({ name: '', codeindex: '' });
+      setFormData({ name: '', codeindex: '', icon: '' });
     }
   }, [editingTag, open]);
 
@@ -37,19 +49,36 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
 
     onSave({
       name: formData.name,
-      codeindex: formData.codeindex || undefined,
+      codeindex: formData.codeindex,
+      icon: formData.icon || undefined,
     });
 
-    setFormData({ name: '', codeindex: '' });
+    setFormData({ name: '', codeindex: '', icon: '' });
   };
 
-  const handleClose = () => {
-    setFormData({ name: '', codeindex: '' });
+  // Form field change handlers
+  const handleChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, name: e.target.value }));
+  }, []);
+
+  const handleChangeCodeIndex = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, codeindex: e.target.value }));
+  }, []);
+
+  const handleChangeIcon = useCallback((icon) => {
+    setFormData((prev) => ({ ...prev, icon }));
+  }, []);
+
+  const handleClose = useCallback(() => {
     onClose();
-  };
+  }, [onClose]);
+
+  const handleExited = useCallback(() => {
+    setFormData({ name: '', codeindex: '', icon: '' });
+  }, []);
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth TransitionProps={{ onExited: handleExited }}>
       <DialogTitle>{editingTag ? 'Edit Tag' : 'Add Tag'}</DialogTitle>
       <DialogContent>
         <TextField
@@ -58,7 +87,7 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
           label="Tag Name"
           fullWidth
           value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          onChange={handleChangeName}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -66,9 +95,18 @@ const ModalNewTag: React.FC<ModalNewTagProps> = ({ open, editingTag, onClose, on
           label="Code Index"
           fullWidth
           value={formData.codeindex}
-          onChange={(e) => setFormData({ ...formData, codeindex: e.target.value })}
+          onChange={handleChangeCodeIndex}
           helperText="Optional: Unique identifier for JSON import/export"
+          sx={{ mb: 3 }}
         />
+
+        <Box sx={{ mt: 2 }}>
+          <SelectDevIcon
+            label="Select Icon (Optional)"
+            value={formData.icon}
+            onChange={handleChangeIcon}
+          />
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>

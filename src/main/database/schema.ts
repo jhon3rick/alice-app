@@ -3,7 +3,7 @@ import { ColumnType, Generated, Selectable, Insertable, Updateable } from 'kysel
 // Database table schemas
 export interface ProjectsTable {
   id: Generated<number>;
-  codeindex: string | null;
+  codeindex: string;
   name: string;
   path: string | null;
   created_at: ColumnType<Date, string | undefined, never>;
@@ -12,8 +12,9 @@ export interface ProjectsTable {
 
 export interface TagsTable {
   id: Generated<number>;
-  codeindex: string | null;
+  codeindex: string;
   name: string;
+  icon: string | null;
   created_at: ColumnType<Date, string | undefined, never>;
   updated_at: ColumnType<Date, string | undefined, string>;
 }

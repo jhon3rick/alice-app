@@ -1,29 +1,20 @@
 /**
- * SelectIcon
+ * Available Dev Icons
  *
- * Component for selecting technology icons from Simple Icons library.
- * Uses Autocomplete for a native select-like experience with search/filter.
+ * List of available technology icons from Simple Icons library.
+ * Used across the application for consistent icon selection and rendering.
  */
 
-import React from 'react';
-import { Autocomplete, TextField, Box, Typography } from '@mui/material';
 import * as SimpleIcons from 'react-icons/si';
-import './SelectIcon.scss';
 
-interface SelectIconProps {
-  value: string;
-  onChange: (iconName: string) => void;
-  label?: string;
-}
-
-interface IconOption {
+export interface IconOption {
   name: string;
   label: string;
 }
 
 // List of available Simple Icons with their base names
 // Note: Icon names must match Simple Icons format (e.g., 'amazonwebservices', 'nodedotjs', etc.)
-const AVAILABLE_ICONS: IconOption[] = [
+export const AVAILABLE_ICONS: IconOption[] = [
   { name: 'amazonwebservices', label: 'AWS' },
   { name: 'android', label: 'Android' },
   { name: 'angular', label: 'Angular' },
@@ -93,75 +84,10 @@ const AVAILABLE_ICONS: IconOption[] = [
 ];
 
 // Get the icon component dynamically
-const getIconComponent = (iconName: string) => {
+export const getIconComponent = (iconName: string) => {
   if (!iconName) return null;
   // Format for react-icons Simple Icons (e.g., 'laravel' -> 'SiLaravel')
   const capitalizedName = iconName.charAt(0).toUpperCase() + iconName.slice(1);
   const componentName = `Si${capitalizedName}` as keyof typeof SimpleIcons;
   return SimpleIcons[componentName];
 };
-
-const SelectIcon: React.FC<SelectIconProps> = ({ value, onChange, label }) => {
-  const selectedOption = AVAILABLE_ICONS.find((icon) => icon.name === value) || null;
-  const SelectedIconComponent = selectedOption ? getIconComponent(selectedOption.name) : null;
-
-  return (
-    <Box>
-      {label && (
-        <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 'medium' }}>
-          {label}
-        </Typography>
-      )}
-      <Autocomplete
-      value={selectedOption}
-      onChange={(_event, newValue) => {
-        onChange(newValue ? newValue.name : '');
-      }}
-      options={AVAILABLE_ICONS}
-      getOptionLabel={(option) => option.label}
-      isOptionEqualToValue={(option, value) => option.name === value.name}
-      ListboxProps={{
-        style: {
-          maxHeight: '250px',
-        },
-      }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Select an icon..."
-          InputProps={{
-            ...params.InputProps,
-            startAdornment: SelectedIconComponent && (
-              <Box sx={{ display: 'flex', alignItems: 'center', ml: 1, mr: 0.5 }}>
-                <SelectedIconComponent size={20} />
-              </Box>
-            ),
-          }}
-        />
-      )}
-      renderOption={(props, option) => {
-        const IconComponent = getIconComponent(option.name);
-        return (
-          <Box
-            component="li"
-            {...props}
-            className="select-icon__option"
-            sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}
-          >
-            {IconComponent && (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <IconComponent size={20} />
-              </Box>
-            )}
-            <span>{option.label}</span>
-          </Box>
-        );
-      }}
-      noOptionsText="No icons found"
-      className="select-icon"
-    />
-    </Box>
-  );
-};
-
-export default SelectIcon;

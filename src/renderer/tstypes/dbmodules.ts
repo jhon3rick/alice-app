@@ -26,7 +26,7 @@ export interface Step {
 // CommandTemplate - Application level (steps is parsed array)
 export interface CommandTemplate {
   id?: number;
-  codeindex?: string;
+  codeindex: string;
   name: string;
   detail: string;
   resumen: string;
@@ -43,7 +43,7 @@ export interface StoredCommandTemplate extends Omit<CommandTemplate, 'id' | 'ste
 
 export interface Project {
   id?: number;
-  codeindex?: string;
+  codeindex: string;
   name: string;
   path?: string;
 }
@@ -54,8 +54,9 @@ export interface StoredProject extends Omit<Project, 'id'> {
 
 export interface Tag {
   id?: number;
-  codeindex?: string;
+  codeindex: string;
   name: string;
+  icon?: string;
 }
 
 export interface StoredTag extends Omit<Tag, 'id'> {
