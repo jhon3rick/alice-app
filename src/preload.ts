@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import type { Project, Tag, CommandTemplate } from './renderer/tstypes/dbmodules';
+import type { Project, Tag, CommandTemplate } from '@tstypes/dbmodules';
 
 // Type definitions for IPC communication
 export interface IpcResponse {

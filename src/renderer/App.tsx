@@ -2,9 +2,9 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from '@store/index';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider } from '@contexts/ThemeContext';
 
-import './styles/_global.scss';
+import '@styles/_global.scss';
 
 // Views
 import Splash from '@views/Splash';
